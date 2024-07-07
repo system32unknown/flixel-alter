@@ -986,7 +986,7 @@ class FlxBar extends FlxSprite
 			if (value != null)
 				value.parent.incrementUseCount();
 				
-			if (frontFrames != null)
+			if (frontFrames != null && frontFrames.parent != null)
 				frontFrames.parent.decrementUseCount();
 
 			frontFrames = value;
