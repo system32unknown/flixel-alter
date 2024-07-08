@@ -512,6 +512,8 @@ class FlxGraphic implements IFlxDestroyable
 				FlxG.log.warn('Attempting to add already added collection');
 			else
 				collections.push(collection);
+			if (!frameCollectionTypes.contains(collection.type))
+				frameCollectionTypes.push(collection.type);
 		}
 	}
 
