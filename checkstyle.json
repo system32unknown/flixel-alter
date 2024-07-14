@@ -34,7 +34,8 @@
 					"STATIC",
 					"MACRO",
 					"INLINE",
-					"DYNAMIC"
+					"DYNAMIC",
+					"FINAL"
 				]
 			}
 		},

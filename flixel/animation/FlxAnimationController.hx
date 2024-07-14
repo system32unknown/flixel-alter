@@ -3,8 +3,7 @@ package flixel.animation;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxFrame;
-import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxSignal.FlxTypedSignal;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 using StringTools;
 
@@ -59,14 +58,24 @@ class FlxAnimationController implements IFlxDestroyable
 	 * If assigned, will be called each time the current animation's frame changes.
 	 * A function that has 3 parameters: a string name, a frame number, and a frame index.
 	 */
-	@:deprecated('callback is deprecated, use `frameCallback`')
 	public var callback:(name:String, frameNumber:Int, frameIndex:Int) -> Void;
 
 	/**
 	 * If assigned, will be called each time the current animation finishes.
-	 * A function that has 1 parameter: a string name - animation name.
+	 * 
+	 * @param   animName  The name of the current animation
 	 */
-	@:deprecated('finishCallback is deprecated, use `finishedCallback`')
+	@:deprecated('finishCallback is deprecated, use onFinish.add') // 5.9.0
+	public var finishCallback:(animName:String) -> Void;
+	
+	/**
+	 * Dispatches each time the current animation's frame changes
+	 * 
+	 * @param   animName     The name of the current animation
+	 * @param   frameNumber  The progress of the current animation, in frames
+	 * @param   frameIndex   The current animation's frameIndex in the tile sheet
+	 * @since 5.9.0
+	 */
 	public var finishCallback:(name:String) -> Void;
 
 	/**
@@ -166,11 +175,9 @@ class FlxAnimationController implements IFlxDestroyable
 		clearPrerotated();
 	}
 
+	@:haxe.warning("-WDeprecated")
 	public function destroy():Void
 	{
-		FlxDestroyUtil.destroy(_frameCallback);
-		FlxDestroyUtil.destroy(_finishedCallback);
-
 		destroyAnimations();
 		_animations = null;
 		callback = null;
@@ -694,7 +701,8 @@ class FlxAnimationController implements IFlxDestroyable
 		frameIndex = FlxG.random.int(0, numFrames - 1);
 	}
 
-	inline function fireCallback():Void
+	@:haxe.warning("-WDeprecated")
+	function fireCallback():Void
 	{
 		final name = (_curAnim != null) ? (_curAnim.name) : null;
 		final number = (_curAnim != null) ? (_curAnim.curFrame) : frameIndex;
@@ -702,23 +710,14 @@ class FlxAnimationController implements IFlxDestroyable
 		{
 			callback(name, number, frameIndex);
 		}
-		if (_frameCallback != null)
-		{
-			_frameCallback.dispatch(name, number, frameIndex);
-		}
 	}
 
 	@:allow(flixel.animation)
-	@:haxe.warning("-WDeprecated")
 	inline function fireFinishCallback(?name:String):Void
 	{
 		if (finishCallback != null)
 		{
 			finishCallback(name);
-		}
-		if (_finishedCallback != null)
-		{
-			_finishedCallback.dispatch(name);
 		}
 	}
 
