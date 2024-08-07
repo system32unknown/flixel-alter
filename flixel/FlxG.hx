@@ -1,5 +1,11 @@
 package flixel;
 
+import openfl.Lib;
+import openfl.display.DisplayObject;
+import openfl.display.Stage;
+import openfl.display.StageDisplayState;
+import openfl.net.URLRequest;
+import flixel.effects.postprocess.PostProcess;
 import flixel.math.FlxMath;
 import flixel.math.FlxRandom;
 import flixel.math.FlxRect;

@@ -9,6 +9,7 @@ import flixel.sound.FlxSound;
 import flixel.sound.FlxSoundGroup;
 import flixel.system.FlxAssets;
 import flixel.system.ui.FlxSoundTray;
+import flixel.text.FlxInputText;
 import flixel.util.FlxSignal;
 import openfl.Assets;
 import openfl.media.Sound;
@@ -394,12 +395,15 @@ class SoundFrontEnd
 			list.update(elapsed);
 
 		#if FLX_KEYBOARD
-		if (FlxG.keys.anyJustReleased(muteKeys))
-			toggleMuted();
-		else if (FlxG.keys.anyJustReleased(volumeUpKeys))
-			changeVolume(0.1);
-		else if (FlxG.keys.anyJustReleased(volumeDownKeys))
-			changeVolume(-0.1);
+		if (!FlxInputText.globalManager.isTyping)
+		{
+			if (FlxG.keys.anyJustReleased(muteKeys))
+				toggleMuted();
+			else if (FlxG.keys.anyJustReleased(volumeUpKeys))
+				changeVolume(0.1);
+			else if (FlxG.keys.anyJustReleased(volumeDownKeys))
+				changeVolume(-0.1);
+		}
 		#end
 	}
 

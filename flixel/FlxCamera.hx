@@ -1705,7 +1705,7 @@ class FlxCamera extends FlxBasic
 			if (FxAlpha == 0)
 				return;
 
-			final targetGraphics:Graphics = (graphics == null) ? canvas.graphics : graphics;
+			var targetGraphics:Graphics = (graphics == null) ? canvas.graphics : graphics;
 
 			#if (openfl > "8.7.0")
 			targetGraphics.overrideBlendMode(null);
@@ -1739,7 +1739,7 @@ class FlxCamera extends FlxBasic
 				fill(_fxFlashColor.rgb, true, alpha, canvas.graphics);
 			}
 		}
-
+		
 		// Draw the "fade" special effect onto the buffer
 		if (_fxFadeAlpha > 0.0)
 		{
