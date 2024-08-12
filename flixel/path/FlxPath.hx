@@ -151,7 +151,7 @@ class FlxPath extends FlxBasePath
 	/**
 	 * Path behavior controls: move from the start of the path to the end then stop.
 	 */
-	static var _point:FlxPoint = FlxPoint.get();
+	static var _point:FlxPoint = new FlxPoint();
 
 	/**
 	 * The speed at which the object is moving on the path.

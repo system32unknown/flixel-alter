@@ -594,9 +594,9 @@ class FlxCamera extends FlxBasic
 	 * Internal variables, used in blit render mode to draw trianglesSprite on camera's buffer.
 	 * Added for less garbage creation.
 	 */
-	static var renderPoint:FlxPoint = FlxPoint.get();
+	static var renderPoint:FlxPoint = new FlxPoint();
 
-	static var renderRect:FlxRect = FlxRect.get();
+	static var renderRect:FlxRect = new FlxRect();
 
 	@:noCompletion
 	public function startQuadBatch(graphic:FlxGraphic, colored:Bool, hasColorOffsets:Bool = false, ?blend:BlendMode, smooth:Bool = false, ?shader:FlxShader)

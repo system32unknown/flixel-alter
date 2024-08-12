@@ -5,8 +5,8 @@ import openfl.display.Sprite;
 import openfl.events.KeyboardEvent;
 import openfl.ui.Keyboard;
 
-using flixel.util.FlxStringUtil;
 using StringTools;
+using flixel.util.FlxStringUtil;
 
 class CompletionList extends Sprite
 {
@@ -37,8 +37,6 @@ class CompletionList extends Sprite
 		createPopupEntries(capacity);
 		createScrollBar();
 		updateSelectedItem();
-
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 	}
 
 	public function show(x:Float, items:Array<String>)
@@ -82,7 +80,7 @@ class CompletionList extends Sprite
 		addChild(scrollBar);
 	}
 
-	function onKeyDown(e:KeyboardEvent)
+	public function onKeyDown(e:KeyboardEvent)
 	{
 		if (!visible)
 			return;
