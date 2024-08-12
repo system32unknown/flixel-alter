@@ -912,6 +912,12 @@ class FlxText extends FlxSprite
 		// Account for gutter
 		var newHeight:Int = Math.ceil(textfieldHeight) + vertGutter;
 
+		if (shadowOffset != null)
+		{
+			newWidth += Math.ceil(Math.abs(shadowOffset.x));
+			newHeight += Math.ceil(Math.abs(shadowOffset.y));
+		}
+
 		// prevent text height from shrinking on flash if text == ""
 		if (textField.textHeight == 0)
 		{
@@ -1069,7 +1075,7 @@ class FlxText extends FlxSprite
 
 				for (i in 0...iterations)
 				{
-					copyTextWithOffset(delta, delta);
+					copyTextWithOffset(shadowOffset.x >= 0 ? shadowOffset.x : delta, shadowOffset.y >= 0 ? shadowOffset.y : delta);
 				}
 
 				_matrix.translate(-shadowOffset.x * borderSize, -shadowOffset.y * borderSize);

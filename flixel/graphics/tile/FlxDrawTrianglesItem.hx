@@ -8,6 +8,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxShader;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import openfl.display.Graphics;
 import openfl.display.ShaderParameter;
 import openfl.display.TriangleCulling;
@@ -123,7 +124,7 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 		indices = null;
 		uvtData = null;
 		colors = null;
-		bounds = null;
+		bounds = FlxDestroyUtil.put(bounds);
 		#if !flash
 		alphas = null;
 		colorMultipliers = null;
