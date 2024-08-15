@@ -196,8 +196,6 @@ class Console extends Window
 	function onKeyDown(e:KeyboardEvent)
 	{
 		if (completionList.visible)
-		{
-			completionList.onKeyDown(e);
 			return;
 		}
 
