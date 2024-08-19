@@ -160,13 +160,20 @@ class FlxBitmapText extends FlxSprite
 	public var borderQuality(default, set):Float = 0;
 
 	/**
-	 * Offset that is applied to the shadow border style, if active.
-	 * x and y are multiplied by borderSize. Default is (1, 1), or lower-right corner.
+	 * Internal handler for deprecated `shadowOffset` field
 	 */
-	public var shadowOffset(default, null):FlxPoint;
+	var _shadowOffset:FlxPoint = FlxPoint.get(1, 1);
+	
+	/**
+	 * Offset that is applied to the shadow border style, if active.
+	 * `x` and `y` are multiplied by `borderSize`. Default is `(1, 1)`, or lower-right corner.
+	 */
+	@:deprecated("shadowOffset is deprecated, use setBorderStyle(SHADOW_XY(offsetX, offsetY)), instead") // 5.9.0
+	public var shadowOffset(get, never):FlxPoint;
 
 	/**
-	 * Specifies whether the text should have background
+	 * Specifies whether the text should have a background. It is recommended to use a
+	 * `padding` of `1` or more with a background, especially when using a border style
 	 */
 	public var background(default, set):Bool = false;
 
@@ -197,7 +204,6 @@ class FlxBitmapText extends FlxSprite
 	var pendingTextBitmapChange:Bool = true;
 	var pendingPixelsChange:Bool = true;
 
-	// var textData:Array<Float>;
 	var textData:FlxBuffer<TileDrawItem>;
 	var textDrawData:FlxBuffer<TileDrawItem>;
 	var borderDrawData:FlxBuffer<TileDrawItem>;
@@ -226,8 +232,6 @@ class FlxBitmapText extends FlxSprite
 
 		this.font = (font == null) ? FlxBitmapFont.getDefaultFont() : font;
 
-		shadowOffset = FlxPoint.get(1, 1);
-
 		if (FlxG.renderBlit)
 		{
 			pixels = new BitmapData(1, 1, true, FlxColor.TRANSPARENT);
@@ -252,7 +256,7 @@ class FlxBitmapText extends FlxSprite
 		_lines = null;
 		_linesWidth = null;
 
-		shadowOffset = FlxDestroyUtil.put(shadowOffset);
+		_shadowOffset = FlxDestroyUtil.put(_shadowOffset);
 		textBitmap = FlxDestroyUtil.dispose(textBitmap);
 
 		_colorParams = null;
@@ -1243,27 +1247,19 @@ class FlxBitmapText extends FlxSprite
 
 		var delta:Int = Std.int(borderSize / iterations);
 
-		var iterationsX:Int = 1;
-		var iterationsY:Int = 1;
-		var deltaX:Int = 1;
-		var deltaY:Int = 1;
-
-		if (borderStyle == FlxTextBorderStyle.SHADOW)
-		{
-			iterationsX = Math.round(Math.abs(shadowOffset.x) * borderQuality);
-			iterationsX = (iterationsX <= 0) ? 1 : iterationsX;
-
-			iterationsY = Math.round(Math.abs(shadowOffset.y) * borderQuality);
-			iterationsY = (iterationsY <= 0) ? 1 : iterationsY;
-
-			deltaX = Math.round(shadowOffset.x / iterationsX);
-			deltaY = Math.round(shadowOffset.y / iterationsY);
-		}
-
 		// render border
 		switch (borderStyle)
 		{
-			case SHADOW:
+			case SHADOW if (_shadowOffset.x != 1 || _shadowOffset.y != 1):
+				var iterationsX = Math.round(Math.abs(_shadowOffset.x) * borderQuality);
+				iterationsX = (iterationsX <= 0) ? 1 : iterationsX;
+				
+				var iterationsY = Math.round(Math.abs(_shadowOffset.y) * borderQuality);
+				iterationsY = (iterationsY <= 0) ? 1 : iterationsY;
+				
+				final deltaX = Math.round(_shadowOffset.x / iterationsX);
+				final deltaY = Math.round(_shadowOffset.y / iterationsY);
+				
 				for (iterY in 0...iterationsY)
 				{
 					for (iterX in 0...iterationsX)
@@ -1271,6 +1267,25 @@ class FlxBitmapText extends FlxSprite
 						drawText(deltaX * (iterX + 1), deltaY * (iterY + 1), isFront, bitmap, useTiles);
 					}
 				}
+			case SHADOW:
+				final iterations = borderQuality < 1 ? 1 : Std.int(Math.abs(borderSize) * borderQuality);
+				final delta = borderSize / iterations;
+				var i = iterations + 1;
+				while (i-- > 1)
+				{
+					drawText(Std.int(delta * i), Std.int(delta * i), isFront, bitmap, useTiles);
+				}
+				
+			case SHADOW_XY(shadowX, shadowY):
+				// Size is max of both, so (4, 4) has 4 iterations, just like SHADOW
+				final size = Math.max(shadowX, shadowY);
+				final iterations = borderQuality < 1 ? 1 : Std.int(size * borderQuality);
+				var i = iterations + 1;
+				while (i-- > 1)
+				{
+					drawText(Std.int(shadowX / iterations * i), Std.int(shadowY / iterations * i), isFront, bitmap, useTiles);
+				}
+				
 			case OUTLINE:
 				// Render an outline around the text
 				// (do 8 offset draw calls)
@@ -1409,20 +1424,22 @@ class FlxBitmapText extends FlxSprite
 	/**
 	 * Set border's style (shadow, outline, etc), color, and size all in one go!
 	 *
-	 * @param	Style outline style
-	 * @param	Color outline color in flash 0xAARRGGBB format
-	 * @param	Size outline size in pixels
-	 * @param	Quality outline quality - # of iterations to use when drawing. 0:just 1, 1:equal number to BorderSize
+	 * @param   style    Outline style, such as `OUTLINE` or `SHADOW`
+	 * @param   color    Outline color
+	 * @param   size     Outline size in pixels.
+	 *                   **If `background` is `true`, you may want to increase this text's `padding`**
+	 * @param   quality  Outline quality, or the number of iterations to use when drawing.
+	 *                   `0` means `1` iteration, otherwise it draws `size * quality` iterations
 	 */
-	public inline function setBorderStyle(Style:FlxTextBorderStyle, Color:FlxColor = 0, Size:Float = 1, Quality:Float = 1):Void
+	public inline function setBorderStyle(style:FlxTextBorderStyle, color:FlxColor = 0, size = 1.0, quality = 1.0)
 	{
-		borderStyle = Style;
-		borderColor = Color;
-		borderSize = Size;
-		borderQuality = Quality;
+		borderStyle = style;
+		borderColor = color;
+		borderSize = size;
+		borderQuality = quality;
 		if (borderStyle == FlxTextBorderStyle.SHADOW)
 		{
-			shadowOffset.set(borderSize, borderSize);
+			_shadowOffset.set(borderSize, borderSize);
 		}
 		pendingTextBitmapChange = true;
 	}
@@ -1683,6 +1700,11 @@ class FlxBitmapText extends FlxSprite
 		return super.get_height();
 	}
 
+	inline function get_shadowOffset()
+	{
+		return _shadowOffset;
+	}
+	
 	/**
 	 * Checks if the specified code is one of the Unicode Combining Diacritical Marks
 	 * @param	Code	The charactercode we want to check
