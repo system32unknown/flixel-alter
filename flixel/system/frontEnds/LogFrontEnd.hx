@@ -76,6 +76,7 @@ class LogFrontEnd
 			
 			if (style.callbackFunction != null)
 				style.callbackFunction();
+			
 			if (style.callback != null)
 				style.callback(data);
 		}
