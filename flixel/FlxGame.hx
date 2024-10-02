@@ -324,8 +324,13 @@ class FlxGame extends Sprite
 		#end
 
 		// Focus gained/lost monitoring
-		stage.addEventListener(Event.DEACTIVATE, onFocusLost);
-		stage.addEventListener(Event.ACTIVATE, onFocus);
+		#if (desktop && openfl <= "4.0.0")
+		stage.addEventListener(FocusEvent.FOCUS_OUT, onFocusLost);
+		stage.addEventListener(FocusEvent.FOCUS_IN, onFocus);
+		#elseif (sys && openfl >= "9.3.0")
+		stage.nativeWindow.addEventListener(Event.DEACTIVATE, onFocusLost);
+		stage.nativeWindow.addEventListener(Event.ACTIVATE, onFocus);
+		#else
 
 		// Instantiate the initial state
 		resetGame();
