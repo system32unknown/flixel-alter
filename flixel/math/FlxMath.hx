@@ -498,6 +498,24 @@ class FlxMath
 		return signOf(a) == signOf(b);
 	}
 
+	public function linearToLog(x:Float, minValue:Float = 0.001):Float
+	{
+		// Ensure x is between 0 and 1
+		x = Math.max(0, Math.min(1, x));
+		
+		// Convert linear scale to logarithmic
+		return Math.exp(Math.log(minValue) * (1 - x));
+	}
+	
+	public function logToLinear(x:Float, minValue:Float = 0.001):Float
+	{
+		// Ensure x is between minValue and 1
+		x = Math.max(minValue, Math.min(1, x));
+		
+		// Convert logarithmic scale to linear
+		return 1 - (Math.log(x) / Math.log(minValue));
+	}
+
 	/**
 	 * A faster but slightly less accurate version of `Math.sin()`.
 	 * About 2-6 times faster with < 0.05% average error.
