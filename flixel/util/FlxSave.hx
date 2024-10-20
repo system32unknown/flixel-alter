@@ -167,6 +167,19 @@ class FlxSave implements IFlxDestroyable
 			_sharedObject = FlxSharedObject.getLocal(name, path);
 			status = BOUND(name, path);
 		}
+		catch (s:FlxSaveStatus)
+		{
+			this.status = s;
+			switch (this.status)
+			{
+				case EMPTY:
+					return false;
+				case ERROR(_):
+					return false;
+				case BOUND(_, _):
+					return true;
+			}
+		}
 		catch (e:Error)
 		{
 			FlxG.log.error('Error:${e.message} name:"$name", path:"$path".');
@@ -459,11 +472,15 @@ private class FlxSharedObject extends SharedObject
 				try
 				{
 					final unserializer = new haxe.Unserializer(encodedData);
-					final resolver = { resolveEnum: Type.resolveEnum, resolveClass: SharedObject.__resolveClass };
+					final resolver = {resolveEnum: FlxSharedObject.resolveEnum, resolveClass: FlxSharedObject.resolveClass};
 					unserializer.setResolver(cast resolver);
 					sharedObject.data = unserializer.unserialize();
 				}
-				catch (e:Dynamic) {}
+				catch (e:Dynamic)
+				{
+					trace('Error loading shared object "' + name + '" from local path "' + localPath + '"');
+					throw FlxSaveStatus.ERROR("There was a problem parsing the save data.");
+				}
 			}
 			
 			all.set(id, sharedObject);
@@ -471,7 +488,39 @@ private class FlxSharedObject extends SharedObject
 		
 		return all.get(id);
 	}
+
+	static function resolveEnum(name:String):Enum<Dynamic>
+	{
+		try
+		{
+			return Type.resolveEnum(name);
+		}
+		catch (e)
+		{
+			FlxG.log.error('Found invalid enum type ${name} in save data, indicates partial save corruption.');
+			throw e;
+		}
+	}
 	
+	static function resolveClass(name:String):Class<Dynamic>
+	{
+		if (name == 'Dynamic')
+		{
+			FlxG.log.warn('Found invalid class type ${name} in save data, indicates partial save corruption.');
+			return null;
+		}
+		
+		try
+		{
+			return SharedObject.__resolveClass(name);
+		}
+		catch (e)
+		{
+			FlxG.log.error('Found invalid class type ${name} in save data, indicates partial save corruption.');
+			throw e;
+		}
+	}
+
 	#if (js && html5)
 	static function getData(name:String, ?localPath:String)
 	{
