@@ -1,15 +1,15 @@
 package flixel.system.debug.console;
 
 #if FLX_DEBUG
+import openfl.text.TextField;
+import openfl.text.TextFormat;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.system.debug.FlxDebugger.GraphicConsole;
-import flixel.system.debug.completion.CompletionHandler;
 import flixel.system.debug.completion.CompletionList;
+import flixel.system.debug.completion.CompletionHandler;
 import flixel.util.FlxStringUtil;
-import openfl.text.TextField;
-import openfl.text.TextFormat;
-#if sys
+#if (!next && sys)
 import openfl.events.MouseEvent;
 #end
 #if hscript
@@ -58,7 +58,7 @@ class Console extends Window
 	 */
 	var input:TextField;
 
-	#if sys
+	#if (!next && sys)
 	var inputMouseDown:Bool = false;
 	var stageMouseDown:Bool = false;
 	#end
@@ -123,7 +123,7 @@ class Console extends Window
 		#end
 		#end
 
-		#if sys // workaround for broken TextField focus on native
+		#if (!next && sys) // workaround for broken TextField focus on native
 		input.addEventListener(MouseEvent.MOUSE_DOWN, function(_)
 		{
 			inputMouseDown = true;
@@ -135,7 +135,7 @@ class Console extends Window
 		#end
 	}
 
-	#if sys
+	#if (!next && sys)
 	@:access(flixel.FlxGame.onFocus)
 	override public function update()
 	{
@@ -196,6 +196,9 @@ class Console extends Window
 	function onKeyDown(e:KeyboardEvent)
 	{
 		if (completionList.visible)
+		{
+			// Fixes issue with listening for key down events - https://github.com/HaxeFlixel/flixel/pull/3225
+			completionList.onKeyDown(e);
 			return;
 		}
 
