@@ -244,7 +244,7 @@ class FlxAtlasFrames extends FlxFramesCollection
 		if (frames != null)
 			return frames;
 
-		final xmlData = xml.getFirstElement();
+		final xmlData = xml.getXml().firstElement();
 		if (xmlData == null)
 		{
 			FlxG.log.warn('Invalid xml: $xml');
@@ -330,7 +330,7 @@ class FlxAtlasFrames extends FlxFramesCollection
 		if (frames != null)
 			return frames;
 
-		final xmlData = xml.getFirstElement();
+		final xmlData = xml.getXml().firstElement();
 		if (xmlData == null)
 		{
 			FlxG.log.warn('Invalid xml: $xml');
