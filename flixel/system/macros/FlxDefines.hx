@@ -3,10 +3,13 @@ package flixel.system.macros;
 import haxe.macro.Compiler;
 import haxe.macro.Context;
 import haxe.macro.Expr.Position;
-using StringTools;
+import haxe.io.Path;
 #if (flixel_addons >= "3.2.2")
 import flixel.addons.system.macros.FlxAddonDefines;
 #end
+
+
+using StringTools;
 
 private enum UserDefines
 {
@@ -41,6 +44,14 @@ private enum UserDefines
 	FLX_TRACK_POOLS;
 	/** Adds `creationInfo` to FlxGraphic instances, automatically defined with FLX_DEBUG */
 	FLX_TRACK_GRAPHICS;
+	/**
+	 * Loads from the specified relative or absolute directory. Unlike other boolean flags,
+	 * this flag should contain a string value.
+	 * 
+	 * **Note:** When using assets entirely from outside the build directory, it is wise to disable
+	 * any `</asset>` tags in your project.xml, to reduce your total memory
+	 */
+	FLX_CUSTOM_ASSETS_DIRECTORY;
 }
 
 /**
@@ -63,6 +74,7 @@ private enum HelperDefines
 	FLX_NATIVE_CURSOR;
 	FLX_SOUND_TRAY;
 	FLX_POINTER_INPUT;
+	FLX_POST_PROCESS;
 	FLX_JOYSTICK_API;
 	FLX_GAMEINPUT_API;
 	FLX_ACCELEROMETER;
@@ -84,6 +96,8 @@ private enum HelperDefines
 	FLX_NO_TRACK_POOLS;
 	FLX_NO_TRACK_GRAPHICS;
 	FLX_OPENGL_AVAILABLE;
+	/** Defined to `1`(or `true`) if `FLX_CUSTOM_ASSETS_DIRECTORY` is not defined */
+	FLX_STANDARD_ASSETS_DIRECTORY;
 }
 
 class FlxDefines
@@ -203,8 +217,12 @@ class FlxDefines
 		if (!defined(FLX_NO_SOUND_SYSTEM) && !defined(FLX_NO_SOUND_TRAY))
 			define(FLX_SOUND_TRAY);
 
+		#if (lime >= "8.0.0")
 		if (defined(FLX_NO_SOUND_SYSTEM) || defined("flash"))
 			define(FLX_NO_PITCH);
+		#else
+		define(FLX_NO_PITCH);
+		#end
 
 		if (!defined(FLX_NO_PITCH))
 			define(FLX_PITCH);
@@ -214,6 +232,8 @@ class FlxDefines
 		
 		if (!defined("flash") || defined("flash11_8"))
 			define(FLX_GAMEINPUT_API);
+		else if (!defined("openfl_next") && (defined("cpp") || defined("neko")))
+			define(FLX_JOYSTICK_API);
 
 		#if nme
 		define(FLX_JOYSTICK_API);
@@ -221,6 +241,11 @@ class FlxDefines
 
 		if (!defined(FLX_NO_TOUCH) || !defined(FLX_NO_MOUSE))
 			define(FLX_POINTER_INPUT);
+
+		#if (openfl < "4.0.0")
+		if (defined("cpp") || defined("neko"))
+			define(FLX_POST_PROCESS);
+		#end
 
 		if (defined("cpp") && defined("steamwrap"))
 			define(FLX_STEAMWRAP);
@@ -246,6 +271,28 @@ class FlxDefines
 		#end
 		
 		defineInversion(FLX_TRACK_GRAPHICS, FLX_NO_TRACK_GRAPHICS);
+		
+		if (defined(FLX_CUSTOM_ASSETS_DIRECTORY))
+		{
+			if (!defined("sys"))
+			{
+				abort('FLX_CUSTOM_ASSETS_DIRECTORY is only available on sys targets', (macro null).pos);
+			}
+			else
+			{
+				// Todo: check sys targets
+				final rawDirectory = Path.normalize(definedValue(FLX_CUSTOM_ASSETS_DIRECTORY));
+				final directory = Path.normalize(rawDirectory);
+				if (!sys.FileSystem.isDirectory(directory) || directory == "1")
+				{
+					final absPath = sys.FileSystem.absolutePath(directory);
+					abort('FLX_CUSTOM_ASSETS_DIRECTORY must be a path to a directory, got "$rawDirectory"'
+						+ '\nabsolute path: $absPath', (macro null).pos);
+				}
+			}
+		}
+		else // define boolean inversion
+			define(FLX_STANDARD_ASSETS_DIRECTORY);
 	}
 
 	static function defineInversion(userDefine:UserDefines, invertedDefine:HelperDefines)
@@ -273,6 +320,11 @@ class FlxDefines
 			abort(errorMessage, (macro null).pos);
 	}
 
+	static inline function definedValue(define:Dynamic):String
+	{
+		return Context.definedValue(Std.string(define));
+	}
+	
 	static inline function defined(define:Dynamic)
 	{
 		return Context.defined(Std.string(define));

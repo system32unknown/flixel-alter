@@ -702,9 +702,9 @@ class FlxText extends FlxSprite
 		if (Font != null)
 		{
 			var newFontName:String = Font;
-			if (Assets.exists(Font, AssetType.FONT))
+			if (FlxG.assets.exists(Font, FONT))
 			{
-				newFontName = Assets.getFont(Font).fontName;
+				newFontName = FlxG.assets.getFontUnsafe(Font).fontName;
 			}
 
 			_defaultFormat.font = newFontName;
