@@ -8,7 +8,7 @@
 	"releasenote": "TBD",
 	"contributors": ["haxeflixel", "Gama11", "GeoKureli"],
 	"dependencies": {
-		"lime": "",
+		"lime": "8.1.3",
 		"openfl": ""
 	}
 }
