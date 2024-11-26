@@ -100,19 +100,6 @@ class FlxSave implements IFlxDestroyable
 	}
 	
 	/**
-	 * The default class resolver of a FlxSave, handles certain Flixel and Openfl classes
-	 */
-	public static inline function resolveFlixelClasses(name:String)
-	{
-		#if flash
-		return Type.resolveEnum(name);
-		#else
-		@:privateAccess
-		return SharedObject.__resolveClass(name);
-		#end
-	}
-
-	/**
 	 * Allows you to directly access the data container in the local shared object.
 	 */
 	public var data(default, null):Dynamic;
@@ -160,18 +147,15 @@ class FlxSave implements IFlxDestroyable
 	/**
 	 * Automatically creates or reconnects to locally saved data.
 	 *
-	 * @param   name          The name of the save (should be the same each time to access old data).
-	 *                        May not contain spaces or any of the following characters:
-	 *                        `~ % & \ ; : " ' , < > ? #`
-	 * @param   path          The full or partial path to the file that created the shared object.
-	 *                        Mainly used to differentiate from other FlxSaves. If you do not specify
-	 *                        this parameter, the company name specified in your Project.xml is used.
-	 * @param   backupParser  A function that takes a string and an error and returns parsed data.
-	 *                        If there is an error parsing the raw save data, this will be called as
-	 *                        a backup. if null is returned, the save will stay in an error state.
+	 * @param   name  The name of the save (should be the same each time to access old data).
+	 *                May not contain spaces or any of the following characters:
+	 *                `~ % & \ ; : " ' , < > ? #`
+	 * @param   path  The full or partial path to the file that created the shared object.
+	 *                Mainly used to differentiate from other FlxSaves. If you do not specify
+	 *                this parameter, the company name specified in your Project.xml is used.
 	 * @return  Whether or not you successfully connected to the save data.
 	 */
-	public function bind(name:String, ?path:String, ?backupParser:(String, Exception) -> Null<Any>):Bool
+	public function bind(name:String, ?path:String):Bool
 	{
 		destroy();
 		
@@ -181,34 +165,8 @@ class FlxSave implements IFlxDestroyable
 
 		try
 		{
-			switch FlxSharedObject.getLocal(name, path)
-			{
-				case SUCCESS(sharedObject):
-					_sharedObject = sharedObject;
-					data = _sharedObject.data;
-					status = BOUND(name, path);
-					return true;
-				case FAILURE(PARSING(rawData, exception), sharedObject) if (backupParser != null):
-					// Use the provided backup parser
-					final parsedData = backupParser(rawData, exception);
-					if (parsedData == null)
-					{
-						status = LOAD_ERROR(PARSING(rawData, exception));
-						return false;
-					}
-					
-					data = sharedObject.data;
-					for (field in Reflect.fields(parsedData))
-						Reflect.setField(data, field, Reflect.field(parsedData, field));
-						
-					_sharedObject = sharedObject;
-					status = BOUND(name, path);
-					return true;
-				case FAILURE(type, sharedObject):
-					_sharedObject = sharedObject;
-					status = LOAD_ERROR(type);
-					return false;
-			}
+			_sharedObject = FlxSharedObject.getLocal(name, path);
+			status = BOUND(name, path);
 		}
 		catch (e:Error)
 		{
@@ -316,12 +274,12 @@ class FlxSave implements IFlxDestroyable
 		{
 			status = ERROR("There was an problem flushing the save data.");
 		}
-
+		
 		checkStatus();
-
+		
 		return isBound;
 	}
-
+	
 	/**
 	 * Erases everything stored in the local shared object.
 	 * Data is immediately erased and the object is saved that way,
@@ -333,7 +291,7 @@ class FlxSave implements IFlxDestroyable
 	{
 		if (!checkStatus())
 			return false;
-
+		
 		_sharedObject.clear();
 		data = {};
 		return true;
@@ -429,15 +387,7 @@ private class FlxSharedObject extends SharedObject
 	/** Use SharedObject as usual */
 	public static inline function getLocal(name:String, ?localPath:String):LoadResult
 	{
-		try
-		{
-			final obj = SharedObject.getLocal(name, localPath);
-			return SUCCESS(obj);
-		}
-		catch (e)
-		{
-			return FAILURE(IO(e));
-		}
+		return SharedObject.getLocal(name, localPath);
 	}
 	
 	public static inline function exists(name:String, ?path:String)
@@ -483,8 +433,8 @@ private class FlxSharedObject extends SharedObject
 	public static function getLocal(name:String, ?localPath:String):LoadResult
 	{
 		if (name == null || name == "")
-			return FAILURE(INVALID_NAME(name));
-			
+			throw new Error('Error: Invalid name:"$name".');
+		
 		if (localPath == null)
 			localPath = "";
 
@@ -495,10 +445,7 @@ private class FlxSharedObject extends SharedObject
 		if (!all.exists(id))
 		{
 			var encodedData = null;
-
-			if (~/(?:^|\/)\.\.\//.match(localPath))
-				return FAILURE(INVALID_PATH(localPath, "../ not allowed in localPath"));
-	
+			
 			try
 			{
 				encodedData = getData(name, localPath);
@@ -521,7 +468,7 @@ private class FlxSharedObject extends SharedObject
 				try
 				{
 					final unserializer = new haxe.Unserializer(encodedData);
-					final resolver = {resolveEnum: Type.resolveEnum, resolveClass: FlxSave.resolveFlixelClasses};
+					final resolver = { resolveEnum: Type.resolveEnum, resolveClass: SharedObject.__resolveClass };
 					unserializer.setResolver(cast resolver);
 					sharedObject.data = unserializer.unserialize();
 				}
@@ -534,40 +481,8 @@ private class FlxSharedObject extends SharedObject
 			
 			all.set(id, sharedObject);
 		}
-
-		return SUCCESS(all.get(id));
-	}
-
-	static function resolveEnum(name:String):Enum<Dynamic>
-	{
-		try
-		{
-			return Type.resolveEnum(name);
-		}
-		catch (e)
-		{
-			FlxG.log.error('Found invalid enum type ${name} in save data, indicates partial save corruption.');
-			throw e;
-		}
-	}
-	
-	static function resolveClass(name:String):Class<Dynamic>
-	{
-		if (name == 'Dynamic')
-		{
-			FlxG.log.warn('Found invalid class type ${name} in save data, indicates partial save corruption.');
-			return null;
-		}
 		
-		try
-		{
-			return SharedObject.__resolveClass(name);
-		}
-		catch (e)
-		{
-			FlxG.log.error('Found invalid class type ${name} in save data, indicates partial save corruption.');
-			throw e;
-		}
+		return all.get(id);
 	}
 
 	#if (js && html5)
@@ -777,18 +692,14 @@ enum FlxSaveStatus
 	 * The initial state, call bind() in order to use.
 	 */
 	EMPTY;
-
+	
 	/**
 	 * The save is set up correctly.
 	 */
 	BOUND(name:String, ?path:String);
-
+	
 	/**
 	 * There was an issue during `flush`
 	 */
 	ERROR(msg:String);
-	/**
-	 * There was an issue while loading
-	 */
-	LOAD_ERROR(type:LoadFailureType);
 }
