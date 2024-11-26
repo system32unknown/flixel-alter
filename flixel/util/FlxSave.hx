@@ -100,6 +100,19 @@ class FlxSave implements IFlxDestroyable
 	}
 	
 	/**
+	 * The default class resolver of a FlxSave, handles certain Flixel and Openfl classes
+	 */
+	public static inline function resolveFlixelClasses(name:String)
+	{
+		#if flash
+		return Type.resolveClass(name);
+		#else
+		@:privateAccess
+		return SharedObject.__resolveClass(name);
+		#end
+	}
+	
+	/**
 	 * Allows you to directly access the data container in the local shared object.
 	 */
 	public var data(default, null):Dynamic;
@@ -147,15 +160,18 @@ class FlxSave implements IFlxDestroyable
 	/**
 	 * Automatically creates or reconnects to locally saved data.
 	 *
-	 * @param   name  The name of the save (should be the same each time to access old data).
-	 *                May not contain spaces or any of the following characters:
-	 *                `~ % & \ ; : " ' , < > ? #`
-	 * @param   path  The full or partial path to the file that created the shared object.
-	 *                Mainly used to differentiate from other FlxSaves. If you do not specify
-	 *                this parameter, the company name specified in your Project.xml is used.
+	 * @param   name          The name of the save (should be the same each time to access old data).
+	 *                        May not contain spaces or any of the following characters:
+	 *                        `~ % & \ ; : " ' , < > ? #`
+	 * @param   path          The full or partial path to the file that created the shared object.
+	 *                        Mainly used to differentiate from other FlxSaves. If you do not specify
+	 *                        this parameter, the company name specified in your Project.xml is used.
+	 * @param   backupParser  If there is an error parsing the raw save data, this will be called as
+	 *                        a backup. if null is returned, the save will stay in an error state.
+	 *                        **Note:** This arg is never used when targeting flash
 	 * @return  Whether or not you successfully connected to the save data.
 	 */
-	public function bind(name:String, ?path:String):Bool
+	public function bind(name:String, ?path:String, ?backupParser:(String, Exception) -> Null<Any>):Bool
 	{
 		destroy();
 		
@@ -165,8 +181,35 @@ class FlxSave implements IFlxDestroyable
 
 		try
 		{
-			_sharedObject = FlxSharedObject.getLocal(name, path);
-			status = BOUND(name, path);
+			switch FlxSharedObject.getLocal(name, path)
+			{
+				case SUCCESS(sharedObject):
+					_sharedObject = sharedObject;
+					data = _sharedObject.data;
+					status = BOUND(name, path);
+					return true;
+				#if !flash
+				case FAILURE(PARSING(rawData, exception), sharedObject) if (backupParser != null):
+					// Use the provided backup parser
+					final parsedData = backupParser(rawData, exception);
+					if (parsedData == null)
+					{
+						status = LOAD_ERROR(PARSING(rawData, exception));
+						return false;
+					}
+					
+					_sharedObject = sharedObject;
+					data = parsedData;
+					@:privateAccess
+					sharedObject.data = parsedData;
+					status = BOUND(name, path);
+					return true;
+				#end
+				case FAILURE(type, sharedObject):
+					_sharedObject = sharedObject;
+					status = LOAD_ERROR(type);
+					return false;
+			}
 		}
 		catch (e:Error)
 		{
@@ -387,7 +430,16 @@ private class FlxSharedObject extends SharedObject
 	/** Use SharedObject as usual */
 	public static inline function getLocal(name:String, ?localPath:String):LoadResult
 	{
-		return SharedObject.getLocal(name, localPath);
+		try
+		{
+			final obj = SharedObject.getLocal(name, localPath);
+			return SUCCESS(obj);
+		}
+		catch (e)
+		{
+			// We can't detect parsing or naming errors in flash, just use IO for everything
+			return FAILURE(IO(e));
+		}
 	}
 	
 	public static inline function exists(name:String, ?path:String)
@@ -433,7 +485,7 @@ private class FlxSharedObject extends SharedObject
 	public static function getLocal(name:String, ?localPath:String):LoadResult
 	{
 		if (name == null || name == "")
-			throw new Error('Error: Invalid name:"$name".');
+			return FAILURE(INVALID_NAME(name));
 		
 		if (localPath == null)
 			localPath = "";
@@ -445,6 +497,9 @@ private class FlxSharedObject extends SharedObject
 		if (!all.exists(id))
 		{
 			var encodedData = null;
+			
+			if (~/(?:^|\/)\.\.\//.match(localPath))
+				return FAILURE(INVALID_PATH(localPath, "../ not allowed in localPath"));
 			
 			try
 			{
@@ -468,7 +523,7 @@ private class FlxSharedObject extends SharedObject
 				try
 				{
 					final unserializer = new haxe.Unserializer(encodedData);
-					final resolver = { resolveEnum: Type.resolveEnum, resolveClass: SharedObject.__resolveClass };
+					final resolver = {resolveEnum: Type.resolveEnum, resolveClass: FlxSave.resolveFlixelClasses};
 					unserializer.setResolver(cast resolver);
 					sharedObject.data = unserializer.unserialize();
 				}
@@ -482,7 +537,7 @@ private class FlxSharedObject extends SharedObject
 			all.set(id, sharedObject);
 		}
 		
-		return all.get(id);
+		return SUCCESS(all.get(id));
 	}
 
 	#if (js && html5)
@@ -702,4 +757,8 @@ enum FlxSaveStatus
 	 * There was an issue during `flush`
 	 */
 	ERROR(msg:String);
+	/**
+	 * There was an issue while loading
+	 */
+	LOAD_ERROR(type:LoadFailureType);
 }
