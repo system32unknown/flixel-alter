@@ -7,7 +7,7 @@ import flixel.math.FlxAngle;
  * many `FlxObject` features like `allowCollisions` and `touching`.
  * @since 4.10.0
  */
-enum abstract FlxDirectionFlags(Int) from Int from FlxDirection to Int
+enum abstract FlxDirectionFlags(Int)
 {
 	var LEFT = 0x0001; // FlxDirection.LEFT;
 	var RIGHT = 0x0010; // FlxDirection.RIGHT;
@@ -33,6 +33,17 @@ enum abstract FlxDirectionFlags(Int) from Int from FlxDirection to Int
 	/** Special-case constant meaning any, or all directions. */
 	var ANY = 0x1111; // LEFT | RIGHT | UP | DOWN;
 
+	var self(get, never):FlxDirectionFlags;
+	
+	inline function get_self():FlxDirectionFlags
+	{
+		#if (haxe >= version("4.3.0"))
+		return abstract;
+		#else
+		return cast this;
+		#end
+	}
+	
 	/**
 	 * Calculates the angle (in degrees) of the facing flags.
 	 * Returns 0 if two opposing flags are true.
@@ -41,7 +52,7 @@ enum abstract FlxDirectionFlags(Int) from Int from FlxDirection to Int
 	public var degrees(get, never):Float;
 	function get_degrees():Float
 	{
-		return switch (this)
+		return switch self
 		{
 			case RIGHT: 0;
 			case DOWN: 90;
@@ -88,7 +99,7 @@ enum abstract FlxDirectionFlags(Int) from Int from FlxDirection to Int
 	 */
 	public inline function has(dir:FlxDirectionFlags):Bool
 	{
-		return this & dir == dir;
+		return this & dir.toInt() == dir.toInt();
 	}
 
 	/**
@@ -96,7 +107,7 @@ enum abstract FlxDirectionFlags(Int) from Int from FlxDirection to Int
 	 */
 	public inline function hasAny(dir:FlxDirectionFlags):Bool
 	{
-		return this & dir > 0;
+		return cast this & dir.toInt() > 0;
 	}
 
 	/**
@@ -104,7 +115,7 @@ enum abstract FlxDirectionFlags(Int) from Int from FlxDirection to Int
 	 */
 	public inline function with(dir:FlxDirectionFlags):FlxDirectionFlags
 	{
-		return this | dir;
+		return cast this | dir.toInt();
 	}
 
 	/**
@@ -112,12 +123,29 @@ enum abstract FlxDirectionFlags(Int) from Int from FlxDirection to Int
 	 */
 	public inline function without(dir:FlxDirectionFlags):FlxDirectionFlags
 	{
-		return this & ~dir;
+		return cast this & ~dir.toInt();
+	}
+	
+	public inline function not():FlxDirectionFlags
+	{
+		return cast ~this;
+	}
+	
+	@:deprecated("implicit cast from FlxDirectionFlags to Int is deprecated, use an explicit cast")
+	@:to
+	function toIntImplicit()
+	{
+		return toInt();
+	}
+	
+	function toInt():Int
+	{
+		return this;
 	}
 
 	public function toString()
 	{
-		if (this == NONE)
+		if (self == NONE)
 			return "NONE";
 
 		var str = "";
@@ -146,16 +174,29 @@ enum abstract FlxDirectionFlags(Int) from Int from FlxDirection to Int
 			|  (down  ? DOWN  : NONE);
 	}
 
-	// Expose int operators
+	@:deprecated("implicit cast from Int to FlxDirectionFlags is deprecated, use an explicit cast")
+	@:from
+	inline static function fromInt(int:Int):FlxDirectionFlags
+	{
+		return cast int;
+	}
+	
+	@:from
+	inline static function fromDir(dir:FlxDirection):FlxDirectionFlags
+	{
+		return cast dir;
+	}
+	
+	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead") // Expose int operators
 	@:op(A & B) static function and(a:FlxDirectionFlags, b:FlxDirectionFlags):FlxDirectionFlags;
-
+	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead")
 	@:op(A | B) static function or(a:FlxDirectionFlags, b:FlxDirectionFlags):FlxDirectionFlags;
-
+	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead")
 	@:op(A > B) static function gt(a:FlxDirectionFlags, b:FlxDirectionFlags):Bool;
-
+	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead")
 	@:op(A < B) static function lt(a:FlxDirectionFlags, b:FlxDirectionFlags):Bool;
-
+	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead")
 	@:op(A >= B) static function gte(a:FlxDirectionFlags, b:FlxDirectionFlags):Bool;
-
+	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead")
 	@:op(A <= B) static function lte(a:FlxDirectionFlags, b:FlxDirectionFlags):Bool;
 }

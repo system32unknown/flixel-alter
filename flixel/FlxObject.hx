@@ -1172,10 +1172,23 @@ class FlxObject extends FlxBasic
 	/**
 	 * Centers this `FlxObject` on the screen, either by the x axis, y axis, or both.
 	 *
-	 * @param   axes   On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both. 
+	 * @param axes On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both.
 	 * @return  This FlxObject for chaining
 	 */
+	@:deprecated("screenCenter is deprecated, use gameCenter")
 	public inline function screenCenter(axes:FlxAxes = XY):FlxObject
+	{
+		return gameCenter(axes);
+	}
+	
+	/**
+	 * Centers this `FlxObject` in game space, either by the x axis, y axis, or both.
+	 *
+	 * @param   axes   On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both.
+	 * @return  This FlxObject for chaining
+	 * @since 5.9.0
+	 */
+	public function gameCenter(axes:FlxAxes = XY):FlxObject
 	{
 		if (axes.x)
 			x = (FlxG.width - width) / 2;
@@ -1183,6 +1196,28 @@ class FlxObject extends FlxBasic
 		if (axes.y)
 			y = (FlxG.height - height) / 2;
 
+		return this;
+	}
+
+	/**
+	 * Centers this `FlxObject` in camera view, either by the x axis, y axis, or both.
+	 *
+	 * @param   axes     On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both.
+	 * @param   camera   The desired view space. If `null`, `FlxG.camera` is used.
+	 * @return  This FlxObject for chaining
+	 * @since 5.9.0
+	 */
+	public function viewCenter(axes:FlxAxes = XY, ?camera:FlxCamera):FlxObject
+	{
+		if (camera == null)
+			camera = FlxG.camera;
+			
+		if (axes.x)
+			x = camera.viewX + (camera.viewWidth - width) / 2;
+			
+		if (axes.y)
+			y = camera.viewY + (camera.viewHeight - height) / 2;
+			
 		return this;
 	}
 
@@ -1247,14 +1282,14 @@ class FlxObject extends FlxBasic
 		endDrawDebug(camera);
 	}
 
-	function drawDebugBoundingBox(gfx:Graphics, rect:FlxRect, allowCollisions:Int, partial:Bool)
+	function drawDebugBoundingBox(gfx:Graphics, rect:FlxRect, allowCollisions:FlxDirectionFlags, partial:Bool)
 	{
 		// Find the color to use
 		final color = getDebugBoundingBoxColor(allowCollisions);
 		drawDebugBoundingBoxColor(gfx, rect, color);
 	}
 	
-	function getDebugBoundingBoxColor(allowCollisions:Int)
+	function getDebugBoundingBoxColor(allowCollisions:FlxDirectionFlags)
 	{
 		if (debugBoundingBoxColor != null)
 			return debugBoundingBoxColor;
