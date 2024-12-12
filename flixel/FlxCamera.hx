@@ -1864,13 +1864,31 @@ class FlxCamera extends FlxBasic
 	/**
 	 * The size and position of this camera's margins, via `viewMarginLeft`, `viewMarginTop`, `viewWidth`
 	 * and `viewHeight`.
+	 * 
+	 * Notes: Deprecated, in 4.11.0 this was made public, but the wording is confusing.
+	 * After flixel 6.0.0 this will be changed to use `viewX`, `viewY`, `viewWidth` and `viewHeight`,
+	 * meaning, this will return the world coordinates of the camera.
+	 * @since 4.11.0
+	 */
+	@:deprecated("getViewRect is deprecated, use getViewMarginRect")
+	public function getViewRect(?rect:FlxRect)
+	{
+		if (rect == null)
+			rect = FlxRect.get();
+			
+		return rect.set(viewMarginLeft, viewMarginTop, viewWidth, viewHeight);
+	}
+	
+	/**
+	 * The size and position of this camera's margins, via `viewMarginLeft`, `viewMarginTop`, `viewWidth`
+	 * and `viewHeight`.
 	 * @since 5.2.0
 	 */
 	public function getViewMarginRect(?rect:FlxRect)
 	{
 		if (rect == null)
 			rect = FlxRect.get();
-		
+			
 		return rect.set(viewMarginLeft, viewMarginTop, viewWidth, viewHeight);
 	}
 	
