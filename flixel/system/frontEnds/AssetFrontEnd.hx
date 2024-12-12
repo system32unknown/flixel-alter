@@ -90,12 +90,6 @@ class AssetFrontEnd
 	#else
 	public final defaultSoundExtension:String = '.${haxe.macro.Compiler.getDefine("FLX_DEFAULT_SOUND_EXT")}';
 	#end
-	
-	#if (FLX_DEFAULT_SOUND_EXT == "1" || FLX_NO_DEFAULT_SOUND_EXT)
-	public final defaultSoundExtension:String = #if flash ".mp3" #else ".ogg" #end;
-	#else
-	public final defaultSoundExtension:String = '.${haxe.macro.Compiler.getDefine("FLX_DEFAULT_SOUND_EXT")}';
-	#end
 
 	/**
 	 * Used by methods like `getAsset`, `getBitmapData`, `getText`, their "unsafe" counterparts and
@@ -382,9 +376,9 @@ class AssetFrontEnd
 	inline function addSoundExt(id:String)
 	{
 		if (!id.endsWith(".mp3") && !id.endsWith(".ogg") && !id.endsWith(".wav"))
-			id += "." + #if flash "mp3" #else "ogg" #end;
-			
-		return getSound(id, useCache, logStyle);
+			return id + defaultSoundExtension;
+		
+		return id;
 	}
 	
 	/**
