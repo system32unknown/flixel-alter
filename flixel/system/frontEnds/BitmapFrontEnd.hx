@@ -63,12 +63,12 @@ class BitmapFrontEnd
 	/**
 	 * Check the local bitmap cache to see if a bitmap with this key has been loaded already.
 	 *
-	 * @param Key The key identifying the bitmap.
-	 * @return	Whether or not this file can be found in the cache.
+	 * @param   key  The key identifying the bitmap.
+	 * @return  Whether or not this file can be found in the cache.
 	 */
-	public inline function checkCache(Key:String):Bool
+	public inline function checkCache(key:String):Bool
 	{
-		return get(Key) != null;
+		return get(key) != null;
 	}
 
 	/**
@@ -112,7 +112,7 @@ class BitmapFrontEnd
 	 * Caches the specified graphic.
 	 *
 	 * @param   graphic  The graphic to cache.
-	 * @return	The cached graphic.
+	 * @return  The cached graphic.
 	 */
 	public inline function addGraphic(graphic:FlxGraphic):FlxGraphic
 	{
@@ -123,8 +123,8 @@ class BitmapFrontEnd
 	/**
 	 * Gets an FlxGraphic object from this storage from its key.
 	 * 
-	 * @param	key	The FlxGraphics key (or name).
-	 * @return	The FlxGraphic with the specified key, or null if the object doesn't exist.
+	 * @param   key  The FlxGraphics key (or name).
+	 * @return  The FlxGraphic with the specified key, or null if the object doesn't exist.
 	 */
 	public inline function get(key:String):FlxGraphic
 	{
@@ -134,8 +134,8 @@ class BitmapFrontEnd
 	/**
 	 * Gets a key from a cached BitmapData.
 	 *
-	 * @param  bmd BitmapData to find in the cache.
-	 * @return The BitmapData's key or null if there isn't such BitmapData in cache.
+	 * @param   bmd  BitmapData to find in the cache.
+	 * @return  The BitmapData's key or null if there isn't such BitmapData in cache.
 	 */
 	public function findKeyForBitmap(bmd:BitmapData):String
 	{
@@ -151,8 +151,8 @@ class BitmapFrontEnd
 	/**
 	 * Helper method for getting cache key for FlxGraphic objects created from the class.
 	 *
-	 * @param	source BitmapData source class.
-	 * @return	Full name for provided class.
+	 * @param   source  BitmapData source class.
+	 * @return  Full name for provided class.
 	 */
 	public inline function getKeyForClass(source:Class<Dynamic>):String
 	{
@@ -162,12 +162,12 @@ class BitmapFrontEnd
 	/**
 	 * Creates string key for further caching.
 	 *
-	 * @param	systemKey	The first string key to use as a base for a new key. It's usually an asset key ("assets/image.png").
-	 * @param	userKey		The second string key to use as a base for a new key. It's usually a key provided by the user
-	 * @param	unique		Whether generated key should be unique or not.
-	 * @return	Created key.
+	 * @param   systemKey  The first string key to use as a base for a new key. It's usually an asset key ("assets/image.png").
+	 * @param   userKey    The second string key to use as a base for a new key. It's usually a key provided by the user
+	 * @param   unique     Whether generated key should be unique or not.
+	 * @return  Created key.
 	 */
-	public function generateKey(systemKey:String, userKey:String, unique:Bool = false):String
+	public function generateKey(systemKey:String, userKey:String, unique = false):String
 	{
 		var key:String = userKey;
 		if (key == null)
@@ -182,8 +182,8 @@ class BitmapFrontEnd
 	/**
 	 * Gets unique key for bitmap cache.
 	 *
-	 * @param	baseKey	key's prefix.
-	 * @return	unique key.
+	 * @param   baseKey  key's prefix.
+	 * @return  unique key.
 	 */
 	public function getUniqueKey(?baseKey:String):String
 	{
@@ -210,11 +210,11 @@ class BitmapFrontEnd
 	 * Generates key from provided base key and information about tile size and offsets in spritesheet
 	 * and the region of image to use as spritesheet graphics source.
 	 *
-	 * @param	baseKey			Beginning of the key. Usually it is the key for original spritesheet graphics (like "assets/tile.png").
-	 * @param	frameSize		The size of tile in spritesheet.
-	 * @param	frameSpacing	Offsets between tiles in offsets.
-	 * @param	region			Region of image to use as spritesheet graphics source.
-	 * @return	Generated key for spritesheet with inserted spaces between tiles.
+	 * @param   baseKey       Beginning of the key. Usually it is the key for original spritesheet graphics (like "assets/tile.png").
+	 * @param   frameSize     The size of tile in spritesheet.
+	 * @param   frameSpacing  Offsets between tiles in offsets.
+	 * @param   region        Region of image to use as spritesheet graphics source.
+	 * @return  Generated key for spritesheet with inserted spaces between tiles.
 	 */
 	public function getKeyWithSpacesAndBorders(baseKey:String, ?frameSize:FlxPoint, ?frameSpacing:FlxPoint, ?frameBorder:FlxPoint, ?region:FlxRect):String
 	{
@@ -237,7 +237,7 @@ class BitmapFrontEnd
 
 	/**
 	 * Totally removes specified FlxGraphic object.
-	 * @param   graphic The object you want to remove and destroy.
+	 * @param   graphic  The object you want to remove and destroy.
 	 */
 	public function remove(graphic:FlxGraphic):Void
 	{
@@ -252,7 +252,7 @@ class BitmapFrontEnd
 
 	/**
 	 * Totally removes FlxGraphic object with specified key.
-	 * @param key Key of the cached FlxGraphic object.
+	 * @param   key  Key of the cached graphic.
 	 */
 	public function removeByKey(key:String):Void
 	{
