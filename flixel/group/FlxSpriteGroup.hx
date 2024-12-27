@@ -12,8 +12,8 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets;
 import flixel.util.FlxColor;
-import flixel.util.FlxDirectionFlags;
 import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxDirectionFlags;
 import flixel.util.FlxSort;
 
 /**
