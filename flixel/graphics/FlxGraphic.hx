@@ -415,19 +415,19 @@ class FlxGraphic implements IFlxDestroyable
 	/**
 	 * Refreshes the `BitmapData` of this graphic.
 	 */
-	public function refreshBitmap():Void
+	public function refresh():Void
 	{
 		var newBitmap:BitmapData = getBitmapFromSystem();
 		if (newBitmap != null)
 			bitmap = newBitmap;
 	}
-
-	@:deprecated("`undump` is deprecated, use `refreshBitmap`")
+	
+	@:deprecated("`undump` is deprecated, use `refresh`")
 	public function undump():Void
 	{
-		refreshBitmap();
+		refresh();
 	}
-
+	
 	/**
 	 * Asset reload callback for this graphic object.
 	 * It regenerates its bitmap data.
@@ -436,8 +436,8 @@ class FlxGraphic implements IFlxDestroyable
 	{
 		if (!canBeRefreshed)
 			return;
-
-		refreshBitmap();
+			
+		refresh();
 	}
 
 	/**
@@ -528,7 +528,7 @@ class FlxGraphic implements IFlxDestroyable
 
 	/**
 	 * Gets the `BitmapData` for this graphic object from OpenFL.
-	 * This method is used for undumping graphic.
+	 * This method is used for refreshing bitmaps.
 	 */
 	function getBitmapFromSystem():BitmapData
 	{
@@ -540,10 +540,10 @@ class FlxGraphic implements IFlxDestroyable
 
 		if (newBitmap != null)
 			return FlxGraphic.getBitmap(newBitmap, unique);
-
+			
 		return null;
 	}
-	
+
 	inline function get_isLoaded()
 	{
 		return bitmap != null && !bitmap.rect.isEmpty();
@@ -563,7 +563,7 @@ class FlxGraphic implements IFlxDestroyable
 	{
 		return canBeRefreshed;
 	}
-
+	
 	public function incrementUseCount()
 	{
 		useCount++;

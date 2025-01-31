@@ -18,26 +18,26 @@ class LogFrontEnd
 
 	var _standardTraceFunction:(Dynamic, ?PosInfos)->Void;
 
-	public inline function add(data:Dynamic, ?pos:PosInfos):Void
+	public inline function add(data:Dynamic):Void
 	{
 		advanced(data, LogStyle.NORMAL, false, pos);
 	}
 
-	public inline function warn(data:Dynamic, ?pos:PosInfos):Void
+	public inline function warn(data:Dynamic):Void
 	{
 		advanced(data, LogStyle.WARNING, true, pos);
 	}
 
-	public inline function error(data:Dynamic, ?pos:PosInfos):Void
+	public inline function error(data:Dynamic):Void
 	{
 		advanced(data, LogStyle.ERROR, true, pos);
 	}
 
-	public inline function notice(data:Dynamic, ?pos:PosInfos):Void
+	public inline function notice(data:Dynamic):Void
 	{
 		advanced(data, LogStyle.NOTICE, false, pos);
 	}
-
+	
 	/**
 	 * Add an advanced log message to the debugger by also specifying a LogStyle. Backend to FlxG.log.add(), FlxG.log.warn(), FlxG.log.error() and FlxG.log.notice().
 	 *

@@ -2,6 +2,7 @@ package flixel.system.debug.log;
 
 import flixel.util.FlxSignal;
 import haxe.PosInfos;
+import haxe.PosInfos;
 
 using flixel.util.FlxStringUtil;
 
