@@ -81,8 +81,6 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 		setParameterValue(shader.hasColorTransform, colored || hasColorOffsets);
 
 		camera.canvas.graphics.overrideBlendMode(blend);
-		#end
-
 		camera.canvas.graphics.beginShaderFill(shader);
 		#else
 		camera.canvas.graphics.beginBitmapFill(graphics.bitmap, null, true, (camera.antialiasing || antialiasing));
