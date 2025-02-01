@@ -17,7 +17,6 @@ class LogFrontEnd
 	public var redirectTraces(default, set):Bool = false;
 
 	var _standardTraceFunction:(Dynamic, ?PosInfos)->Void;
-
 	public inline function add(data:Dynamic, ?pos:PosInfos):Void
 	{
 		advanced(data, LogStyle.NORMAL, false, pos);

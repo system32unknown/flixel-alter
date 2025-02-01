@@ -50,7 +50,6 @@ class LogStyle
 	 * even when logged with `once = true` and even in release mode.
 	 */
 	public final onLog = new FlxTypedSignal<(data:Any, ?pos:PosInfos) -> Void>();
-
 	/**
 	 * Whether an exception is thrown when this LogStyle is used.
 	 * **Note**: Unlike other log style properties, this happens even in release mode.

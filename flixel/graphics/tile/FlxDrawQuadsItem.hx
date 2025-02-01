@@ -10,6 +10,8 @@ import flixel.math.FlxRect;
 import openfl.geom.ColorTransform;
 import openfl.display.ShaderParameter;
 import openfl.Vector;
+import openfl.display.ShaderParameter;
+import openfl.geom.ColorTransform;
 
 typedef QuadRectRaw =
 {

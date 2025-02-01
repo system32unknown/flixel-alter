@@ -10,9 +10,8 @@ enum abstract FlxDirection(Int)
 	var RIGHT = 0x0010;
 	var UP = 0x0100;
 	var DOWN = 0x1000;
-
-	var self(get, never):FlxDirection;
 	
+	var self(get, never):FlxDirection;
 	inline function get_self():FlxDirection
 	{
 		#if (haxe >= version("4.3.0"))
@@ -26,7 +25,7 @@ enum abstract FlxDirection(Int)
 	{
 		this = value;
 	}
-
+	
 	public function toString()
 	{
 		return switch self
@@ -37,19 +36,21 @@ enum abstract FlxDirection(Int)
 			case DOWN: "D";
 		}
 	}
-	@:deprecated("implicit cast from FlxDirection to Int is deprecated, use an explicit cast")
+	
+	@:deprecated("implicit cast from FlxDirection to Int is deprecated, use toInt()")
 	@:to
 	inline function toIntImplicit()
 	{
 		return toInt();
 	}
 	
+	
 	inline public function toInt()
 	{
 		return this;
 	}
 	
-	@:deprecated("implicit cast from Int to FlxDirectionFlags is deprecated, use an explicit cast")
+	@:deprecated("implicit cast from Int to FlxDirection is deprecated, use FlxDirection.fromInt")
 	@:from
 	inline static function fromIntImplicit(value:Int):FlxDirection
 	{

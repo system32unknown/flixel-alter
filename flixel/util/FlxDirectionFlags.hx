@@ -32,7 +32,7 @@ enum abstract FlxDirectionFlags(Int)
 
 	/** Special-case constant meaning any, or all directions. */
 	var ANY = 0x1111; // LEFT | RIGHT | UP | DOWN;
-
+	
 	var self(get, never):FlxDirectionFlags;
 	
 	inline function get_self():FlxDirectionFlags
@@ -97,7 +97,7 @@ enum abstract FlxDirectionFlags(Int)
 	{
 		this = value;
 	}
-
+	
 	/**
 	 * Returns true if this contains **all** of the supplied flags.
 	 */
@@ -132,21 +132,21 @@ enum abstract FlxDirectionFlags(Int)
 	
 	public inline function not():FlxDirectionFlags
 	{
-		return fromInt(~this);
+		return fromInt((~this & ANY.toInt()));
 	}
-	
-	@:deprecated("implicit cast from FlxDirectionFlags to Int is deprecated, use an explicit cast")
+
+	@:deprecated("implicit cast from FlxDirectionFlags to Int is deprecated, use toInt")
 	@:to
 	inline function toIntImplicit()
 	{
 		return toInt();
 	}
-
+	
 	public inline function toInt():Int
 	{
 		return this;
 	}
-
+	
 	public function toString()
 	{
 		if (self == NONE)
@@ -178,9 +178,9 @@ enum abstract FlxDirectionFlags(Int)
 			|  (down  ? DOWN  : NONE);
 	}
 
-	@:deprecated("implicit cast from Int to FlxDirectionFlags is deprecated, use an explicit cast")
+	@:deprecated("implicit cast from Int to FlxDirectionFlags is deprecated, use FlxDirectionFlags.fromInt")
 	@:from
-	public inline static function fromIntImplicit(value:Int):FlxDirectionFlags
+	inline static function fromIntImplicit(value:Int):FlxDirectionFlags
 	{
 		return fromInt(value);
 	}
@@ -189,14 +189,14 @@ enum abstract FlxDirectionFlags(Int)
 	{
 		return new FlxDirectionFlags(value);
 	}
-
+	
 	@:from
 	inline static function fromDir(dir:FlxDirection):FlxDirectionFlags
 	{
 		return fromInt(dir.toInt());
 	}
-	
-	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead") // Expose int operators
+
+	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead")// Expose int operators
 	@:op(A & B) static function and(a:FlxDirectionFlags, b:FlxDirectionFlags):FlxDirectionFlags;
 	@:deprecated("FlxDirectionFlags operators are deprecated, use has(), instead")
 	@:op(A | B) static function or(a:FlxDirectionFlags, b:FlxDirectionFlags):FlxDirectionFlags;
