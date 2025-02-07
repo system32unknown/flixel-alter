@@ -6,6 +6,7 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxSoundAsset;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxSignal;
 import flixel.util.FlxStringUtil;
 import openfl.events.Event;
 import openfl.events.IEventDispatcher;
