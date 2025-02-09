@@ -49,24 +49,6 @@ class FlxAnimationController implements IFlxDestroyable
 	public var numFrames(get, never):Int;
 
 	/**
-	 * If assigned, will be called each time the current animation's frame changes
-	 * 
-	 * @param   animName     The name of the current animation
-	 * @param   frameNumber  The progress of the current animation, in frames
-	 * @param   frameIndex   The current animation's frameIndex in the tile sheet
-	 */
-	@:deprecated('callback is deprecated, use onFrameChange.add') // 5.9.0
-	public var callback:(animName:String, frameNumber:Int, frameIndex:Int) -> Void;
-	
-	/**
-	 * If assigned, will be called each time the current animation finishes.
-	 * 
-	 * @param   animName  The name of the current animation
-	 */
-	@:deprecated('finishCallback is deprecated, use onFinish.add') // 5.9.0
-	public var finishCallback:(animName:String) -> Void;
-	
-	/**
 	 * Dispatches each time the current animation's frame changes
 	 * 
 	 * @param   animName     The name of the current animation
@@ -171,7 +153,6 @@ class FlxAnimationController implements IFlxDestroyable
 		clearPrerotated();
 	}
 
-	@:haxe.warning("-WDeprecated")
 	public function destroy():Void
 	{
 		FlxDestroyUtil.destroy(onFrameChange);
@@ -180,8 +161,6 @@ class FlxAnimationController implements IFlxDestroyable
 
 		destroyAnimations();
 		_animations = null;
-		callback = null;
-		finishCallback = null;
 		_sprite = null;
 	}
 
@@ -701,26 +680,16 @@ class FlxAnimationController implements IFlxDestroyable
 		frameIndex = FlxG.random.int(0, numFrames - 1);
 	}
 
-	@:haxe.warning("-WDeprecated")
 	function fireCallback():Void
 	{
 		final name = (_curAnim != null) ? (_curAnim.name) : null;
 		final number = (_curAnim != null) ? (_curAnim.curFrame) : frameIndex;
-		if (callback != null)
-		{
-			callback(name, number, frameIndex);
-		}
 		onFrameChange.dispatch(name, number, frameIndex);
 	}
 
 	@:allow(flixel.animation)
-	@:haxe.warning("-WDeprecated")
 	function fireFinishCallback(?name:String):Void
 	{
-		if (finishCallback != null)
-		{
-			finishCallback(name);
-		}
 		onFinish.dispatch(name);
 	}
 	

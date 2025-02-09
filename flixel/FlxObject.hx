@@ -46,7 +46,6 @@ import flixel.util.FlxStringUtil;
  * FlxG.overlap(playerGroup, medKitGroup
  *     function onOverlap(player, medKit)
  *     {
- *         player.health = 100;
  *         medKit.kill();
  *     }
  * );
@@ -116,7 +115,6 @@ class FlxObject extends FlxBasic
 	 * @return  The result of whichever separator was used
 	 * @since 5.9.0
 	 */
-	@:haxe.warning("-WDeprecated")
 	static function processCheckTilemap(object1:FlxObject, object2:FlxObject, func:(FlxObject, FlxObject)->Bool,
 		?position:FlxPoint, isCollision = true):Bool
 	{
@@ -134,7 +132,7 @@ class FlxObject extends FlxBasic
 				// Keep tile as first arg
 				return processCheckTilemap(tile, object2, func, position, isCollision);
 			}
-			return tilemap.overlapsWithCallback(object2, recurseProcess, false, position);
+			return tilemap.objectOverlapsTiles(object2, recurseProcess, position);
 		}
 		else if (object2.flixelType == TILEMAP)
 		{
@@ -145,7 +143,7 @@ class FlxObject extends FlxBasic
 				// Keep tile as second arg
 				return processCheckTilemap(object1, tile, func, position, isCollision);
 			}
-			return tilemap.overlapsWithCallback(object1, recurseProcess, false, position);
+			return tilemap.objectOverlapsTiles(object1, recurseProcess, position);
 		}
 		
 		return func(object1, object2);
@@ -666,14 +664,6 @@ class FlxObject extends FlxBasic
 	 */
 	public var maxAngular:Float = 10000;
 
-	#if FLX_HEALTH
-	/**
-	 * Handy for storing health percentage or armor points or whatever.
-	 */
-	@:deprecated("object.health is being removed in version 6.0.0")
-	public var health:Float = 1;
-	#end
-
 	/**
 	 * Bit field of flags (use with UP, DOWN, LEFT, RIGHT, etc) indicating surface contacts. Use bitwise operators to check the values
 	 * stored here, or use isTouching(), justTouched(), etc. You can even use them broadly as boolean values if you're feeling saucy!
@@ -1153,34 +1143,6 @@ class FlxObject extends FlxBasic
 		return touching.hasAny(direction) && !wasTouching.hasAny(direction);
 	}
 
-	#if FLX_HEALTH
-	/**
-	 * Reduces the `health` variable of this object by the amount specified in `Damage`.
-	 * Calls `kill()` if health drops to or below zero.
-	 *
-	 * @param   Damage   How much health to take away (use a negative number to give a health bonus).
-	 */
-	@:deprecated("object.health is being removed in version 6.0.0")
-	public function hurt(damage:Float):Void
-	{
-		health = health - damage;
-		if (health <= 0)
-			kill();
-	}
-	#end
-
-	/**
-	 * Centers this `FlxObject` on the screen, either by the x axis, y axis, or both.
-	 *
-	 * @param axes On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both.
-	 * @return  This FlxObject for chaining
-	 */
-	@:deprecated("screenCenter is deprecated, use gameCenter")
-	public inline function screenCenter(axes:FlxAxes = XY):FlxObject
-	{
-		return gameCenter(axes);
-	}
-	
 	/**
 	 * Centers this `FlxObject` in game space, either by the x axis, y axis, or both.
 	 *
@@ -1435,7 +1397,7 @@ class FlxObject extends FlxBasic
 	@:noCompletion
 	inline function get_solid():Bool
 	{
-		return (allowCollisions & FlxDirectionFlags.ANY) > FlxDirectionFlags.NONE;
+		return allowCollisions != FlxDirectionFlags.NONE;
 	}
 
 	@:noCompletion
