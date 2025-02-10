@@ -181,4 +181,5 @@ enum abstract FlxDirectionFlags(Int)
 	{
 		return fromInt(dir.toInt());
 	}
+	@:op(A | B) static function or(a:FlxDirectionFlags, b:FlxDirectionFlags):FlxDirectionFlags;
 }
