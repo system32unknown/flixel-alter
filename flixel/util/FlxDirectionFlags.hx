@@ -171,13 +171,13 @@ enum abstract FlxDirectionFlags(Int)
 			|  (down  ? DOWN  : NONE);
 	}
 	
-	public inline static function fromInt(value:Int):FlxDirectionFlags
+	public static inline function fromInt(value:Int):FlxDirectionFlags
 	{
 		return new FlxDirectionFlags(value);
 	}
 	
 	@:from
-	inline static function fromDir(dir:FlxDirection):FlxDirectionFlags
+	static inline function fromDir(dir:FlxDirection):FlxDirectionFlags
 	{
 		return fromInt(dir.toInt());
 	}
