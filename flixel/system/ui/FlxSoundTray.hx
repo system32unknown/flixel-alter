@@ -78,7 +78,7 @@ class FlxSoundTray extends Sprite
 		screenCenter();
 		addChild(bg);
 
-		var text:TextField = new TextField();
+		text = new TextField();
 		text.width = bg.width;
 		text.multiline = true;
 		text.selectable = false;
