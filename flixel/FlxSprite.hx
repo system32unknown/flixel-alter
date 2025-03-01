@@ -1595,6 +1595,9 @@ class FlxSprite extends FlxObject
 	{
 		clipRect = rect;
 
+		if (frames != null)
+			frame = frames.frames[animation.frameIndex];
+
 		return rect;
 	}
 
