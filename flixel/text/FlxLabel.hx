@@ -5,14 +5,12 @@ import openfl.text.TextFormat;
 import openfl.text.TextField;
 import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFormatAlign;
-import openfl.display.Sprite as OFLSprite;
 import openfl.Assets;
 import flixel.FlxSprite;
 import flixel.util.FlxAxes;
 import flixel.system.FlxAssets;
 import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
-import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
 
 /**
@@ -156,7 +154,7 @@ class FlxLabel extends FlxSprite {
 
 	function addToCamera()
 	{
-		final display:OFLSprite = camera.canvas;
+		final display:DisplayObjectContainer = camera.canvas;
 		camera.canvas.addChildAt(field, display.numChildren);
 	}
 
