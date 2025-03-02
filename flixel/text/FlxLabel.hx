@@ -155,8 +155,7 @@ class FlxLabel extends FlxSprite {
 
 	function addToCamera()
 	{
-		final display:DisplayObjectContainer = inFront ? camera.canvas : camera.staticCanvas;
-		display.addChildAt(field, display.numChildren);
+		camera.canvas.addChildAt(field, display.numChildren);
 	}
 
 	function get_font():String
@@ -254,8 +253,7 @@ class FlxLabel extends FlxSprite {
 
 	override function destroy():Void
 	{
-		final display:DisplayObjectContainer = inFront ? camera.canvas : camera.staticCanvas;
-		display.removeChild(field);
+		camera.canvas.removeChild(field);
 		active = visible = false;
 		_FORMAT = null;
 		field = null;
