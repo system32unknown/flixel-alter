@@ -13,7 +13,6 @@ import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.tile.FlxDrawBaseItem;
 import flixel.graphics.tile.FlxDrawTrianglesItem;
-import flixel.graphics.tile.FlxGraphicsShader;
 import flixel.math.FlxMath;
 import flixel.math.FlxMatrix;
 import flixel.math.FlxPoint;
@@ -342,11 +341,6 @@ class FlxCamera extends FlxBasic
 	public var angle(default, set):Float = 0;
 
 	/**
-	 * Whenever the sprite should be rotated.
-	 */
-	public var rotateSprite(default, set):Bool = false;
-
-	/**
 	 * The color tint of the camera display.
 	 */
 	public var color(default, set):FlxColor = FlxColor.WHITE;
@@ -578,12 +572,6 @@ class FlxCamera extends FlxBasic
 	static var renderPoint:FlxPoint = new FlxPoint();
 
 	static var renderRect:FlxRect = new FlxRect();
-
-	@:noCompletion
-	var _sinAngle:Float = 0;
-	
-	@:noCompletion
-	var _cosAngle:Float = 1;
 	
 	/**
 	 * Adds a FlxShader as a filter to the camera
@@ -815,13 +803,6 @@ class FlxCamera extends FlxBasic
 		{
 			var isColored = (transform != null #if !html5 && transform.hasRGBMultipliers() #end);
 			var hasColorOffsets:Bool = (transform != null && transform.hasRGBAOffsets());
-
-			if (!rotateSprite && angle != 0)
-			{
-				matrix.translate(-width / 2, -height / 2);
-				matrix.rotateWithTrig(_cosAngle, _sinAngle);
-				matrix.translate(width / 2, height / 2);
-			}
 
 			#if FLX_RENDER_TRIANGLE
 			var drawItem:FlxDrawTrianglesItem = startTrianglesBatch(frame.parent, smoothing, isColored, blend);
@@ -2011,22 +1992,10 @@ class FlxCamera extends FlxBasic
 		return Alpha;
 	}
 
-	function set_rotateSprite(rotate:Bool)
-	{
-		rotateSprite = rotate;
-		set_angle(angle);
-		return rotateSprite;
-	}
-	
-
 	function set_angle(Angle:Float):Float
 	{
 		angle = Angle;
-		flashSprite.rotation = rotateSprite ? Angle : 0;
-		
-		var radians:Float = angle * flixel.math.FlxAngle.TO_RAD;
-		_sinAngle = Math.sin(radians);
-		_cosAngle = Math.cos(radians);
+		flashSprite.rotation = Angle;
 		return Angle;
 	}
 
