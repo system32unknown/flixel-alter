@@ -1074,7 +1074,7 @@ class FlxTypedSpriteGroup<T:FlxSprite> extends FlxSprite
 	inline function scrollFactorTransform(Sprite:FlxSprite, ScrollFactor:FlxPoint)
 		Sprite.scrollFactor.copyFrom(ScrollFactor);
 
-	inline function clipRectTransform(Sprite:FlxSprite, ClipRect:FlxRect)
+	function clipRectTransform(Sprite:FlxSprite, ClipRect:FlxRect)
 	{
 		if (ClipRect == null)
 			Sprite.clipRect = null;
