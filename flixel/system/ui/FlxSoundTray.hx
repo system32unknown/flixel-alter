@@ -81,9 +81,7 @@ class FlxSoundTray extends Sprite
 
 		_label = new TextField();
 		_label.width = _bg.width;
-		// text.height = bg.height;
 		_label.multiline = true;
-		// text.wordWrap = true;
 		_label.selectable = false;
 
 		#if flash
@@ -102,10 +100,9 @@ class FlxSoundTray extends Sprite
 
 		_bars = new Array();
 
-		var tmp:Bitmap;
 		for (i in 0...10)
 		{
-			tmp = new Bitmap(new BitmapData(4, i + 1, false, FlxColor.WHITE));
+			var tmp:Bitmap = new Bitmap(new BitmapData(4, i + 1, false, FlxColor.WHITE));
 			addChild(tmp);
 			_bars.push(tmp);
 		}

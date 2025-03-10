@@ -157,6 +157,7 @@ class FlxCamera extends FlxBasic
 	 * make the camera look at specified point in world coordinates.
 	 */
 	public var scroll:FlxPoint = FlxPoint.get();
+	public var scrollZ:Float = 0; // for FlxSprite3D
 
 	/**
 	 * The actual `BitmapData` of the camera display itself.
