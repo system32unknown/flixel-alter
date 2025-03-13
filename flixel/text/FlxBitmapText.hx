@@ -1,24 +1,20 @@
 package flixel.text;
 
-import openfl.display.BitmapData;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import openfl.geom.ColorTransform;
 import flixel.graphics.frames.FlxBitmapFont;
 import flixel.graphics.frames.FlxFrame;
-#if FLX_RENDER_TRIANGLE
-import flixel.graphics.tile.FlxDrawTrianglesItem;
-#else
-import flixel.graphics.tile.FlxDrawQuadsItem;
-#end
+import flixel.graphics.tile.FlxDrawBaseItem;
+import flixel.math.FlxMatrix;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.text.FlxText.FlxTextAlign;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import flixel.system.FlxBuffer;
+import openfl.display.BitmapData;
+import openfl.geom.ColorTransform;
 
 using flixel.util.FlxColorTransformUtil;
 
@@ -179,9 +175,9 @@ class FlxBitmapText extends FlxSprite
 	var pendingTextBitmapChange:Bool = true;
 	var pendingPixelsChange:Bool = true;
 
-	var textData:FlxBuffer<TileDrawItem>;
-	var textDrawData:FlxBuffer<TileDrawItem>;
-	var borderDrawData:FlxBuffer<TileDrawItem>;
+	var textData:CharList;
+	var textDrawData:CharList;
+	var borderDrawData:CharList;
 
 	/**
 	 * Helper bitmap buffer for text pixels but without any color transformations
@@ -213,9 +209,9 @@ class FlxBitmapText extends FlxSprite
 		}
 		else
 		{
-			textData = new FlxBuffer<TileDrawItem>();
-			textDrawData = new FlxBuffer<TileDrawItem>();
-			borderDrawData = new FlxBuffer<TileDrawItem>();
+			textData = [];
+			textDrawData = [];
+			borderDrawData = [];
 		}
 		
 		this.text = text;
@@ -292,7 +288,12 @@ class FlxBitmapText extends FlxSprite
 		}
 	}
 
-	override public function draw():Void
+	static final bgColorTransformDrawHelper = new ColorTransform();
+	static final borderColorTransformDrawHelper = new ColorTransform();
+	static final textColorTransformDrawHelper = new ColorTransform();
+	static final matrixDrawHelper = new FlxMatrix();
+	
+	override function draw()
 	{
 		if (FlxG.renderBlit)
 		{
@@ -303,26 +304,34 @@ class FlxBitmapText extends FlxSprite
 		{
 			checkPendingChanges(true);
 			
-			final full = 0xFF*0xFF;
-			function multiplyColors(a:FlxColor, b:FlxColor)
-			{
-				return FlxColor.fromRGBFloat(a.red * b.red / full, a.green * b.green / full, a.blue * b.blue / full, a.alpha * b.alpha / full);
-			}
+			final colorHelper = Std.int(alpha * 0xFF) << 24 | this.color;
 			
-			final colorFullAlpha = color.rgb | 0xFF000000;
-			final borderColorMult = multiplyColors(borderColor, colorFullAlpha);
-			final bgColorMult = multiplyColors(backgroundColor, colorFullAlpha);
-			final textColorMult = useTextColor ? multiplyColors(textColor, colorFullAlpha) : colorFullAlpha;
+			final textColorTransform = textColorTransformDrawHelper.reset();
+			textColorTransform.setMultipliers(colorHelper);
+			if (useTextColor)
+				textColorTransform.scaleMultipliers(textColor);
 			
-			final clippedFrameRect = FlxRect.get();
+			final borderColorTransform = borderColorTransformDrawHelper.reset();
+			borderColorTransform.setMultipliers(borderColor).scaleMultipliers(colorHelper);
+			
+			final scaleX:Float = scale.x * _facingHorizontalMult;
+			final scaleY:Float = scale.y * _facingVerticalMult;
+			
+			final originX:Float = _facingHorizontalMult != 1 ? frameWidth - origin.x : origin.x;
+			final originY:Float = _facingVerticalMult != 1 ? frameHeight - origin.y : origin.y;
+			
+			final clippedFrameRect = FlxRect.get(0, 0, frameWidth, frameHeight);
+
 			if (clipRect != null)
-				clipRect.intersection(FlxRect.weak(0, 0, frameWidth, frameHeight), clippedFrameRect)
-			else
-				clippedFrameRect.set(0, 0, frameWidth, frameHeight);
-			
+				clippedFrameRect.clipTo(clipRect);
+
 			if (clippedFrameRect.isEmpty)
 				return;
 
+			final charClipHelper = FlxRect.get();
+			final charClippedFrame = new FlxFrame(null);
+			final screenPos = FlxPoint.get();
+			
 			final cameras = getCamerasLegacy();
 			for (camera in cameras)
 			{
@@ -331,52 +340,72 @@ class FlxBitmapText extends FlxSprite
 					continue;
 				}
 
-				getScreenPosition(_point, camera).subtractPoint(offset);
+				getScreenPosition(screenPos, camera).subtractPoint(offset);
 
 				if (isPixelPerfectRender(camera))
 				{
-					_point.floor();
+					screenPos.floor();
 				}
 
 				updateTrig();
 
 				if (background)
 				{
-					final offsetX = _facingHorizontalMult != 1 ? frameWidth - origin.x : origin.x;
-					final offsetY = _facingVerticalMult != 1 ? frameHeight - origin.y : origin.y;
 					// backround tile transformations
-					final currFrame = FlxG.bitmap.whitePixel;
-					_matrix.identity();
-					_matrix.scale(0.1 * clippedFrameRect.width, 0.1 * clippedFrameRect.height);
-					_matrix.translate(clippedFrameRect.x - offsetX, clippedFrameRect.y - offsetY);
-					_matrix.scale(scale.x * _facingHorizontalMult, scale.y * _facingVerticalMult);
+					final matrix = matrixDrawHelper;
+					matrix.identity();
+					matrix.scale(0.1 * clippedFrameRect.width, 0.1 * clippedFrameRect.height);
+					matrix.translate(clippedFrameRect.x - originX, clippedFrameRect.y - originY);
+					matrix.scale(scaleX, scaleY);
 
 					if (angle != 0)
 					{
-						_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+						matrix.rotateWithTrig(_cosAngle, _sinAngle);
 					}
 
-					_matrix.translate(_point.x + offsetX, _point.y + offsetY);
-					_colorParams.setMultipliersFromColor(bgColorMult);
-					camera.drawPixels(currFrame, null, _matrix, _colorParams, blend, antialiasing);
+					matrix.translate(screenPos.x + originX, screenPos.y + originY);
+					final colorTransform = bgColorTransformDrawHelper.reset();
+					colorTransform.setMultipliers(colorHelper).scaleMultipliers(backgroundColor);
+					camera.drawPixels(FlxG.bitmap.whitePixel, null, matrix, colorTransform, blend, antialiasing);
 				}
 
-				final hasColorOffsets:Bool = (colorTransform != null && colorTransform.hasRGBAOffsets());
-
+				final hasColorOffsets = (colorTransform != null && colorTransform.hasRGBAOffsets());
 				final drawItem = camera.startQuadBatch(font.parent, true, hasColorOffsets, blend, antialiasing, shader);
+				function addQuad(charCode:Int, x:Float, y:Float, color:ColorTransform)
+				{
+					var frame = font.getCharFrame(charCode);
+					if (clipRect != null)
+					{
+						charClipHelper.copyFrom(clippedFrameRect).offset(-x, -y);
+						if (!frame.isContained(charClipHelper))
+							frame = frame.clipTo(charClipHelper, charClippedFrame);
+					}
+
+					final matrix = matrixDrawHelper;
+					frame.prepareMatrix(matrix);
+					matrix.translate(x - originX, y - originY);
+					matrix.scale(scaleX, scaleY);
+					if (angle != 0)
+					{
+						matrix.rotateWithTrig(_cosAngle, _sinAngle);
+					}
+					
+					matrix.translate(screenPos.x + originX, screenPos.y + originY);
+					drawItem.addQuad(frame, matrix, color);
+				}
 				
-				// draw the text border
-				batchDrawData(drawItem, borderDrawData, borderColorMult);
-				// draw the actual text
-				batchDrawData(drawItem, textDrawData, textColorMult);
-				
+				borderDrawData.forEach(addQuad.bind(_, _, _, borderColorTransform));
+				textDrawData.forEach(addQuad.bind(_, _, _, textColorTransform));
 				#if FLX_DEBUG
 				FlxBasic.visibleCount++;
 				#end
 			}
 			
-			// dispose clipRect helpers
+			// dispose helpers
+			charClipHelper.put();
 			clippedFrameRect.put();
+			screenPos.put();
+			charClippedFrame.destroy();
 			
 			#if FLX_DEBUG
 			if (FlxG.debugger.drawDebug)
@@ -384,56 +413,6 @@ class FlxBitmapText extends FlxSprite
 				drawDebug();
 			}
 			#end
-		}
-	}
-	
-	#if FLX_RENDER_TRIANGLE
-	function batchDrawData(drawItem:FlxDrawTrianglesItem, list:FlxBuffer<TileDrawItem>, color:FlxColor)
-	#else
-	function batchDrawData(drawItem:FlxDrawQuadsItem, list:FlxBuffer<TileDrawItem>, color:FlxColor)
-	#end
-	{
-		_colorParams.setMultipliersFromColor(color);
-		
-		final scaleX = scale.x * _facingHorizontalMult;
-		final scaleY = scale.y * _facingVerticalMult;
-		
-		final offsetX = _facingHorizontalMult != 1 ? frameWidth - origin.x : origin.x;
-		final offsetY = _facingVerticalMult != 1 ? frameHeight - origin.y : origin.y;
-		
-		for (item in list)
-		{
-			final currFrame = getClippedCharFrame(item);
-			currFrame.prepareMatrix(_matrix);
-			_matrix.translate(item.x - offsetX, item.y - offsetY);
-			_matrix.scale(scaleX, scaleY);
-			if (angle != 0)
-			{
-				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
-			}
-			
-			_matrix.translate(_point.x + offsetX, _point.y + offsetY);
-			// TODO: cull offscreen chars
-			drawItem.addQuad(currFrame, _matrix, _colorParams);
-		}
-	}
-	
-	/**
-	 * Gets the character frame and clips it according to the clipRect
-	 */
-	inline function getClippedCharFrame(item:TileDrawItem)
-	{
-		final currFrame = font.getCharFrame(item.charCode);
-		
-		return if (clipRect == null)
-			currFrame;
-		else
-		{
-			final clippedFrameRect = FlxRect.get().copyFrom(clipRect);
-			clippedFrameRect.offset(-item.x, -item.y);
-			final result = currFrame.clipTo(clippedFrameRect);
-			clippedFrameRect.put();
-			result;
 		}
 	}
 
@@ -556,18 +535,9 @@ class FlxBitmapText extends FlxSprite
 	 */
 	function computeTextSize():Void
 	{
-		var txtWidth:Int = textWidth + Std.int(borderSize) * 2;
-		var txtHeight:Int = textHeight + 2 * padding + Std.int(borderSize) * 2;
-
-		if (autoSize)
-		{
-			txtWidth += 2 * padding;
-		}
-		else
-		{
-			txtWidth = fieldWidth;
-		}
-
+		final txtWidth = autoSize ? textWidth + padding * 2 : fieldWidth;
+		final txtHeight = textHeight + padding * 2;
+		
 		frameWidth = (txtWidth == 0) ? 1 : txtWidth;
 		frameHeight = (txtHeight == 0) ? 1 : txtHeight;
 	}
@@ -1020,20 +990,25 @@ class FlxBitmapText extends FlxSprite
 		}
 		else if (FlxG.renderTile)
 		{
-			textData.resize(0);
+			textData.clear();
 		}
 
 		_fieldWidth = frameWidth;
 
-		final numLines:Int = _lines.length;
+		var numLines:Int = _lines.length;
+		var line:UnicodeString;
+		var lineWidth:Int;
+		
+		var ox:Int, oy:Int;
+
 		for (i in 0...numLines)
 		{
-			final line:UnicodeString = _lines[i];
-			final lineWidth = _linesWidth[i];
+			line = _lines[i];
+			lineWidth = _linesWidth[i];
 
 			// LEFT
-			var ox = font.minOffsetX;
-			var oy = i * (font.lineHeight + lineSpacing) + padding;
+			ox = font.minOffsetX;
+			oy = i * (font.lineHeight + lineSpacing) + padding;
 
 			if (alignment == FlxTextAlign.CENTER)
 			{
@@ -1078,16 +1053,15 @@ class FlxBitmapText extends FlxSprite
 
 	function blitLine(line:UnicodeString, startX:Int, startY:Int):Void
 	{
-		final data = new FlxBuffer<TileDrawItem>();
+		final data:CharList = [];
 		addLineData(line, startX, startY, data);
 		
-		while (data.length > 0)
+		data.forEach(function(charCode, x, y)
 		{
-			final item = data.shift();
-			final charFrame = font.getCharFrame(item.charCode);
-			_flashPoint.setTo(item.x, item.y);
+			final charFrame = font.getCharFrame(charCode);
+			_flashPoint.setTo(x, y);
 			charFrame.paint(textBitmap, _flashPoint, true);
-		}
+		});
 	}
 
 	function tileLine(line:UnicodeString, startX:Int, startY:Int)
@@ -1098,7 +1072,7 @@ class FlxBitmapText extends FlxSprite
 		addLineData(line, startX, startY, textData);
 	}
 	
-	function addLineData(line:UnicodeString, startX:Int, startY:Int, data:FlxBuffer<TileDrawItem>)
+	function addLineData(line:UnicodeString, startX:Int, startY:Int, data:CharList)
 	{
 		var curX:Float = startX;
 		var curY:Int = startY;
@@ -1123,9 +1097,7 @@ class FlxBitmapText extends FlxSprite
 			final isSpace = isSpaceChar(charCode);
 			final hasFrame = font.charExists(charCode);
 			if (hasFrame && !isSpace)
-			{
 				data.push(charCode, curX, curY);
-			}
 			
 			if (hasFrame || isSpace)
 			{
@@ -1198,8 +1170,8 @@ class FlxBitmapText extends FlxSprite
 			}
 			else
 			{
-				textDrawData.resize(0);
-				borderDrawData.resize(0);
+				textDrawData.clear();
+				borderDrawData.clear();
 			}
 
 			// use local var to avoid get_width and recursion
@@ -1214,82 +1186,9 @@ class FlxBitmapText extends FlxSprite
 			bitmap.lock();
 		}
 
-		var isFront:Bool = false;
-
-		var iterations:Int = Std.int(borderSize * borderQuality);
-		iterations = (iterations <= 0) ? 1 : iterations;
-
-		var delta:Int = Std.int(borderSize / iterations);
-
-		// render border
-		switch (borderStyle)
-		{
-			case SHADOW:
-				final iterations = borderQuality < 1 ? 1 : Std.int(Math.abs(borderSize) * borderQuality);
-				final delta = borderSize / iterations;
-				var i = iterations + 1;
-				while (i-- > 1)
-				{
-					drawText(Std.int(delta * i), Std.int(delta * i), isFront, bitmap, useTiles);
-				}
-				
-			case SHADOW_XY(shadowX, shadowY):
-				// Size is max of both, so (4, 4) has 4 iterations, just like SHADOW
-				final size = Math.max(shadowX, shadowY);
-				final iterations = borderQuality < 1 ? 1 : Std.int(size * borderQuality);
-				var i = iterations + 1;
-				while (i-- > 1)
-				{
-					drawText(Std.int(shadowX / iterations * i), Std.int(shadowY / iterations * i), isFront, bitmap, useTiles);
-				}
-				
-			case OUTLINE:
-				// Render an outline around the text
-				// (do 8 offset draw calls)
-				var itd:Int = 0;
-				for (iter in 0...iterations)
-				{
-					itd = delta * (iter + 1);
-					// upper-left
-					drawText(-itd, -itd, isFront, bitmap, useTiles);
-					// upper-middle
-					drawText(0, -itd, isFront, bitmap, useTiles);
-					// upper-right
-					drawText(itd, -itd, isFront, bitmap, useTiles);
-					// middle-left
-					drawText(-itd, 0, isFront, bitmap, useTiles);
-					// middle-right
-					drawText(itd, 0, isFront, bitmap, useTiles);
-					// lower-left
-					drawText(-itd, itd, isFront, bitmap, useTiles);
-					// lower-middle
-					drawText(0, itd, isFront, bitmap, useTiles);
-					// lower-right
-					drawText(itd, itd, isFront, bitmap, useTiles);
-				}
-			case OUTLINE_FAST:
-				// Render an outline around the text
-				// (do 4 diagonal offset draw calls)
-				// (this method might not work with certain narrow fonts)
-				var itd:Int = 0;
-				for (iter in 0...iterations)
-				{
-					itd = delta * (iter + 1);
-					// upper-left
-					drawText(-itd, -itd, isFront, bitmap, useTiles);
-					// upper-right
-					drawText(itd, -itd, isFront, bitmap, useTiles);
-					// lower-left
-					drawText(-itd, itd, isFront, bitmap, useTiles);
-					// lower-right
-					drawText(itd, itd, isFront, bitmap, useTiles);
-				}
-			case NONE:
-		}
-
-		isFront = true;
-		drawText(0, 0, isFront, bitmap, useTiles);
-
+		forEachBorder(drawText.bind(_, _, false, bitmap, useTiles));
+		drawText(0, 0, true, bitmap, useTiles);
+		
 		if (!useTiles)
 		{
 			bitmap.unlock();
@@ -1302,6 +1201,63 @@ class FlxBitmapText extends FlxSprite
 
 		if (pendingPixelsChange)
 			throw "pendingPixelsChange was changed to true while processing changed pixels";
+	}
+	
+	function forEachBorder(func:(xOffset:Int, yOffset:Int) -> Void)
+	{
+		switch (borderStyle)
+		{
+			case SHADOW:
+				final iterations = borderQuality < 1 ? 1 : Std.int(Math.abs(borderSize) * borderQuality);
+				final delta = borderSize / iterations; 
+				var i = iterations + 1;
+				while (i-- > 1)
+				{
+					func(Std.int(delta * i), Std.int(delta * i));
+				}
+				
+			case SHADOW_XY(shadowX, shadowY):
+				// Size is max of both, so (4, 4) has 4 iterations, just like SHADOW
+				final size = Math.max(shadowX, shadowY);
+				final iterations = borderQuality < 1 ? 1 : Std.int(size * borderQuality); 
+				var i = iterations + 1;
+				while (i-- > 1)
+				{
+					func(Std.int(shadowX / iterations * i), Std.int(shadowY / iterations * i));
+				}
+				
+			case OUTLINE:
+				// Render an outline around the text (8 draws)
+				var iterations:Int = Std.int(borderSize * borderQuality);
+				iterations = (iterations <= 0) ? 1 : iterations;
+				final delta = Std.int(borderSize / iterations);
+				for (iter in 0...iterations)
+				{
+					final i = delta * (iter + 1);
+					func(-i, -i); // upper-left
+					func(0, -i); // upper-middle
+					func(i, -i); // upper-right
+					func(-i, 0); // middle-left
+					func(i, 0); // middle-right
+					func(-i, i); // lower-left
+					func(0, i); // lower-middle
+					func(i, i); // lower-right
+				}
+			case OUTLINE_FAST:
+				// Render an outline around the text in each corner (4 draws)
+				var iterations:Int = Std.int(borderSize * borderQuality);
+				iterations = (iterations <= 0) ? 1 : iterations;
+				final delta = Std.int(borderSize / iterations);
+				for (iter in 0...iterations)
+				{
+					final i = delta * (iter + 1);
+					func(-i, -i); // upper-left
+					func(i, -i); // upper-right
+					func(-i, i); // lower-left
+					func(i, i); // lower-right
+				}
+			case NONE:
+		}
 	}
 
 	function drawText(posX:Int, posY:Int, isFront:Bool = true, ?bitmap:BitmapData, useTiles:Bool = false):Void
@@ -1355,25 +1311,23 @@ class FlxBitmapText extends FlxSprite
 		if (!FlxG.renderTile)
 			return;
 
-		final data = isFront ? textDrawData : borderDrawData;
-
+		final data:CharList = isFront ? textDrawData : borderDrawData;
 		final rect = FlxRect.get();
 
-		final textLen:Int = textData.length;
-		for (i in 0...textLen)
+		textData.forEach(function(charCode:Int, charX:Float, charY:Float)
 		{
-			final textPos = i;
-			final item = textData.get(textPos);
+			final charFrame = font.getCharFrame(charCode);
 			
 			if (clipRect != null)
 			{
-				rect.copyFrom(clipRect).offset(-item.x - posX, -item.y - posY);
-				if (font.getCharFrame(item.charCode).clipTo(rect).type == FlxFrameType.EMPTY)
-					continue;
+				rect.copyFrom(clipRect);
+				rect.offset(-charX - posX, -charY - posY);
+				if (!charFrame.overlaps(rect))
+					return;
 			}
 			
-			data.push(item.charCodeRaw, item.x + posX, item.y + posY);
-		}
+			data.push(charCode, charX + posX, charY + posY);
+		});
 
 		rect.put();
 	}
@@ -1688,17 +1642,52 @@ enum WordSplitConditions
 	WIDTH(minPixels:Int);
 }
 
-@:noCompletion
-private typedef TileDrawItemRaw = { final charCodeRaw:Float; final x:Float; final y:Float; };
-@:forward
-/**
- * Internal type used for batch rendering characters, used by FlxBuffer
- * **Warning:** all methods must be inlined 
- */
-abstract TileDrawItem(TileDrawItemRaw) from TileDrawItemRaw
+@:forward(length)
+abstract CharList(Array<Float>) from Array<Float>
 {
-	public var charCode(get, never):Int;
-	inline function get_charCode() return Std.int(this.charCodeRaw);
+	public inline function new()
+	{
+		this = [];
+	}
+	
+	// TODO: deprecate
+	overload public inline extern function push(item:Float)
+	{
+		this.push(item);
+	}
+	
+	overload public inline extern function push(charCode:Int, x:Float, y:Float)
+	{
+		this.push(charCode);
+		this.push(x);
+		this.push(y);
+	}
+	
+	public function forEach(func:(charCode:Int, x:Float, y:Float) -> Void)
+	{
+		for (i in 0...Std.int(this.length / 3))
+		{
+			final pos = i * 3;
+			func(Std.int(this[pos]), this[pos + 1], this[pos + 2]);
+		}
+	}
+	
+	public inline function clear()
+	{
+		this.resize(0);
+	}
+	
+	@:arrayAccess // TODO: deprecate
+	public inline function get(index:Int):Float
+	{
+		return this[index];
+	}
+	
+	@:arrayAccess // TODO: deprecate
+	public inline function set(index:Int, value:Float):Float
+	{
+		return this[index] = value;
+	}
 }
 
 /*
