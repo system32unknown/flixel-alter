@@ -279,6 +279,15 @@ abstract FlxColor(Int) from Int from UInt to Int to UInt
 	}
 
 	/**
+	 * Divide the RGB channels of two FlxColors
+	 */
+	@:op(A / B)
+	public static inline function divide(lhs:FlxColor, rhs:FlxColor):FlxColor
+	{
+		return FlxColor.fromRGBFloat(lhs.redFloat / rhs.redFloat, lhs.greenFloat / rhs.greenFloat, lhs.blueFloat / rhs.blueFloat);
+	}
+
+	/**
 	 * Multiply the RGB channels of two FlxColors
 	 */
 	@:op(A * B)
