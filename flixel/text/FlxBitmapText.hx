@@ -83,6 +83,13 @@ class FlxBitmapText extends FlxSprite
 	 * Default value if true.
 	 */
 	public var autoSize(default, set):Bool = true;
+	
+	/**
+	 * Whether to autmatically adjust the `width`, `height`, `offset` and
+	 * `origin` whenever the size of the text is changed.
+	 * @since 6.1.0
+	 */
+	public var autoBounds(default, set):Bool = true;
 
 	/**
 	 * Number of pixels between text and text field border
@@ -1174,11 +1181,8 @@ class FlxBitmapText extends FlxSprite
 				borderDrawData.clear();
 			}
 
-			// use local var to avoid get_width and recursion
-			final newWidth = width = Math.abs(scale.x) * frameWidth;
-			final newHeight = height = Math.abs(scale.y) * frameHeight;
-			offset.set(-0.5 * (newWidth - frameWidth), -0.5 * (newHeight - frameHeight));
-			centerOrigin();
+			if (autoBounds)
+				autoAdjustBounds();
 		}
 
 		if (!useTiles)
@@ -1436,6 +1440,14 @@ class FlxBitmapText extends FlxSprite
 			pendingTextChange = true;
 
 		return autoSize = value;
+	}
+	
+	function set_autoBounds(value:Bool):Bool
+	{
+		if (autoBounds != value)
+			pendingTextChange = true;
+		
+		return this.autoBounds = value;
 	}
 
 	function set_padding(value:Int):Int
