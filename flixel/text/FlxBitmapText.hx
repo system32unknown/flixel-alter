@@ -1264,6 +1264,15 @@ class FlxBitmapText extends FlxSprite
 		}
 	}
 
+	function autoAdjustBounds()
+	{
+		// use local var to avoid get_width and recursion
+		final newWidth = width = Math.abs(scale.x) * frameWidth;
+		final newHeight = height = Math.abs(scale.y) * frameHeight;
+		offset.set(-0.5 * (newWidth - frameWidth), -0.5 * (newHeight - frameHeight));
+		centerOrigin();
+	}
+
 	function drawText(posX:Int, posY:Int, isFront:Bool = true, ?bitmap:BitmapData, useTiles:Bool = false):Void
 	{
 		if (FlxG.renderBlit)
