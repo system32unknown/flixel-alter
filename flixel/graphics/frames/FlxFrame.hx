@@ -600,51 +600,7 @@ class FlxFrame implements IFlxDestroyable
 		rect.y -= frame.y - offset.y;
 		return result;
 	}
-	
-	/**
-	 * Whether there is any overlap between this frame and the given rect. If clipping this frame to
-	 * the given rect would result in an empty frame, the result is `false`
-	 */
-	public function overlaps(rect:FlxRect)
-	{
-		rect.x += frame.x - offset.x;
-		rect.y += frame.y - offset.y;
-		final result = rect.overlaps(frame);
-		rect.x -= frame.x - offset.x;
-		rect.y -= frame.y - offset.y;
-		return result;
-	}
-	
-	/**
-	 * Whether this frame fully contains the given rect. If clipping this frame to
-	 * the given rect would result in a smaller frame, the result is `false`
-	 * @since 6.1.0
-	 */
-	public function contains(rect:FlxRect)
-	{
-		rect.x += frame.x - offset.x;
-		rect.y += frame.y - offset.y;
-		final result = frame.contains(rect);
-		rect.x -= frame.x - offset.x;
-		rect.y -= frame.y - offset.y;
-		return result;
-	}
-	
-	/**
-	 * Whether this frame is fully contained by the given rect. If clipping this frame to
-	 * the given rect would result in a smaller frame, the result is `false`
-	 * @since 6.1.0
-	 */
-	public function isContained(rect:FlxRect)
-	{
-		rect.x += frame.x - offset.x;
-		rect.y += frame.y - offset.y;
-		final result = rect.contains(frame);
-		rect.x -= frame.x - offset.x;
-		rect.y -= frame.y - offset.y;
-		return result;
-	}
-	
+
 	/**
 	 * Clips this frame to the desired rect
 	 *
