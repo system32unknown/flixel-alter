@@ -101,10 +101,9 @@ class FlxColorTransformUtil
 		transform.greenMultiplier = green;
 		transform.blueMultiplier = blue;
 		transform.alphaMultiplier = alpha;
-
+		
 		return transform;
 	}
-
 	/**
 	 * Quick way to set all of a transform's multipliers with a single color
 	 * 
@@ -121,7 +120,6 @@ class FlxColorTransformUtil
 		
 		return transform;
 	}
-
 	/**
 	 * Quick way to set all of a transform's offsets
 	 * 
@@ -136,10 +134,21 @@ class FlxColorTransformUtil
 		transform.greenOffset = green;
 		transform.blueOffset = blue;
 		transform.alphaOffset = alpha;
-
+		
 		return transform;
 	}
-
+	
+	/**
+	 * Quick way to set all of a transform's offsets with a single color
+	 * 
+	 * @param   color   A `FlxColor` whos `red`, `green`, `blue` and
+	 *                  `alpha` values determine the offsets of this transform
+	 * @since 6.1.0
+	 */
+	overload public static inline extern function setOffsets(transform:ColorTransform, color:FlxColor):ColorTransform
+	{
+		return setOffsets(transform, color.red, color.green, color.blue, color.alpha);
+	}
 	/**
 	 * Returns whether red, green, or blue multipliers are set to anything other than 1.
 	 */
