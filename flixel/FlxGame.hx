@@ -237,8 +237,8 @@ class FlxGame extends Sprite
 	 *
 	 * @see [scale modes](https://api.haxeflixel.com/flixel/system/scaleModes/index.html)
 	 */
-	public function new(gameWidth = 0, gameHeight = 0, ?initialState:NextState, updateFramerate = 60, drawFramerate = 60, skipSplash = false,
-			startFullscreen = false)
+	public function new(?initialState:NextState, ?gameWidth:Int = 0, ?gameHeight:Int = 0, ?framerate:Int = 60, ?skipSplash:Bool = false,
+			?startFullscreen:Bool = false)
 	{
 		super();
 
@@ -257,8 +257,7 @@ class FlxGame extends Sprite
 		// Basic display and update setup stuff
 		FlxG.init(this, gameWidth, gameHeight);
 
-		FlxG.updateFramerate = updateFramerate;
-		FlxG.drawFramerate = drawFramerate;
+		FlxG.drawFramerate = FlxG.updateFramerate = framerate;
 		_accumulator = _stepMS;
 		_skipSplash = skipSplash;
 
@@ -594,8 +593,8 @@ class FlxGame extends Sprite
 
 		FlxG.signals.postStateSwitch.dispatch();
 	}
-	
-	function gameStart()
+
+	function gameStart():Void
 	{
 		FlxG.signals.postGameStart.dispatch();
 		_gameJustStarted = false;
