@@ -1,6 +1,5 @@
 package flixel;
 
-import openfl.display.Graphics;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -13,6 +12,7 @@ import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDirectionFlags;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxStringUtil;
+import openfl.display.Graphics;
 
 /**
  * At their core `FlxObjects` are just boxes with positions that can move and collide with other
@@ -46,6 +46,7 @@ import flixel.util.FlxStringUtil;
  * FlxG.overlap(playerGroup, medKitGroup
  *     function onOverlap(player, medKit)
  *     {
+ *         player.heal(100);
  *         medKit.kill();
  *     }
  * );
@@ -664,6 +665,16 @@ class FlxObject extends FlxBasic
 	 */
 	public var maxAngular:Float = 10000;
 
+	#if FLX_HEALTH
+	/**
+	 * Handy for storing health percentage or armor points or whatever.
+	 */
+	#if FLX_HEALTH_NOT_DEFINED
+	@:deprecated("object.health is deprecated, add <haxedef name=\"FLX_HEALTH\"/> in your project.xml to continue using it")
+	#end
+	public var health:Float = 1;
+	#end
+
 	/**
 	 * Bit field of flags (use with UP, DOWN, LEFT, RIGHT, etc) indicating surface contacts. Use bitwise operators to check the values
 	 * stored here, or use isTouching(), justTouched(), etc. You can even use them broadly as boolean values if you're feeling saucy!
@@ -1146,7 +1157,24 @@ class FlxObject extends FlxBasic
 	/**
 	 * Centers this `FlxObject` in game space, either by the x axis, y axis, or both.
 	 *
-	 * @param   axes   On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both.
+	 * @param   Damage   How much health to take away (use a negative number to give a health bonus).
+	 */
+	
+	#if FLX_HEALTH_NOT_DEFINED
+	@:deprecated("object.hurt is deprecated, add <haxedef name=\"FLX_HEALTH\"/> in your project.xml to continue using it")
+	#end
+	public function hurt(damage:Float):Void
+	{
+		health = health - damage;
+		if (health <= 0)
+			kill();
+	}
+	#end
+
+	/**
+	 * Centers this `FlxObject` on the screen, either by the x axis, y axis, or both.
+	 *
+	 * @param   axes   On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both. 
 	 * @return  This FlxObject for chaining
 	 * @since 5.9.0
 	 */

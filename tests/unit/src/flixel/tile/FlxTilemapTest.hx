@@ -664,6 +664,7 @@ class FlxTilemapTest extends FlxTest
 	}
 	
 	@Test
+	@:haxe.warning("-WDeprecated")
 	function testNegativeIndex()
 	{
 		final mapData = [
