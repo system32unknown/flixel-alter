@@ -1154,6 +1154,7 @@ class FlxObject extends FlxBasic
 		return touching.hasAny(direction) && !wasTouching.hasAny(direction);
 	}
 
+	#if FLX_HEALTH
 	/**
 	 * Centers this `FlxObject` in game space, either by the x axis, y axis, or both.
 	 *
