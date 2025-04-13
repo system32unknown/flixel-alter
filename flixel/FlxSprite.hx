@@ -261,7 +261,7 @@ class FlxSprite extends FlxObject
 	 * `0xAARRGGBB` colors, but the alpha value will simply be ignored. To change the opacity use `alpha`.
 	 * @see https://snippets.haxeflixel.com/sprites/color/
 	 */
-	public var color(default, set):FlxColor = 0xffffff;
+	public var color(default, set):FlxColor = FlxColor.WHITE;
 
 	public var colorTransform(default, null):ColorTransform;
 
@@ -1056,13 +1056,13 @@ class FlxSprite extends FlxObject
 	public function setColorTransform(redMultiplier = 1.0, greenMultiplier = 1.0, blueMultiplier = 1.0, alphaMultiplier = 1.0,
 			redOffset = 0.0, greenOffset = 0.0, blueOffset = 0.0, alphaOffset = 0.0):Void
 	{
-		color = FlxColor.fromRGBFloat(redMultiplier, greenMultiplier, blueMultiplier).to24Bit();
-		alpha = alphaMultiplier;
+		@:bypassAccessor color = FlxColor.fromRGBFloat(redMultiplier, greenMultiplier, blueMultiplier, 0);
+		@:bypassAccessor alpha = alphaMultiplier;
 
 		colorTransform.setMultipliers(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
 		colorTransform.setOffsets(redOffset, greenOffset, blueOffset, alphaOffset);
 
-		useColorTransform = alpha != 1 || color != 0xffffff || colorTransform.hasRGBOffsets();
+		useColorTransform = alpha != 1 || color != 0xffffff || colorTransform.hasRGBAOffsets();
 		dirty = true;
 	}
 	
@@ -1071,12 +1071,13 @@ class FlxSprite extends FlxObject
 		if (colorTransform == null)
 			return;
 
-		useColorTransform = alpha != 1 || color != 0xffffff;
+		useColorTransform = alpha != 1 || color.rgb != 0xffffff;
 		if (useColorTransform)
 			colorTransform.setMultipliers(color.redFloat, color.greenFloat, color.blueFloat, alpha);
 		else
 			colorTransform.setMultipliers(1, 1, 1, 1);
 
+		useColorTransform = useColorTransform || colorTransform.hasRGBAOffsets();
 		dirty = true;
 	}
 
@@ -1249,8 +1250,8 @@ class FlxSprite extends FlxObject
 			return framePixels;
 		}
 
-		var doFlipX:Bool = checkFlipX();
-		var doFlipY:Bool = checkFlipY();
+		final doFlipX = checkFlipX();
+		final doFlipY = checkFlipY();
 
 		if (!doFlipX && !doFlipY && _frame.type == FlxFrameType.REGULAR)
 		{
@@ -1261,10 +1262,8 @@ class FlxSprite extends FlxObject
 			framePixels = _frame.paintRotatedAndFlipped(framePixels, _flashPointZero, FlxFrameAngle.ANGLE_0, doFlipX, doFlipY, false, true);
 		}
 
-		if (useColorTransform)
-		{
+		if (FlxG.renderBlit && useColorTransform)
 			framePixels.colorTransform(_flashRect, colorTransform);
-		}
 
 		if (FlxG.renderTile && useFramePixels)
 		{
@@ -1537,11 +1536,12 @@ class FlxSprite extends FlxObject
 	@:noCompletion
 	function set_alpha(Alpha:Float):Float
 	{
+		Alpha = FlxMath.bound(Alpha, 0, 1);
 		if (alpha == Alpha)
 		{
 			return Alpha;
 		}
-		alpha = FlxMath.bound(Alpha, 0, 1);
+		alpha = Alpha;
 		updateColorTransform();
 		return alpha;
 	}
