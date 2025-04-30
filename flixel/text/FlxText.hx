@@ -663,13 +663,15 @@ class FlxText extends FlxSprite
 		updateDefaultFormat();
 		return LetterSpacing;
 	}
-	
-	override function setColorTransform(redMultiplier = 1.0, greenMultiplier = 1.0, blueMultiplier = 1.0, alphaMultiplier = 1.0, redOffset = 0.0, greenOffset = 0.0, blueOffset = 0.0, alphaOffset = 0.0)
+
+	override function setColorTransform(redMultiplier = 1.0, greenMultiplier = 1.0, blueMultiplier = 1.0, alphaMultiplier = 1.0, redOffset = 0.0,
+			greenOffset = 0.0, blueOffset = 0.0, alphaOffset = 0.0)
 	{
 		super.setColorTransform(1, 1, 1, 1, redOffset, greenOffset, blueOffset, alphaOffset);
 		_defaultFormat.color = FlxColor.fromRGBFloat(redMultiplier, greenMultiplier, blueMultiplier, 0);
 		updateDefaultFormat();
 	}
+	
 	override function set_color(value:FlxColor):Int
 	{
 		if (_defaultFormat.color == value.rgb)
