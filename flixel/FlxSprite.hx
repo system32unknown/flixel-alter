@@ -1244,24 +1244,6 @@ class FlxSprite extends FlxObject
 	{
 		return alpha != 1 || color.rgb != 0xffffff || colorTransform.hasRGBAOffsets();
 	}
-	
-	/**
-	 * Whether this sprite has a color transform, menaing any of the following: less than full
-	 * `alpha`, a `color` tint, or a `colorTransform` whos values are not the default.
-	 */
-	@:haxe.warning("-WDeprecated")
-	public function hasColorTransform()
-	{
-		return useColorTransform || hasColorTransformRaw();
-	}
-	
-	/**
-	 * Helper for the non-deprecated component of `hasColorTransform`
-	 */
-	function hasColorTransformRaw()
-	{
-		return alpha != 1 || color.rgb != 0xffffff || colorTransform.hasRGBAOffsets();
-	}
 
 	/**
 	 * Checks to see if a point in 2D world space overlaps this `FlxSprite` object's
