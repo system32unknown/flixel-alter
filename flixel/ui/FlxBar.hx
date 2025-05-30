@@ -58,7 +58,7 @@ class FlxBar extends FlxSprite
 	 * The current value - must always be between min and max
 	 */
 	@:isVar
-	public var value(get, set):Float;
+	public var value(default, set):Float;
 
 	/**
 	 * The minimum value the bar can be (can never be >= max)
@@ -965,18 +965,6 @@ class FlxBar extends FlxSprite
 
 		updateBar();
 		return newValue;
-	}
-
-	function get_value():Float
-	{
-		#if neko
-		if (value == null)
-		{
-			value = min;
-		}
-		#end
-
-		return value;
 	}
 
 	function set_numDivisions(newValue:Int):Int
