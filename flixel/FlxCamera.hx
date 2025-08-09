@@ -1706,7 +1706,7 @@ class FlxCamera extends FlxBasic
 		}
 		else
 		{
-			if (FxAlpha == 0)
+			if (FxAlpha == 0 && (!filtersEnabled || filters == null || filters.length == 0))
 				return;
 
 			var targetGraphics:Graphics = (graphics == null) ? canvas.graphics : graphics;
