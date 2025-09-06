@@ -1,6 +1,7 @@
 package flixel;
 
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
+import flixel.util.FlxColor;
 
 /**
  * A very basic rendering component which uses `drawTriangles()`.
@@ -30,7 +31,10 @@ class FlxStrip extends FlxSprite
 	 */
 	public var uvtData:DrawData<Float> = new DrawData<Float>();
 
-	public var colors:DrawData<Int> = new DrawData<Int>();
+	/**
+	 * A `Vector` of colors for vertices. Works similar to `color`. Isn't supported on `FlxG.renderBlit`.
+	 */
+	public var colors:DrawData<FlxColor> = new DrawData<FlxColor>();
 
 	public var repeat:Bool = false;
 
@@ -57,11 +61,7 @@ class FlxStrip extends FlxSprite
 				continue;
 
 			getScreenPosition(_point, camera).subtractPoint(offset);
-			#if !flash
 			camera.drawTriangles(graphic, vertices, indices, uvtData, colors, _point, blend, repeat, antialiasing, colorTransform, shader);
-			#else
-			camera.drawTriangles(graphic, vertices, indices, uvtData, colors, _point, blend, repeat, antialiasing);
-			#end
 		}
 	}
 }
