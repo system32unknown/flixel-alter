@@ -843,29 +843,14 @@ abstract FlxUVRect(FlxRect) from FlxRect to flixel.util.FlxPool.IFlxPooled
 	inline function set_left(value):Float { return this.x = value; }
 	
 	/** Top */
-	public var top(get, set):Float;
-	
-	inline function get_top():Float
-	{
-		return this.y;
-	}
-	
-	inline function set_top(value):Float
-	{
-		return this.y = value;
-	}
+	public var right(get, set):Float;
+	inline function get_right():Float { return this.width; }
+	inline function set_right(value):Float { return this.width = value; }
 	
 	/** Right */
-	public var right(get, set):Float;
-	inline function get_right():Float
-	{
-		return this.width;
-	}
-	
-	inline function set_right(value):Float
-	{
-		return this.width = value;
-	}
+	public var top(get, set):Float;
+	inline function get_top():Float { return this.y; }
+	inline function set_top(value):Float { return this.y = value; }
 	
 	/** Bottom */
 	public var bottom(get, set):Float;
@@ -885,6 +870,16 @@ abstract FlxUVRect(FlxRect) from FlxRect to flixel.util.FlxPool.IFlxPooled
 	public inline function copyFrom(uv:FlxUVRect)
 	{
 		set(uv.left, uv.top, uv.right, uv.bottom);
+	}
+	
+	public inline function toString()
+	{
+		return return FlxStringUtil.getDebugString([
+			LabelValuePair.weak("l", left),
+			LabelValuePair.weak("t", top),
+			LabelValuePair.weak("r", right),
+			LabelValuePair.weak("b", bottom)
+		]);
 	}
 	
 	public static function get(l = 0.0, t = 0.0, r = 0.0, b = 0.0)
