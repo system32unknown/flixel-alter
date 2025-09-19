@@ -770,6 +770,8 @@ class FlxCamera extends FlxBasic
 	@:allow(flixel.system.frontEnds.CameraFrontEnd)
 	function render():Void
 	{
+		flashSprite.filters = filtersEnabled ? filters : null;
+		
 		var currItem:FlxDrawBaseItem<Dynamic> = _headOfDrawStack;
 		while (currItem != null)
 		{
@@ -858,17 +860,20 @@ class FlxCamera extends FlxBasic
 			?position:FlxPoint, ?blend:BlendMode, repeat:Bool = false, smoothing:Bool = false, ?transform:ColorTransform, ?shader:FlxShader):Void
 	{
 		final cameraBounds = _bounds.set(viewMarginLeft, viewMarginTop, viewWidth, viewHeight);
-
+		
 		if (FlxG.renderBlit)
 		{
 			if (position == null)
 				position = renderPoint.set();
 
-			drawVertices.length = 0;
-			final verticesLength = Std.int(vertices.length / 2) * 2;
-			final bounds = renderRect.set();
-			var i = 0;
-			
+			var verticesLength:Int = vertices.length;
+			var currentVertexPosition:Int = 0;
+
+			var tempX:Float, tempY:Float;
+			var i:Int = 0;
+			var bounds = renderRect.set();
+			drawVertices.splice(0, drawVertices.length);
+
 			while (i < verticesLength)
 			{
 				final tempX = position.x + vertices[i];
@@ -887,7 +892,11 @@ class FlxCamera extends FlxBasic
 
 			position.putWeak();
 
-			if (bounds.overlaps(cameraBounds) && Std.int(indices.length / 3) != 0)
+			if (!cameraBounds.overlaps(bounds))
+			{
+				drawVertices.splice(drawVertices.length - verticesLength, verticesLength);
+			}
+			else
 			{
 				trianglesSprite.graphics.clear();
 				trianglesSprite.graphics.beginBitmapFill(graphic.bitmap, null, repeat, smoothing);
@@ -920,12 +929,17 @@ class FlxCamera extends FlxBasic
 		}
 		else
 		{
-			final isColored = (transform != null #if !html5 && transform.hasRGBMultipliers() #end)
-				|| (colors != null && colors.length != 0);
-			final hasColorOffsets = (transform != null && transform.hasRGBAOffsets());
-			
-			final drawItem = startTrianglesBatch(graphic, smoothing, isColored, blend, hasColorOffsets, shader);
+			var isColored:Bool = (colors != null && colors.length != 0);
+
+			#if !flash
+			var hasColorOffsets:Bool = (transform != null && transform.hasRGBAOffsets());
+			isColored = isColored || (transform != null && transform.hasRGBMultipliers());
+			var drawItem:FlxDrawTrianglesItem = startTrianglesBatch(graphic, smoothing, isColored, blend, hasColorOffsets, shader);
 			drawItem.addTriangles(vertices, indices, uvtData, colors, position, cameraBounds, transform);
+			#else
+			var drawItem:FlxDrawTrianglesItem = startTrianglesBatch(graphic, smoothing, isColored, blend);
+			drawItem.addTriangles(vertices, indices, uvtData, colors, position, cameraBounds);
+			#end
 		}
 	}
 
@@ -1115,7 +1129,7 @@ class FlxCamera extends FlxBasic
 			_helperPoint = null;
 		}
 
-		_bounds = null;
+		_bounds = FlxDestroyUtil.put(_bounds);
 		scroll = FlxDestroyUtil.put(scroll);
 		targetOffset = FlxDestroyUtil.put(targetOffset);
 		deadzone = FlxDestroyUtil.put(deadzone);
@@ -1147,8 +1161,6 @@ class FlxCamera extends FlxBasic
 		updateScroll();
 		updateFlash(elapsed);
 		updateFade(elapsed);
-
-		flashSprite.filters = filtersEnabled ? filters : null;
 
 		updateFlashSpritePosition();
 		updateShake(elapsed);
