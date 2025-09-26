@@ -26,6 +26,10 @@ class FlxDrawBaseItem<T>
 	public var hasColorOffsets:Bool = false;
 	public var blend:BlendMode;
 
+	@:noCompletion
+	@:deprecated("blending is deprecated, remove all references to it")
+	public var blending:Int = 0;
+
 	public var type:FlxDrawItemType;
 
 	public var numVertices(get, never):Int;
