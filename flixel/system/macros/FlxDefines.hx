@@ -344,4 +344,3 @@ class FlxDefines
 		Context.fatalError(message, pos);
 	}
 }
-}}
