@@ -1,4 +1,4 @@
-### 6.1.1 (TBD)
+### 6.1.1 (Oct 7, 2025)
 
 #### Changes and improvements:
 - `FlxSignal`: Remove antiquated Hashlink workaround ([#3458](https://github.com/HaxeFlixel/flixel/pull/3458))
@@ -13,7 +13,6 @@
 - `FlxFrame`: Update `uv` in `clip` method ([#3476](https://github.com/HaxeFlixel/flixel/pull/3476))
 - `FlxSignal`: Allow `destroy` during `dispatch` ([#3436](https://github.com/HaxeFlixel/flixel/pull/3436))
 - `FlxG.gamepads`: Extend PS4 mapping to work with PS5 ([#3380](https://github.com/HaxeFlixel/flixel/pull/3380))
-- `FlxG.overlap`: Improve overlap detection across both axes ([#3418](https://github.com/HaxeFlixel/flixel/pull/3418))
 
 #### Bugfixes:
 - `FlxCamera`: Honor `filter` changes when `active = false` ([#3481](https://github.com/HaxeFlixel/flixel/pull/3481))
@@ -21,6 +20,7 @@
 - `FlxCamera`: Fix `FlxStrip` disapearing on zoomed out cameras ([#3484](https://github.com/HaxeFlixel/flixel/pull/3484))
 - `FlxFrame`: Fix rotated frames not rendering on Hashlink ([#3454](https://github.com/HaxeFlixel/flixel/pull/3454))
 - `FlxSound`: Prevent paused sounds resuming on focus ([#3316](https://github.com/HaxeFlixel/flixel/pull/3316))
+- `FlxTilemap`: Fix debug draw when zoomed ([#3504](https://github.com/HaxeFlixel/flixel/pull/3504))
 
 ## 6.1.0 (Apr 28, 2025)
 
