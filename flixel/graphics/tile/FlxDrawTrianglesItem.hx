@@ -20,6 +20,7 @@ typedef DrawData<T> = openfl.Vector<T>;
 class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 {
 	static inline final INDICES_PER_QUAD = 6;
+<<<<<<< HEAD
 	static final point = FlxPoint.get();
 	static final rect = FlxRect.get();
 	static final bounds = FlxRect.get();
@@ -41,16 +42,43 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 	public var indicesPosition(get, never):Int;
 	@:deprecated("colorsPosition is deprecated")
 	public var colorsPosition(get, never):Int;
+=======
+	static var point:FlxPoint = FlxPoint.get();
+	static var rect:FlxRect = FlxRect.get();
+
+	public var shader:FlxShader;
+	var alphas:Array<Float>;
+	var colorMultipliers:Array<Float>;
+	var colorOffsets:Array<Float>;
+
+	public var vertices:DrawData<Float> = new DrawData<Float>();
+	public var indices:DrawData<Int> = new DrawData<Int>();
+	public var uvtData:DrawData<Float> = new DrawData<Float>();
+	@:deprecated("colors is deprecated, use colorMultipliers and colorOffsets")
+	public var colors:DrawData<Int> = new DrawData<Int>();
+
+	public var verticesPosition:Int = 0;
+	public var indicesPosition:Int = 0;
+	@:deprecated("colorsPosition is deprecated")
+	public var colorsPosition:Int = 0;
+
+	var bounds:FlxRect = FlxRect.get();
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 
 	public function new()
 	{
 		super();
 		type = FlxDrawItemType.TRIANGLES;
+<<<<<<< HEAD
+=======
+		alphas = [];
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 	}
 
 	#if !flash
 	override public function render(camera:FlxCamera):Void
 	{
+<<<<<<< HEAD
 		if (numTriangles == 0)
 			return;
 
@@ -59,6 +87,13 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 			throw 'Attempted to render an invalid FlxDrawItem, did you destroy a cached sprite?';
 		
 		final shader = shader != null ? shader : graphics.shader;
+=======
+		if (numTriangles <= 0)
+			return;
+
+		#if !flash
+		var shader = shader != null ? shader : graphics.shader;
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 		shader.bitmap.input = graphics.bitmap;
 		shader.bitmap.filter = (camera.antialiasing || antialiasing) ? LINEAR : NEAREST;
 		shader.bitmap.wrap = REPEAT; // in order to prevent breaking tiling behaviour in classes that use drawTriangles
@@ -110,10 +145,21 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 		vertices.length = 0;
 		indices.length = 0;
 		uvtData.length = 0;
+<<<<<<< HEAD
 		colors.length = 0;
 		alphas.resize(0);
 		colorMultipliers.resize(0);
 		colorOffsets.resize(0);
+=======
+
+		verticesPosition = 0;
+		indicesPosition = 0;
+		alphas.splice(0, alphas.length);
+		if (colorMultipliers != null)
+			colorMultipliers.splice(0, colorMultipliers.length);
+		if (colorOffsets != null)
+			colorOffsets.splice(0, colorOffsets.length);
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 	}
 
 	@:haxe.warning("-WDeprecated")
@@ -123,13 +169,21 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 		vertices = null;
 		indices = null;
 		uvtData = null;
+<<<<<<< HEAD
 		colors = null;
+=======
+		bounds = null;
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 		alphas = null;
 		colorMultipliers = null;
 		colorOffsets = null;
 	}
 
+<<<<<<< HEAD
 	public function addTriangles(vertices:DrawData<Float>, indices:DrawData<Int>, uvtData:DrawData<Float>, ?colors:DrawData<FlxColor>, ?position:FlxPoint,
+=======
+	public function addTriangles(vertices:DrawData<Float>, indices:DrawData<Int>, uvtData:DrawData<Float>, ?colors:DrawData<Int>, ?position:FlxPoint,
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 			?cameraBounds:FlxRect, ?transform:ColorTransform):Void
 	{
 		if (position == null)
@@ -138,6 +192,7 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 		if (cameraBounds == null)
 			cameraBounds = rect.set(0, 0, FlxG.width, FlxG.height);
 
+<<<<<<< HEAD
 		// reset bounds outside camera view
 		bounds.set(Math.NaN, Math.NaN, Math.NaN, Math.NaN);
 		
@@ -145,6 +200,19 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 		final verticesLength = Std.int(vertices.length / 2) * 2;
 		var i = 0;
 		
+=======
+		var verticesLength:Int = vertices.length;
+		var prevVerticesLength:Int = this.vertices.length;
+		var numberOfVertices:Int = Std.int(verticesLength / 2);
+		var prevIndicesLength:Int = this.indices.length;
+		var prevUVTDataLength:Int = this.uvtData.length;
+		var prevNumberOfVertices:Int = this.numVertices;
+
+		var tempX:Float, tempY:Float;
+		var i:Int = 0;
+		var currentVertexPosition:Int = prevVerticesLength;
+
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 		while (i < verticesLength)
 		{
 			final tempX = position.x + vertices[i];
@@ -161,6 +229,7 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 			i += 2;
 		}
 
+<<<<<<< HEAD
 		position.putWeak();
 		
 		if (!bounds.overlaps(cameraBounds))
@@ -238,6 +307,80 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 				colorOffsets.push(alphaOffset);
 			}
 		}
+=======
+		var indicesLength:Int = indices.length;
+		if (!cameraBounds.overlaps(bounds))
+		{
+			this.vertices.splice(this.vertices.length - verticesLength, verticesLength);
+		}
+		else
+		{
+			var uvtDataLength:Int = uvtData.length;
+			for (i in 0...uvtDataLength)
+			{
+				this.uvtData[prevUVTDataLength + i] = uvtData[i];
+			}
+
+			for (i in 0...indicesLength)
+			{
+				this.indices[prevIndicesLength + i] = indices[i] + prevNumberOfVertices;
+			}
+			
+			final alphaMultiplier = transform != null ? transform.alphaMultiplier : 1.0;
+			for (_ in 0...indicesLength)
+				alphas.push(alphaMultiplier);
+			
+			if (colored || hasColorOffsets)
+			{
+				if (colorMultipliers == null)
+					colorMultipliers = [];
+				
+				if (colorOffsets == null)
+					colorOffsets = [];
+				
+				for (_ in 0...indicesLength)
+				{
+					if (transform != null)
+					{
+						colorMultipliers.push(transform.redMultiplier);
+						colorMultipliers.push(transform.greenMultiplier);
+						colorMultipliers.push(transform.blueMultiplier);
+						
+						colorOffsets.push(transform.redOffset);
+						colorOffsets.push(transform.greenOffset);
+						colorOffsets.push(transform.blueOffset);
+						colorOffsets.push(transform.alphaOffset);
+					}
+					else
+					{
+						colorMultipliers.push(1);
+						colorMultipliers.push(1);
+						colorMultipliers.push(1);
+						
+						colorOffsets.push(0);
+						colorOffsets.push(0);
+						colorOffsets.push(0);
+						colorOffsets.push(0);
+					}
+					
+					colorMultipliers.push(1);
+				}
+			}
+			
+			verticesPosition += verticesLength;
+			indicesPosition += indicesLength;
+		}
+
+		position.putWeak();
+		cameraBounds.putWeak();
+	}
+
+	inline function setParameterValue(parameter:ShaderParameter<Bool>, value:Bool):Void
+	{
+		if (parameter.value == null)
+			parameter.value = [];
+		parameter.value[0] = value;
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 	}
 
 	public static inline function inflateBounds(bounds:FlxRect, x:Float, y:Float):FlxRect
@@ -265,6 +408,7 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 
 	override public function addQuad(frame:FlxFrame, matrix:FlxMatrix, ?transform:ColorTransform):Void
 	{
+<<<<<<< HEAD
 		final prevNumVertices = numVertices;
 		
 		inline function addVertex(x:Float, y:Float)
@@ -334,6 +478,78 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 				colorOffsets.push(blueOffset);
 				colorOffsets.push(alphaOffset);
 			}
+=======
+		final prevVerticesPos = verticesPosition;
+		final prevNumberOfVertices = numVertices;
+		
+		final w = frame.frame.width;
+		final h = frame.frame.height;
+		vertices[prevVerticesPos + 0] = matrix.transformX(0, 0); // left
+		vertices[prevVerticesPos + 1] = matrix.transformY(0, 0); // top
+		vertices[prevVerticesPos + 2] = matrix.transformX(w, 0); // right
+		vertices[prevVerticesPos + 3] = matrix.transformY(w, 0); // top
+		vertices[prevVerticesPos + 4] = matrix.transformX(0, h); // left
+		vertices[prevVerticesPos + 5] = matrix.transformY(0, h); // bottom
+		vertices[prevVerticesPos + 6] = matrix.transformX(w, h); // right
+		vertices[prevVerticesPos + 7] = matrix.transformY(w, h); // bottom
+		
+		uvtData[prevVerticesPos + 0] = frame.uv.left;
+		uvtData[prevVerticesPos + 1] = frame.uv.top;
+		uvtData[prevVerticesPos + 2] = frame.uv.right;
+		uvtData[prevVerticesPos + 3] = frame.uv.top;
+		uvtData[prevVerticesPos + 4] = frame.uv.left;
+		uvtData[prevVerticesPos + 5] = frame.uv.bottom;
+		uvtData[prevVerticesPos + 6] = frame.uv.right;
+		uvtData[prevVerticesPos + 7] = frame.uv.bottom;
+		
+		final prevIndicesPos = indicesPosition;
+		indices[prevIndicesPos + 0] = prevNumberOfVertices + 0; // TL
+		indices[prevIndicesPos + 1] = prevNumberOfVertices + 1; // TR
+		indices[prevIndicesPos + 2] = prevNumberOfVertices + 2; // BL
+		indices[prevIndicesPos + 3] = prevNumberOfVertices + 1; // TR
+		indices[prevIndicesPos + 4] = prevNumberOfVertices + 2; // BL
+		indices[prevIndicesPos + 5] = prevNumberOfVertices + 3; // BR
+
+		final alphaMultiplier = transform != null ? transform.alphaMultiplier : 1.0;
+		for (i in 0...INDICES_PER_QUAD)
+			alphas.push(alphaMultiplier);
+			
+		if (colored || hasColorOffsets)
+		{
+			if (colorMultipliers == null)
+				colorMultipliers = [];
+				
+			if (colorOffsets == null)
+				colorOffsets = [];
+				
+			for (i in 0...INDICES_PER_QUAD)
+			{
+				if (transform != null)
+				{
+					colorMultipliers.push(transform.redMultiplier);
+					colorMultipliers.push(transform.greenMultiplier);
+					colorMultipliers.push(transform.blueMultiplier);
+					
+					colorOffsets.push(transform.redOffset);
+					colorOffsets.push(transform.greenOffset);
+					colorOffsets.push(transform.blueOffset);
+					colorOffsets.push(transform.alphaOffset);
+				}
+				else
+				{
+					colorMultipliers.push(1);
+					colorMultipliers.push(1);
+					colorMultipliers.push(1);
+					
+					colorOffsets.push(0);
+					colorOffsets.push(0);
+					colorOffsets.push(0);
+					colorOffsets.push(0);
+				}
+				
+				colorMultipliers.push(1);
+			}
+>>>>>>> 78d4e25671a4774e80d0e2315c824a67e3509524
 		}
 	}
 
