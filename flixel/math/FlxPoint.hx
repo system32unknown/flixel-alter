@@ -308,7 +308,18 @@ import openfl.geom.Point;
 	{
 		this = FlxPoint.get(x, y);
 	}
-
+	
+	/**
+	 * Set the coordinates of this point object.
+	 *
+	 * @param   n  The X and Y coordinate of the point in space.
+	 */
+	public inline function setXY(n:Float):FlxPoint
+	{
+		return set(n, n);
+	}
+	
+	
 	/**
 	 * Set the coordinates of this point object.
 	 *
@@ -329,7 +340,27 @@ import openfl.geom.Point;
 	{
 		return this.set(x, y);
 	}
-
+	
+	/**
+	 * Sets the x coordinate of this point and zeroes the y coordinate.
+	 *
+	 * @param   x  The X-coordinate of the point in space.
+	 */
+	@:deprecated("set(n) with one arg, is deprecated, use the two-arged set(n, 0), instead") // 6.2.0
+	overload public inline extern function set(x:Float):FlxPoint
+	{
+		return set(x, 0);
+	}
+	
+	/**
+	 * Set the coordinates of this point to zero.
+	 */
+	// @:deprecated("set() with no args, is deprecated, use the two-arged set(0, 0), setXY(0) or zero(), instead")
+	overload public inline extern function set():FlxPoint
+	{
+		return set(0, 0);
+	}
+	
 	/**
 	 * Sets the x coordinate of this point and zeroes the y coordinate.
 	 *
@@ -1601,7 +1632,7 @@ class FlxBasePoint implements IFlxPooled
 	{
 		set(x, y);
 	}
-
+	
 	/**
 	 * Necessary for FlxCallbackPoint.
 	 */
@@ -1641,7 +1672,7 @@ class FlxBasePoint implements IFlxPooled
 	{
 		return set(0, 0);
 	}
-
+	
 	/**
 	 * Add this FlxBasePoint to the recycling pool.
 	 */
@@ -1741,14 +1772,9 @@ abstract FlxReadOnlyPoint(FlxPoint) from FlxPoint
 	inline function get_degrees():Float return this.degrees;
 
 	// hide underlying mutators
-	overload inline extern function set(x, y):FlxReadOnlyPoint
-		return this.set(x, y);
-		
-	overload inline extern function set(x):FlxReadOnlyPoint
-		return this.set(x);
-		
-	overload inline extern function set():FlxReadOnlyPoint
-		return this.set();
+	overload inline extern function set(x, y):FlxReadOnlyPoint return this.set(x, y);
+	overload inline extern function set(x):FlxReadOnlyPoint return this.set(x);
+	overload inline extern function set():FlxReadOnlyPoint return this.set();
 	inline function add(x = 0, y = 0):FlxReadOnlyPoint return this.add(x, y);
 	inline function addPoint(point):FlxReadOnlyPoint return this.add(point);
 	inline function subtract(x = 0, y = 0):FlxReadOnlyPoint return this.subtract(x, y);
@@ -1811,7 +1837,7 @@ class FlxCallbackPoint extends FlxBasePoint
 		}
 	}
 
-	override function setHelper(x:Float, y:Float):FlxCallbackPoint
+	override function set(x:Float = 0, y:Float = 0)
 	{
 		@:bypassAccessor this.x = x;
 		@:bypassAccessor this.y = y;
