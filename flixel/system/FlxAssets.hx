@@ -36,17 +36,20 @@ class VirtualInputData extends #if nme ByteArray #else ByteArrayData #end {}
 
 typedef FlxTexturePackerJsonAsset = FlxJsonAsset<TexturePackerAtlas>;
 typedef FlxAsepriteJsonAsset = FlxJsonAsset<AseAtlas>;
-typedef FlxSoundAsset = OneOfFour<String, Sound, Class<Sound>, ByteArray>;
+typedef FlxSoundAsset = OneOfThree<String, Sound, Class<Sound>>;
 typedef FlxTilemapGraphicAsset = OneOfFour<FlxFramesCollection, FlxGraphic, BitmapData, String>;
 typedef FlxBitmapFontGraphicAsset = OneOfFour<FlxFrame, FlxGraphic, BitmapData, String>;
-abstract FlxGraphicAsset(OneOfFour<FlxGraphic, BitmapData, String, Class<Dynamic>>) from FlxGraphic to FlxGraphic from BitmapData to BitmapData from String
-	to String from Class<Dynamic> to Class<Dynamic>
+
+abstract FlxGraphicAsset(OneOfFour<FlxGraphic, BitmapData, String, Class<Dynamic>>) from FlxGraphic to FlxGraphic from BitmapData to BitmapData from String to String from Class<Dynamic> to Class<Dynamic>
 {
 	public inline function resolveBitmapData():BitmapData
 	{
 		return FlxAssets.resolveBitmapData(cast this);
 	}
 }
+
+@:deprecated("`FlxGraphicSource` is deprecated, use `FlxGraphicAsset` instead")
+typedef FlxGraphicSource = FlxGraphicAsset;
 
 abstract FlxAngelCodeAsset(OneOfThree<Xml, String, Bytes>) from Xml from String from Bytes
 {
@@ -55,6 +58,9 @@ abstract FlxAngelCodeAsset(OneOfThree<Xml, String, Bytes>) from Xml from String 
 		return BMFont.parse(cast this);
 	}
 }
+
+@:deprecated("`FlxAngelCodeXmlAsset` is deprecated, use `FlxAngelCodeAsset` instead")// 5.6.0
+typedef FlxAngelCodeXmlAsset = FlxAngelCodeAsset;
 
 abstract FlxXmlAsset(OneOfTwo<Xml, String>) from Xml from String
 {
@@ -338,7 +344,7 @@ class FlxAssets
 	{
 		if (key != null)
 			return key;
-
+		
 		if ((graphic is FlxGraphic))
 		{
 			return cast(graphic, FlxGraphic).key;
