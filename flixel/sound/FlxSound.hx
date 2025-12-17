@@ -6,7 +6,6 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxSoundAsset;
 import flixel.tweens.FlxTween;
-import flixel.util.FlxSignal;
 import flixel.util.FlxStringUtil;
 import openfl.events.Event;
 import openfl.events.IEventDispatcher;
@@ -69,15 +68,9 @@ class FlxSound extends FlxBasic
 	public var autoDestroy:Bool;
 	
 	/**
-	 * Signal that is dispatched on sound complete.
-	 */
-	public final onFinish:FlxSignal;
-
-	/**
 	 * Tracker for sound complete callback. If assigned, will be called
 	 * each time when sound reaches its end.
 	 */
-	@:deprecated("`FlxSound.onComplete` is deprecated! Use `FlxSound.onFinish` instead.")
 	public var onComplete:Void->Void;
 	
 	/**
@@ -119,9 +112,9 @@ class FlxSound extends FlxBasic
 	
 	/**
 	 * The sound group this sound belongs to, can only be in one group.
+	 * NOTE: This setter is deprecated, use `group.add(sound)` or `group.remove(sound)`.
 	 */
-	@:allow(flixel.sound.FlxSoundGroup)
-	public var group(default, null):FlxSoundGroup;
+	public var group(default, set):FlxSoundGroup;
 	
 	/**
 	 * Whether or not this sound should loop.
@@ -224,7 +217,6 @@ class FlxSound extends FlxBasic
 	public function new()
 	{
 		super();
-		onFinish = new FlxSignal();
 		reset();
 	}
 	
@@ -259,7 +251,6 @@ class FlxSound extends FlxBasic
 		_transform.pan = 0;
 	}
 	
-	@:haxe.warning("-WDeprecated")
 	override public function destroy():Void
 	{
 		// Prevents double destroy
@@ -286,7 +277,6 @@ class FlxSound extends FlxBasic
 			_sound = null;
 		}
 		
-		onFinish.removeAll();
 		onComplete = null;
 		
 		super.destroy();
@@ -364,7 +354,7 @@ class FlxSound extends FlxBasic
 	{
 		if (sound == null)
 			return this;
-
+			
 		cleanup(true);
 		
 		if ((sound is Sound))
@@ -390,15 +380,7 @@ class FlxSound extends FlxBasic
 			_sound.addEventListener(Event.ID3, gotID3);
 			_sound.loadCompressedDataFromByteArray(bytes, bytes.length);
 		}
-		else if ((sound is ByteArrayData))
-		{
-			var bytes:ByteArray = cast sound;
-
-			_sound = new Sound();
-			_sound.addEventListener(Event.ID3, gotID3);
-			_sound.loadCompressedDataFromByteArray(bytes, bytes.length);
-		}
-
+		
 		// NOTE: can't pull ID3 info from embedded sound currently
 		return init(looped, autoDestroy, onComplete);
 	}
@@ -464,7 +446,7 @@ class FlxSound extends FlxBasic
 	public function loadFromURL(soundURL:String, looped:Bool = false, autoDestroy:Bool = false, ?onComplete:Void->Void, ?onLoad:Void->Void):FlxSound
 	{
 		cleanup(true);
-
+		
 		_sound = new Sound();
 		_sound.addEventListener(Event.ID3, gotID3);
 		var loadCallback:Event->Void = null;
@@ -542,8 +524,6 @@ class FlxSound extends FlxBasic
 		autoDestroy = AutoDestroy;
 		updateTransform();
 		exists = true;
-		onFinish.removeAll();
-		onFinish.add(onComplete);
 		onComplete = OnComplete;
 		#if FLX_PITCH
 		pitch = 1;
@@ -705,7 +685,6 @@ class FlxSound extends FlxBasic
 	@:allow(flixel.sound.FlxSoundGroup)
 	function updateTransform():Void
 	{
-		if (_transform == null) return;
 		_transform.volume = calcTransformVolume();
 		
 		if (_channel != null)
@@ -757,10 +736,8 @@ class FlxSound extends FlxBasic
 	 * An internal helper function used to help Flash
 	 * clean up finished sounds or restart looped sounds.
 	 */
-	@:haxe.warning("-WDeprecated")
 	function stopped(?_):Void
 	{
-		onFinish.dispatch();
 		if (onComplete != null)
 			onComplete();
 			
@@ -834,7 +811,23 @@ class FlxSound extends FlxBasic
 		pause();
 	}
 	#end
-
+	
+	@:deprecated("sound.group = myGroup is deprecated, use myGroup.add(sound)") // 5.7.0
+	function set_group(value:FlxSoundGroup):FlxSoundGroup
+	{
+		if (value != null)
+		{
+			// add to new group, also removes from prev and calls updateTransform
+			value.add(this);
+		}
+		else
+		{
+			// remove from prev group, also calls updateTransform
+			group.remove(this);
+		}
+		return value;
+	}
+	
 	inline function get_playing():Bool
 	{
 		return _channel != null;

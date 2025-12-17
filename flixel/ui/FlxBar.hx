@@ -88,11 +88,6 @@ class FlxBar extends FlxSprite
 	public var numDivisions(default, set):Int = 100;
 
 	/**
-	 * Determines whenever numDivisions will make stuff blocky
-	 */
-	public var continuous:Bool = false;
-
-	/**
 	 * This function will be called when value will hit it's minimum
 	 */
 	public var emptyCallback:Void->Void;
@@ -772,8 +767,7 @@ class FlxBar extends FlxSprite
 		} : {
 			var scaleInterval:Float = maxScale / numDivisions;
 			Math.round(Std.int(fraction * maxScale / scaleInterval) * scaleInterval);
-			}
-
+		}
 		if (_fillHorizontal)
 		{
 			_filledBarRect.width = floorFunc(interval);

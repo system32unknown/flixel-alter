@@ -3,17 +3,17 @@ package flixel.system.frontEnds;
 import flixel.FlxG;
 import flixel.system.FlxAssets;
 import flixel.system.debug.log.LogStyle;
+import haxe.Json;
 import haxe.io.Bytes;
 import haxe.io.Path;
-import haxe.Json;
 import haxe.xml.Access;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
-import openfl.utils.Assets;
-import openfl.utils.AssetType;
-import openfl.utils.AssetCache;
-import openfl.utils.Future;
 import openfl.text.Font;
+import openfl.utils.AssetCache;
+import openfl.utils.AssetType;
+import openfl.utils.Assets;
+import openfl.utils.Future;
 
 using StringTools;
 
@@ -90,7 +90,7 @@ class AssetFrontEnd
 	#else
 	public final defaultSoundExtension:String = '.${haxe.macro.Compiler.getDefine("FLX_DEFAULT_SOUND_EXT")}';
 	#end
-
+	
 	/**
 	 * Used by methods like `getAsset`, `getBitmapData`, `getText`, their "unsafe" counterparts and
 	 * the like to get assets synchronously. Can be set to a custom function to avoid the existing
@@ -173,12 +173,10 @@ class AssetFrontEnd
 	 */
 	public function getAsset(id:String, type:FlxAssetType, useCache = true, ?logStyle:LogStyle):Null<Any>
 	{
-		inline function log(message:String)
-		{
-			if (logStyle == null)
-				logStyle = LogStyle.ERROR;
-			FlxG.log.advanced(message, logStyle);
-		}
+		if (logStyle == null)
+			logStyle = FlxG.log.styles.error;
+		
+		final log = FlxG.log.advanced.bind(_, logStyle);
 		
 		if (exists(id, type))
 		{
@@ -237,6 +235,12 @@ class AssetFrontEnd
 	 */
 	public dynamic function exists(id:String, ?type:FlxAssetType)
 	{
+		#if FLX_DEFAULT_SOUND_EXT
+		// add file extension
+		if (type == SOUND)
+			id = addSoundExt(id);
+		#end
+		
 		#if FLX_STANDARD_ASSETS_DIRECTORY
 		return Assets.exists(id, type.toOpenFlType());
 		#else
@@ -259,6 +263,12 @@ class AssetFrontEnd
 	 */
 	public dynamic function isLocal(id:String, ?type:FlxAssetType, useCache = true)
 	{
+		#if FLX_DEFAULT_SOUND_EXT
+		// add file extension
+		if (type == SOUND)
+			id = addSoundExt(id);
+		#end
+		
 		#if FLX_STANDARD_ASSETS_DIRECTORY
 		return Assets.isLocal(id, type.toOpenFlType(), useCache);
 		#else
@@ -378,7 +388,7 @@ class AssetFrontEnd
 		final needsExt = Path.extension(id).length == 0;
 		if (needsExt)
 			return id + defaultSoundExtension;
-		
+			
 		return id;
 	}
 
@@ -444,6 +454,26 @@ class AssetFrontEnd
 		return null;
 	}
 
+	/**
+	 * Gets an instance of a streamed sound, logs when the asset is not found.
+	 * 
+	 * Streamed sounds load and unload chunks of audio data during playback, keeping memory usage low.
+	 * The usage of streamed sounds is only recommended for larger audio tracks, such as music.
+	 * 
+	 * **Note**: Due to a backend limitation, streamed sounds currently only work on native targets and OGG/Vorbis files.
+	 * Trying to stream an unsupported file format will fall back to regular sound loading behavior.
+	 * 
+	 * @param   id        The ID or asset path for the sound
+	 * @param   useCache  Whether to allow use of the asset cache (if one exists)
+	 * @param   logStyle  How to log, if the asset is not found. Uses `LogStyle.ERROR` by default
+	 * @return  A new `Sound` object Note: Does not return a `FlxSound`
+	 * @since   6.2.0
+	 */
+	public function streamSoundAddExt(id:String, ?logStyle:LogStyle):Sound
+	{
+		return streamSound(addSoundExt(id));
+	}
+	
 	/**
 	 * Checks whether the sound asset with the specified ID can be streamed.
 	 * 

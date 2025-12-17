@@ -36,7 +36,7 @@ class WatchFrontEnd
 	 * Remove a variable from the watch list in the debugger.
 	 *
 	 * @param	object	A reference to any object in your game, e.g. Player or Robot or this.
-	 * @param	field	The name of the variable you want to watch, in quotes, as a string: e.g. "speed".
+	 * @param	field	The name of the variable you want to watch, in quotes, as a string: e.g. "speed" or "health".
 	 */
 	public inline function remove(object:Dynamic, field:String):Void
 	{

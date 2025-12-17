@@ -149,7 +149,7 @@ import openfl.geom.Point;
 		return result;
 	}
 
-
+	
 	/**
 	 * Operator that divides a point by float, returning a new point.
 	 */
@@ -192,7 +192,7 @@ import openfl.geom.Point;
 		return a.scale(b);
 	}
 
-
+	
 	/**
 	 * Operator that adds two points, returning a new point.
 	 */
@@ -319,7 +319,7 @@ import openfl.geom.Point;
 		return set(n, n);
 	}
 	
-
+	
 	/**
 	 * Set the coordinates of this point object.
 	 *
@@ -350,7 +350,7 @@ import openfl.geom.Point;
 	{
 		return set(0, 0);
 	}
-
+	
 	/**
 	 * Adds to the coordinates of this point.
 	 *
@@ -376,7 +376,7 @@ import openfl.geom.Point;
 		point.putWeak();
 		return this;
 	}
-
+	
 	/**
 	 * Adds the coordinates of another point to the coordinates of this point.
 	 * @since 6.0.0
@@ -388,7 +388,7 @@ import openfl.geom.Point;
 	{
 		return add(p.x, p.y);
 	}
-
+	
 	/**
 	 * Adds the coordinates of another point to the coordinates of this point.
 	 *
@@ -465,7 +465,7 @@ import openfl.geom.Point;
 	{
 		return set(this.x * x, this.y * y);
 	}
-
+	
 	/**
 	 * Scale this point.
 	 * @since 6.0.0
@@ -489,7 +489,7 @@ import openfl.geom.Point;
 	{
 		return scale(point.x, point.y);
 	}
-
+	
 	/**
 	 * Scale this point by another point.
 	 * @since 6.0.0
@@ -748,7 +748,7 @@ import openfl.geom.Point;
 		point.putWeak();
 		return result;
 	}
-
+	
 	/**
 	 * Calculate the distance to another position
 	 * @since 6.0.0
@@ -759,7 +759,7 @@ import openfl.geom.Point;
 	{
 		return Math.sqrt(distanceSquaredTo(x, y));
 	}
-
+	
 	/**
 	 * Calculate the squared distance to another point.
 	 * @since 6.0.0
@@ -773,7 +773,7 @@ import openfl.geom.Point;
 		point.putWeak();
 		return result;
 	}
-
+	
 	/**
 	 * Calculate the distance to another position
 	 * @since 6.0.0
@@ -1361,7 +1361,7 @@ import openfl.geom.Point;
 	{
 		return distanceTo(p);
 	}
-
+	
 	/**
 	 * The squared distance between points
 	 */
@@ -1369,7 +1369,7 @@ import openfl.geom.Point;
 	{
 		return distanceSquaredTo(p);
 	}
-
+	
 	/**
 	 * The squared distance between positions
 	 * @since 6.0.0
@@ -1603,7 +1603,7 @@ class FlxBasePoint implements IFlxPooled
 	{
 		set(x, y);
 	}
-
+	
 	/**
 	 * Set the coordinates of this point object.
 	 *
@@ -1699,22 +1699,22 @@ abstract FlxReadOnlyPoint(FlxPoint) from FlxPoint
 {
 	public var x(get, never):Float;
 	public var y(get, never):Float;
-
+	
 	/** Length of the point */
 	public var length(get, never):Float;
-
+	
 	/** The angle formed by the point with the horizontal axis (in degrees) */
 	public var degrees(get, never):Float;
 
 	/** The angle formed by the point with the horizontal axis (in radians) */
 	public var radians(get, never):Float;
-
+	
 	inline function get_x():Float return this.x;
 	inline function get_y():Float return this.y;
 	inline function get_length():Float return this.length;
 	inline function get_radians():Float return this.radians;
 	inline function get_degrees():Float return this.degrees;
-
+	
 	// hide underlying mutators
 	overload inline extern function set(x, y):FlxReadOnlyPoint return this.set(x, y);
 	overload inline extern function set(x):FlxReadOnlyPoint return this.set(x);

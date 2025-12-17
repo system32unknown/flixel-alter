@@ -2,6 +2,8 @@ package flixel;
 
 import flixel.graphics.tile.FlxDrawBaseItem;
 import flixel.system.FlxSplash;
+import flixel.util.FlxArrayUtil;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.typeLimit.NextState;
 import openfl.Assets;
 import openfl.Lib;
@@ -257,7 +259,7 @@ class FlxGame extends Sprite
 		// Basic display and update setup stuff
 		FlxG.init(this, gameWidth, gameHeight);
 
-		FlxG.drawFramerate = FlxG.updateFramerate = framerate;
+		FlxG.updateFramerate = FlxG.drawFramerate = framerate;
 		_accumulator = _stepMS;
 		_skipSplash = skipSplash;
 
@@ -266,7 +268,7 @@ class FlxGame extends Sprite
 		#end
 
 		// Then get ready to create the game object for real
-		_initialState = (initialState == null) ? FlxState.new : initialState;
+		_initialState = (initialState == null) ? FlxState.new : initialState.toNextState();
 
 		addEventListener(Event.ADDED_TO_STAGE, create);
 	}
@@ -574,7 +576,7 @@ class FlxGame extends Sprite
 
 		// Finally assign and create the new state
 		_state = _nextState.createInstance();
-		_state._constructor = _nextState;
+		_state._constructor = _nextState.getConstructor();
 		_nextState = null;
 
 		if (_gameJustStarted)
@@ -593,8 +595,8 @@ class FlxGame extends Sprite
 
 		FlxG.signals.postStateSwitch.dispatch();
 	}
-
-	function gameStart():Void
+	
+	function gameStart()
 	{
 		FlxG.signals.postGameStart.dispatch();
 		_gameJustStarted = false;

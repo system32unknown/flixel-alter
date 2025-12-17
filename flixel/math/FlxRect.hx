@@ -180,7 +180,7 @@ class FlxRect implements IFlxPooled
 		
 		return this;
 	}
-
+	
 	/**
 	 * Fills the rectangle so that it has always has a positive width and height. For example:
 	 * ```haxe
@@ -315,7 +315,10 @@ class FlxRect implements IFlxPooled
 	 */
 	public inline function contains(rect:FlxRect):Bool
 	{
-		final result = rect.left >= left && rect.right <= right && rect.top >= top && rect.bottom <= bottom;
+		final result = rect.left >= left
+			&& rect.right <= right
+			&& rect.top >= top
+			&& rect.bottom <= bottom;
 		rect.putWeak();
 		return result;
 	}
@@ -539,13 +542,13 @@ class FlxRect implements IFlxPooled
 	{
 		if (result == null)
 			result = FlxRect.get();
-
+		
 		final x0:Float = x < rect.x ? rect.x : x;
 		final x1:Float = right > rect.right ? rect.right : right;
 		final y0:Float = y < rect.y ? rect.y : y;
 		final y1:Float = bottom > rect.bottom ? rect.bottom : bottom;
 		rect.putWeak();
-
+		
 		if (x1 <= x0 || y1 <= y0)
 			return result.set(0, 0, 0, 0);
 		

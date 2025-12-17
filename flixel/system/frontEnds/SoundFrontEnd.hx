@@ -30,6 +30,13 @@ class SoundFrontEnd
 	public var muted:Bool = false;
 
 	/**
+	 * Set this hook to get a callback whenever the volume changes.
+	 * Function should take the form myVolumeHandler(volume:Float).
+	 */
+	@:deprecated("volumeHandler is deprecated, use onVolumeChange, instead")
+	public var volumeHandler:Float->Void;
+
+	/**
 	 * A signal that gets dispatched whenever the volume changes.
 	 */
 	public var onVolumeChange(default, null):FlxTypedSignal<Float->Void> = new FlxTypedSignal<Float->Void>();
@@ -299,7 +306,7 @@ class SoundFrontEnd
 	{
 		return load(null, volume, looped, group, autoDestroy, true, url, onComplete, onLoad);
 	}
-	
+
 	/**
 	 * Plays a sound from a URL. Tries to recycle a cached sound first.
 	 * NOTE: Just calls FlxG.sound.load() with AutoPlay == true.
@@ -384,9 +391,16 @@ class SoundFrontEnd
 	/**
 	 * Toggles muted, also activating the sound tray.
 	 */
+	@:haxe.warning("-WDeprecated")
 	public function toggleMuted():Void
 	{
 		muted = !muted;
+
+		if (volumeHandler != null)
+		{
+			volumeHandler(muted ? 0 : volume);
+		}
+
 		onVolumeChange.dispatch(muted ? 0 : volume);
 
 		showSoundTray(true);
@@ -534,9 +548,16 @@ class SoundFrontEnd
 	}
 	#end
 
+	@:haxe.warning("-WDeprecated")
 	function set_volume(Volume:Float):Float
 	{
 		volume = FlxMath.bound(Volume, 0, 1);
+
+		if (volumeHandler != null)
+		{
+			volumeHandler(muted ? 0 : volume);
+		}
+
 		onVolumeChange.dispatch(muted ? 0 : volume);
 
 		return volume;

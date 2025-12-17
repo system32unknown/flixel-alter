@@ -26,8 +26,9 @@ class FlxColorTransformUtil
 	 * @param   aOffset  The offset for alpha transparency channel value, ranges from -255 to 255
 	 * @since 6.1.0
 	 */
-	overload public static inline extern function set(transform:ColorTransform, rMult, gMult, bMult, aMult, rOffset, gOffset, bOffset,
-			aOffset = 0.0):ColorTransform
+	overload public static inline extern function set(transform:ColorTransform, 
+			rMult, gMult, bMult, aMult,
+			rOffset, gOffset, bOffset, aOffset = 0.0):ColorTransform
 	{
 		setMultipliers(transform, rMult, gMult, bMult, aMult);
 		setOffsets(transform, rOffset, gOffset, bOffset, aOffset);
@@ -46,7 +47,9 @@ class FlxColorTransformUtil
 	 * @param   bOffset  The offset for the blue color channel value, ranges from -255 to 255
 	 * @since 6.1.0
 	 */
-	overload public static inline extern function set(transform:ColorTransform, rMult, gMult, bMult, rOffset, gOffset, bOffset):ColorTransform
+	overload public static inline extern function set(transform:ColorTransform, 
+			rMult, gMult, bMult,
+			rOffset, gOffset, bOffset):ColorTransform
 	{
 		return set(transform, rMult, gMult, bMult, 1.0, rOffset, gOffset, bOffset);
 	}
@@ -62,8 +65,10 @@ class FlxColorTransformUtil
 	 */
 	overload public static inline extern function set(transform:ColorTransform, colorMult = FlxColor.WHITE, colorOffset:FlxColor = 0x0):ColorTransform
 	{
-		return set(transform, colorMult.redFloat, colorMult.greenFloat, colorMult.blueFloat, colorMult.alphaFloat, colorOffset.red, colorOffset.green,
-			colorOffset.blue, colorOffset.alpha);
+		return set(transform,
+			colorMult.redFloat, colorMult.greenFloat, colorMult.blueFloat, colorMult.alphaFloat,
+			colorOffset.red, colorOffset.green, colorOffset.blue, colorOffset.alpha
+		);
 	}
 	
 	/**
@@ -120,7 +125,7 @@ class FlxColorTransformUtil
 		
 		return transform;
 	}
-
+	
 	/**
 	 * Quick way to set all of a transform's multipliers with a single color
 	 * 
@@ -137,7 +142,7 @@ class FlxColorTransformUtil
 		
 		return transform;
 	}
-
+	
 	/**
 	 * Quick way to set all of a transform's offsets
 	 * 

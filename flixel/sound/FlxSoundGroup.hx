@@ -43,6 +43,7 @@ class FlxSoundGroup
 				sound.group.sounds.remove(sound);
 			
 			sounds.push(sound);
+			@:bypassAccessor
 			sound.group = this;
 			sound.updateTransform();
 			return true;
@@ -59,6 +60,7 @@ class FlxSoundGroup
 	{
 		if (sounds.contains(sound))
 		{
+			@:bypassAccessor
 			sound.group = null;
 			sounds.remove(sound);
 			sound.updateTransform();

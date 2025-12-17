@@ -129,7 +129,7 @@ class Interaction extends Window
 	
 	function updateMouse(event:MouseEvent):Void
 	{
-		#if js // openfl/openfl#1305
+		#if (neko || js) // openfl/openfl#1305
 		if (event.stageX == null || event.stageY == null)
 			return;
 		#end
@@ -635,7 +635,13 @@ class Interaction extends Window
 		
 		return items;
 	}
-
+	
+	@:deprecated("findItemsWithinState is deprecated, use getItemsWithinState or addItemsWithinState")
+	public inline function findItemsWithinState(items:Array<FlxBasic>, state:FlxState, area:FlxRect):Void
+	{
+		addItemsWithinState(cast items, state, area);
+	}
+	
 	/**
 	 * finds all items in the state and substate that are within the given area and
 	 * adds them to the given list.

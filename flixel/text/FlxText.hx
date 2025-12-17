@@ -21,6 +21,7 @@ import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 import openfl.utils.AssetType;
+
 using flixel.util.FlxStringUtil;
 #if flash
 import openfl.geom.Rectangle;
@@ -679,15 +680,14 @@ class FlxText extends FlxSprite
 		
 		return value;
 	}
-
-	override function setColorTransform(redMultiplier = 1.0, greenMultiplier = 1.0, blueMultiplier = 1.0, alphaMultiplier = 1.0, redOffset = 0.0,
-			greenOffset = 0.0, blueOffset = 0.0, alphaOffset = 0.0)
+	
+	override function setColorTransform(redMultiplier = 1.0, greenMultiplier = 1.0, blueMultiplier = 1.0, alphaMultiplier = 1.0, redOffset = 0.0, greenOffset = 0.0, blueOffset = 0.0, alphaOffset = 0.0)
 	{
 		super.setColorTransform(1, 1, 1, 1, redOffset, greenOffset, blueOffset, alphaOffset);
 		_defaultFormat.color = FlxColor.fromRGBFloat(redMultiplier, greenMultiplier, blueMultiplier, 0);
 		updateDefaultFormat();
 	}
-	
+
 	override function set_color(value:FlxColor):Int
 	{
 		if (_defaultFormat.color == value.rgb)
@@ -928,22 +928,22 @@ class FlxText extends FlxSprite
 		var borderWidth:Float = 0;
 		var borderHeight:Float = 0;
 		switch (borderStyle)
-		{		
+		{
 			case SHADOW: // With the default shadowOffset value
 				borderWidth += Math.abs(borderSize);
 				borderHeight += Math.abs(borderSize);
-				
+			
 			case SHADOW_XY(offsetX, offsetY):
 				borderWidth += Math.abs(offsetX);
 				borderHeight += Math.abs(offsetY);
-				
+			
 			case OUTLINE_FAST | OUTLINE:
 				borderWidth += Math.abs(borderSize) * 2;
 				borderHeight += Math.abs(borderSize) * 2;
 			
 			case NONE:
 		}
-
+		
 		final newWidth:Int = Math.ceil(newWidthFloat + borderWidth);
 		final newHeight:Int = Math.ceil(newHeightFloat + borderHeight);
 		
@@ -1065,45 +1065,11 @@ class FlxText extends FlxSprite
 		super.draw();
 	}
 	
-	override function drawSimple(camera:FlxCamera):Void
+	override function getScreenPosition(?result:FlxPoint, ?camera:FlxCamera):FlxPoint
 	{
-		// same as super but checks _graphicOffset
-		getScreenPosition(_point, camera).subtract(offset).subtract(_graphicOffset);
-		if (isPixelPerfectRender(camera))
-			_point.floor();
-		
-		_point.copyTo(_flashPoint);
-		camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, colorTransform, blend, antialiasing);
+		return super.getScreenPosition(result, camera).subtract(_graphicOffset);
 	}
 	
-	override function drawComplex(camera:FlxCamera):Void
-	{
-		_frame.prepareMatrix(_matrix, ANGLE_0, checkFlipX(), checkFlipY());
-		_matrix.translate(-origin.x, -origin.y);
-		_matrix.scale(scale.x, scale.y);
-		
-		if (bakedRotationAngle <= 0)
-		{
-			updateTrig();
-			
-			if (angle != 0)
-				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
-		}
-		
-		// same as super but checks _graphicOffset
-		getScreenPosition(_point, camera).subtract(offset).subtract(_graphicOffset);
-		_point.add(origin.x, origin.y);
-		_matrix.translate(_point.x, _point.y);
-		
-		if (isPixelPerfectRender(camera))
-		{
-			_matrix.tx = Math.floor(_matrix.tx);
-			_matrix.ty = Math.floor(_matrix.ty);
-		}
-		
-		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing, shader);
-	}
-
 	/**
 	 * Internal function to update the current animation frame.
 	 *
@@ -1120,23 +1086,23 @@ class FlxText extends FlxSprite
 		regenGraphic();
 		super.calcFrame(RunOnCpp);
 	}
-
+	
 	function applyBorderStyle():Void
 	{
 		// offset entire image to fit the border
-		switch (borderStyle)
+		switch(borderStyle)
 		{
 			case SHADOW: // With the default shadowOffset value
 				if (borderSize < 0)
 					_graphicOffset.set(-borderSize, -borderSize);
-					
+			
 			case SHADOW_XY(offsetX, offsetY):
 				_graphicOffset.x = offsetX < 0 ? -offsetX : 0;
 				_graphicOffset.y = offsetY < 0 ? -offsetY : 0;
-				
+			
 			case OUTLINE_FAST | OUTLINE if (borderSize < 0):
 				_graphicOffset.set(-borderSize, -borderSize);
-				
+			
 			case NONE | OUTLINE_FAST | OUTLINE:
 				_graphicOffset.set(0, 0);
 		}
@@ -1147,7 +1113,7 @@ class FlxText extends FlxSprite
 			case SHADOW: // With the default shadowOffset value
 				// Render a shadow beneath the text
 				applyFormats(_formatAdjusted, true);
-
+				
 				final originX = _matrix.tx;
 				final originY = _matrix.ty;
 				
@@ -1160,7 +1126,7 @@ class FlxText extends FlxSprite
 					_matrix.tx = originX;
 					_matrix.ty = originY;
 				}
-
+			
 			case SHADOW_XY(shadowX, shadowY):
 				// Render a shadow beneath the text with the specified offset
 				applyFormats(_formatAdjusted, true);
@@ -1184,7 +1150,7 @@ class FlxText extends FlxSprite
 				// Render an outline around the text
 				// (do 8 offset draw calls)
 				applyFormats(_formatAdjusted, true);
-
+				
 				final iterations = FlxMath.maxInt(1, Std.int(borderSize * borderQuality));
 				var i = iterations + 1;
 				while (i-- > 1)
@@ -1198,16 +1164,16 @@ class FlxText extends FlxSprite
 					copyTextWithOffset(-curDelta, 0); // lower-middle
 					copyTextWithOffset(-curDelta, 0); // lower-left
 					copyTextWithOffset(0, -curDelta); // lower-left
-
+					
 					_matrix.translate(curDelta, 0); // return to center
 				}
-
+			
 			case OUTLINE_FAST:
 				// Render an outline around the text
 				// (do 4 diagonal offset draw calls)
 				// (this method might not work with certain narrow fonts)
 				applyFormats(_formatAdjusted, true);
-
+				
 				final iterations = FlxMath.maxInt(1, Std.int(borderSize * borderQuality));
 				var i = iterations + 1;
 				while (i-- > 1)
@@ -1217,10 +1183,10 @@ class FlxText extends FlxSprite
 					copyTextWithOffset(curDelta * 2, 0); // upper-right
 					copyTextWithOffset(0, curDelta * 2); // lower-right
 					copyTextWithOffset(-curDelta * 2, 0); // lower-left
-
+					
 					_matrix.translate(curDelta, -curDelta); // return to center
 				}
-
+			
 			case NONE:
 		}
 	}
@@ -1394,12 +1360,12 @@ class FlxTextFormatMarkerPair
 enum FlxTextBorderStyle
 {
 	NONE;
-
+	
 	/**
 	 * A simple shadow to the lower-right
 	 */
 	SHADOW;
-
+	
 	/**
 	 * A shadow that allows custom placement
 	 * **Note:** Ignores borderSize
@@ -1410,7 +1376,7 @@ enum FlxTextBorderStyle
 	 * Outline on all 8 sides
 	 */
 	OUTLINE;
-
+	
 	/**
 	 * Outline, optimized using only 4 draw calls
 	 * **Note:** Might not work for narrow and/or 1-pixel fonts

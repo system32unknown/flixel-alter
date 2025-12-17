@@ -250,7 +250,7 @@ class FlxAtlasFrames extends FlxFramesCollection
 			FlxG.log.warn('Invalid xml: $xml');
 			return null;
 		}
-		
+
 		if (graphic == null)
 			return null;
 
@@ -336,7 +336,7 @@ class FlxAtlasFrames extends FlxFramesCollection
 			FlxG.log.warn('Invalid xml: $xml');
 			return null;
 		}
-		
+
 		if (graphic == null)
 			return null;
 

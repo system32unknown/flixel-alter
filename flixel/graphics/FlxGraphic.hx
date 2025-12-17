@@ -400,7 +400,7 @@ class FlxGraphic implements IFlxDestroyable
 		if (newBitmap != null)
 			bitmap = newBitmap;
 	}
-
+	
 	/**
 	 * Asset reload callback for this graphic object.
 	 * It regenerates its bitmap data.

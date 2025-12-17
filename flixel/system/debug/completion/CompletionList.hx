@@ -5,8 +5,8 @@ import openfl.display.Sprite;
 import openfl.events.KeyboardEvent;
 import openfl.ui.Keyboard;
 
-using StringTools;
 using flixel.util.FlxStringUtil;
+using StringTools;
 
 class CompletionList extends Sprite
 {

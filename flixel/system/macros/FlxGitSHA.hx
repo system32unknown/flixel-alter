@@ -1,6 +1,5 @@
 package flixel.system.macros;
 
-import haxe.io.Path;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import sys.io.Process;
@@ -60,7 +59,7 @@ class FlxGitSHA
 			}
 		}
 
-		return Path.normalize(result);
+		return result;
 	}
 
 	public static function getGitSHA(path:String):String
@@ -68,11 +67,9 @@ class FlxGitSHA
 		var oldWd = Sys.getCwd();
 
 		Sys.setCwd(path);
-		var output = getProcessOutput("git", ["rev-parse", "HEAD", "--show-toplevel"]).split("\n");
-		var sha = output[0];
-		var gitPath = Path.normalize(output[1]);
+		var sha = getProcessOutput("git", ["rev-parse", "HEAD"]);
 		var shaRegex = ~/[a-f0-9]{40}/g;
-		if (!shaRegex.match(sha) || path != gitPath)
+		if (!shaRegex.match(sha))
 			sha = "";
 
 		Sys.setCwd(oldWd);

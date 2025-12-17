@@ -656,7 +656,7 @@ class FlxTypedSpriteGroup<T:FlxSprite> extends FlxSprite
 		var lambda:T->V->Void;
 		for (sprite in group.members)
 		{
-			if (sprite != null)
+			if ((sprite != null) && sprite.exists)
 			{
 				for (i in 0...numProps)
 				{

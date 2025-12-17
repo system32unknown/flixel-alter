@@ -1049,9 +1049,18 @@ class FlxSprite extends FlxObject
 		drawFrameComplex(_frame, camera);
 	}
 	
+	@:noCompletion
+	static final drawComplexMatrix = new FlxMatrix();
 	function drawFrameComplex(frame:FlxFrame, camera:FlxCamera):Void
 	{
-		final matrix = this._matrix; // TODO: Just use local?
+		final matrix = drawComplexMatrix; // TODO: Just use local?
+		prepareComplexMatrix(matrix, frame, camera);
+		
+		camera.drawPixels(frame, framePixels, matrix, colorTransform, blend, antialiasing, shader);
+	}
+	
+	function prepareComplexMatrix(matrix:FlxMatrix, frame:FlxFrame, camera:FlxCamera)
+	{
 		frame.prepareMatrix(matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
 		matrix.translate(-origin.x, -origin.y);
 		matrix.scale(scale.x, scale.y);
@@ -1059,22 +1068,21 @@ class FlxSprite extends FlxObject
 		if (bakedRotationAngle <= 0)
 		{
 			updateTrig();
-
+			
 			if (angle != 0)
 				matrix.rotateWithTrig(_cosAngle, _sinAngle);
 		}
 		
-		getScreenPosition(_point, camera).subtract(offset);
-		_point.add(origin.x, origin.y);
-		matrix.translate(_point.x, _point.y);
+		final screenPos = getScreenPosition(camera).subtract(offset);
+		screenPos.add(origin.x, origin.y);
+		matrix.translate(screenPos.x, screenPos.y);
+		screenPos.put();
 		
 		if (isPixelPerfectRender(camera))
 		{
 			matrix.tx = Math.floor(matrix.tx);
 			matrix.ty = Math.floor(matrix.ty);
 		}
-		
-		camera.drawPixels(frame, framePixels, matrix, colorTransform, blend, antialiasing, shader);
 	}
 
 	/**
@@ -1245,7 +1253,7 @@ class FlxSprite extends FlxObject
 	{
 		return alpha != 1 || color.rgb != 0xffffff || colorTransform.hasRGBAOffsets();
 	}
-
+	
 	/**
 	 * Checks to see if a point in 2D world space overlaps this `FlxSprite` object's
 	 * current displayed pixels. This check is ALWAYS made in screen space, and
@@ -1299,7 +1307,7 @@ class FlxSprite extends FlxObject
 		
 		return colorIn;
 	}
-
+	
 	/**
 	 * Determines which of this sprite's pixels are at the specified world coordinate, if any.
 	 * Factors in `scale`, `angle`, `offset`, `origin`, `scrollFactor`, `flipX` and `flipY`.
@@ -1318,7 +1326,7 @@ class FlxSprite extends FlxObject
 			point.put();
 			return null;
 		}
-
+		
 		return transformColor(frame.getPixelAt(point));
 	}
 	
@@ -1334,10 +1342,10 @@ class FlxSprite extends FlxObject
 	public function getPixelAtScreen(screenPoint:FlxPoint, ?camera:FlxCamera):Null<FlxColor>
 	{
 		final point = viewToFramePosition(screenPoint, camera);
-
+		
 		final overlaps = point.x >= 0 && point.x <= frameWidth && point.y >= 0 && point.y <= frameHeight;
 		final result = overlaps ? frame.getPixelAt(point) : null;
-
+		
 		point.put();
 		return result;
 	}
@@ -1407,7 +1415,7 @@ class FlxSprite extends FlxObject
 	public function transformScreenToPixels(screenPos:FlxPoint, ?camera:FlxCamera, ?result:FlxPoint):FlxPoint
 	{
 		result = getScreenPosition(result, camera);
-
+		
 		result.subtract(screenPos.x, screenPos.y);
 		result.negate();
 		result.add(offset);
@@ -1415,12 +1423,12 @@ class FlxSprite extends FlxObject
 		result.scale(1 / scale.x, 1 / scale.y);
 		result.degrees -= angle;
 		result.add(origin);
-
+		
 		screenPos.putWeak();
 		
 		return result;
 	}
-	
+
 	/**
 	 * Converts the point from world coordinates to this sprite's frame coordinates where (0,0)
 	 * is the top left of the frame. Factors in `scale`, `angle`, `offset`, `origin`,
@@ -1437,7 +1445,7 @@ class FlxSprite extends FlxObject
 		worldPos.putWeak();
 		return result;
 	}
-	
+
 	/**
 	 * Converts the point from world coordinates to this sprite's frame coordinates where (0,0)
 	 * is the top left of the frame. Factors in `scale`, `angle`, `offset`, `origin`,
@@ -1458,7 +1466,7 @@ class FlxSprite extends FlxObject
 	{
 		if (camera == null)
 			camera = getDefaultCamera();
-			
+		
 		// get the screen pos without scrollFactor, then get the world, WITH scrollFactor
 		return viewToFrameHelper(camera.worldToViewX(worldX), camera.worldToViewY(worldY), camera, result);
 	}
@@ -1498,7 +1506,7 @@ class FlxSprite extends FlxObject
 	{
 		if (result == null)
 			result = FlxPoint.get();
-			
+
 		result.set(worldX - x, worldY - y);
 		result.add(offset);
 		result.subtract(origin);
@@ -1509,14 +1517,14 @@ class FlxSprite extends FlxObject
 		final animFlipX = animation.curAnim != null && animation.curAnim.flipX;
 		if (flipX != animFlipX)
 			result.x = frameWidth - result.x;
-			
+		
 		final animFlipY = animation.curAnim != null && animation.curAnim.flipY;
 		if (flipY != animFlipY)
 			result.y = frameHeight - result.y;
-			
+		
 		return result;
 	}
-
+	
 	/**
 	 * Converts the point from camera coordinates to this sprite's frame coordinates where (0,0)
 	 * is the top left of the camera's frame. Factors in `scale`, `angle`, `offset`, `origin`,
@@ -1533,7 +1541,7 @@ class FlxSprite extends FlxObject
 		viewPoint.putWeak();
 		return result;
 	}
-
+	
 	/**
 	 * Converts the point from camera coordinates to this sprite's frame coordinates where (0,0)
 	 * is the top left of the camera's frame. Factors in `scale`, `angle`, `offset`, `origin`,
@@ -1554,7 +1562,7 @@ class FlxSprite extends FlxObject
 	{
 		if (camera == null)
 			camera = this.getDefaultCamera();
-
+		
 		result = camera.viewToWorldPosition(viewX, viewY, scrollFactor, result);
 		result.subtract(x, y);
 		// return result;
@@ -1574,7 +1582,7 @@ class FlxSprite extends FlxObject
 		final animFlipY = animation.curAnim != null && animation.curAnim.flipY;
 		if (flipY != animFlipY)
 			result.y = frameHeight - result.y;
-
+		
 		return result;
 	}
 	/**
@@ -1868,16 +1876,16 @@ class FlxSprite extends FlxObject
 		{
 			return null;
 		}
-
+		
 		if (FlxG.renderTile)
 		{
 			_frameGraphic = FlxDestroyUtil.destroy(_frameGraphic);
 		}
-
+		
 		_frame = frame.copyTo(_frame);
 		if (clipRect != null)
 			_frame.clip(clipRect);
-
+		
 		return frame;
 	}
 

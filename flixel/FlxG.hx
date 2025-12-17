@@ -197,7 +197,7 @@ class FlxG
 	 * The dimensions of the game world, used by the quad tree for collisions and overlap checks.
 	 * Use `.set()` instead of creating a new object!
 	 */
-	public static var worldBounds(default, null):FlxRect = new FlxRect();
+	public static var worldBounds(default, null):FlxRect = FlxRect.get();
 
 	#if FLX_SAVE
 	/**

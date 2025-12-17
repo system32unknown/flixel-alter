@@ -15,7 +15,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
 import openfl.Vector;
-import openfl.filters.ShaderFilter;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.BlendMode;
@@ -23,6 +22,7 @@ import openfl.display.DisplayObject;
 import openfl.display.Graphics;
 import openfl.display.Sprite;
 import openfl.filters.BitmapFilter;
+import openfl.filters.ShaderFilter;
 import openfl.geom.ColorTransform;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -610,6 +610,7 @@ class FlxCamera extends FlxBasic
 		return false;
 	}
 
+	@:noCompletion
 	public function startQuadBatch(graphic:FlxGraphic, colored:Bool, hasColorOffsets:Bool = false, ?blend:BlendMode, smooth:Bool = false, ?shader:FlxShader)
 	{
 		#if FLX_RENDER_TRIANGLE
@@ -671,6 +672,7 @@ class FlxCamera extends FlxBasic
 		#end
 	}
 
+	@:noCompletion
 	public function startTrianglesBatch(graphic:FlxGraphic, smoothing:Bool = false, isColored:Bool = false, ?blend:BlendMode, ?hasColorOffsets:Bool, ?shader:FlxShader):FlxDrawTrianglesItem
 	{
 		if (_currentDrawItem != null
@@ -689,6 +691,7 @@ class FlxCamera extends FlxBasic
 		return getNewDrawTrianglesItem(graphic, smoothing, isColored, blend, hasColorOffsets, shader);
 	}
 
+	@:noCompletion
 	public function getNewDrawTrianglesItem(graphic:FlxGraphic, smoothing:Bool = false, isColored:Bool = false, ?blend:BlendMode, ?hasColorOffsets:Bool, ?shader:FlxShader):FlxDrawTrianglesItem
 	{
 		var itemToReturn:FlxDrawTrianglesItem = null;
@@ -705,10 +708,6 @@ class FlxCamera extends FlxBasic
 			itemToReturn = new FlxDrawTrianglesItem();
 		}
 
-		// TODO: catch this error when the dev actually messes up, not in the draw phase
-		if (graphic.isDestroyed)
-			throw 'Cannot queue ${graphic.key}. This sprite was destroyed.';
-		
 		itemToReturn.graphics = graphic;
 		itemToReturn.antialiasing = smoothing;
 		itemToReturn.colored = isColored;
@@ -802,7 +801,7 @@ class FlxCamera extends FlxBasic
 		{
 			final isColored = (transform != null #if !html5 && transform.hasRGBMultipliers() #end);
 			final hasColorOffsets = (transform != null && transform.hasRGBAOffsets());
-			
+
 			#if FLX_RENDER_TRIANGLE
 			final drawItem:FlxDrawTrianglesItem = startTrianglesBatch(frame.parent, smoothing, isColored, blend, hasColorOffsets, shader);
 			#else
@@ -913,6 +912,7 @@ class FlxCamera extends FlxBasic
 				}
 
 				buffer.draw(trianglesSprite, _helperMatrix, transform);
+
 				#if FLX_DEBUG
 				if (FlxG.debugger.drawDebug)
 				{
@@ -2122,7 +2122,7 @@ class FlxCamera extends FlxBasic
 		// return (viewY - y) / zoom;
 		return viewY * zoom + this.y;
 	}
-
+	
 	/**
 	 * Specify the bounding rectangle of where the camera is allowed to move.
 	 *
@@ -2219,6 +2219,7 @@ class FlxCamera extends FlxBasic
 	{
 		if (rect == null)
 			rect = FlxRect.get();
+		
 		return rect.set(viewMarginLeft, viewMarginTop, viewWidth, viewHeight);
 	}
 	
@@ -2470,8 +2471,7 @@ class FlxCamera extends FlxBasic
 	
 	@:deprecated("don't reference camera.cameras")
 	@:noCompletion
-	override function set_cameras(value:Array<FlxCamera>):Array<FlxCamera>
-		throw "don't reference camera.cameras";
+	override function set_cameras(value:Array<FlxCamera>):Array<FlxCamera> throw "don't reference camera.cameras";
 }
 
 enum FlxCameraFollowStyle

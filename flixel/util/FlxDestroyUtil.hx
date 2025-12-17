@@ -64,7 +64,6 @@ class FlxDestroyUtil
 	{
 		if (object != null)
 			object.putWeak();
-
 		return null;
 	}
 

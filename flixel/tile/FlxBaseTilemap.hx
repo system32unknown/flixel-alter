@@ -15,6 +15,7 @@ import openfl.display.BitmapData;
 
 using StringTools;
 
+@:autoBuild(flixel.system.macros.FlxMacroUtil.deprecateOverride("overlapsWithCallback", "overlapsWithCallback is deprecated, use objectOverlapsTiles"))
 class FlxBaseTilemap<Tile:FlxObject> extends FlxObject
 {
 	/**

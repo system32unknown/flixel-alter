@@ -1055,10 +1055,10 @@ class FlxObject extends FlxBasic
 	{
 		if (result == null)
 			result = FlxPoint.get();
-
+		
 		if (camera == null)
 			camera = getDefaultCamera();
-
+		
 		return result.set(getViewXHelper(camera), getViewYHelper(camera));
 	}
 	
@@ -1073,7 +1073,7 @@ class FlxObject extends FlxBasic
 	{
 		if (camera == null)
 			camera = getDefaultCamera();
-
+		
 		return getViewXHelper(camera);
 	}
 	
@@ -1094,7 +1094,7 @@ class FlxObject extends FlxBasic
 	{
 		if (camera == null)
 			camera = getDefaultCamera();
-
+		
 		return getViewYHelper(camera);
 	}
 	
@@ -1103,7 +1103,7 @@ class FlxObject extends FlxBasic
 		final y = pixelPerfectPosition ? Math.floor(this.y) : this.y;
 		return (y - (camera.scroll.y * scrollFactor.y) - camera.viewMarginY) * camera.zoom;
 	}
-
+	
 	/**
 	 * Returns the world position of this object.
 	 * 
@@ -1210,7 +1210,6 @@ class FlxObject extends FlxBasic
 	 *
 	 * @param   axes   On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both. 
 	 * @return  This FlxObject for chaining
-	 * @since 5.9.0
 	 */
 	public function gameCenter(axes:FlxAxes = XY):FlxObject
 	{
@@ -1229,7 +1228,6 @@ class FlxObject extends FlxBasic
 	 * @param   axes     On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both.
 	 * @param   camera   The desired view space. If `null`, `FlxG.camera` is used.
 	 * @return  This FlxObject for chaining
-	 * @since 5.9.0
 	 */
 	public function viewCenter(axes:FlxAxes = XY, ?camera:FlxCamera):FlxObject
 	{
