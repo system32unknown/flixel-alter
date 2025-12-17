@@ -163,9 +163,6 @@ class LogFrontEnd
 			
 			if (style.openConsole)
 				FlxG.debugger.visible = true;
-			
-			if (style.callbackFunction != null)
-				style.callbackFunction();
 		}
 		#end
 		
