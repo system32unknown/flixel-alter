@@ -49,8 +49,10 @@ class FlxDestroyUtil
 	{
 		if (object != null)
 			object.put();
+		
 		return null;
 	}
+
 	/**
 	 * Checks if an object is not null before calling `putWeak`, always returns `null`
 	 *
@@ -62,6 +64,7 @@ class FlxDestroyUtil
 	{
 		if (object != null)
 			object.putWeak();
+
 		return null;
 	}
 

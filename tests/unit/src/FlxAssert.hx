@@ -21,16 +21,6 @@ class FlxAssert
 		else
 			Assert.fail('Value [$actual] is not within [$margin] of [$expected]', info);
 	}
-	
-	public static function colorsEqual(expected:FlxColor, actual:FlxColor, ?msg:String, ?info:PosInfos):Void
-	{
-		if (expected == actual)
-			Assert.assertionCount++;
-		else if (msg != null)
-			Assert.fail(msg, info);
-		else
-			Assert.fail('Value [${actual.toHexString()}] is not equal to [${expected.toHexString()}]', info);
-	}
 
 	public static function rectsNear(expected:FlxRect, actual:FlxRect, margin = 0.001, ?msg:String, ?info:PosInfos):Void
 	{
@@ -177,12 +167,15 @@ class FlxAssert
 		else
 			Assert.fail('Value [$actual] is not within [$margin] of [( x:$expectedX | y:$expectedY )]', info);
 	}
-	public static function allEqual<T>(expected:T, results:Array<T>, ?msg:String, ?info:PosInfos)
+	
+	
+	public static function colorsEqual(expected:FlxColor, actual:FlxColor, ?msg:String, ?info:PosInfos):Void
 	{
-		for (i => actual in results)
-		{
-			final message = msg != null ? msg : 'Value $i [$actual] was not equal to expected value [$expected]';
-			Assert.areEqual(expected, actual, msg, info);
-		}
+		if (expected == actual)
+			Assert.assertionCount++;
+		else if (msg != null)
+			Assert.fail(msg, info);
+		else
+			Assert.fail('Value [${actual.toHexString()}] is not equal to [${expected.toHexString()}]', info);
 	}
 }

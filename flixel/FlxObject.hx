@@ -1055,10 +1055,10 @@ class FlxObject extends FlxBasic
 	{
 		if (result == null)
 			result = FlxPoint.get();
-			
+
 		if (camera == null)
 			camera = getDefaultCamera();
-			
+
 		return result.set(getViewXHelper(camera), getViewYHelper(camera));
 	}
 	
@@ -1073,7 +1073,7 @@ class FlxObject extends FlxBasic
 	{
 		if (camera == null)
 			camera = getDefaultCamera();
-			
+
 		return getViewXHelper(camera);
 	}
 	
@@ -1094,7 +1094,7 @@ class FlxObject extends FlxBasic
 	{
 		if (camera == null)
 			camera = getDefaultCamera();
-			
+
 		return getViewYHelper(camera);
 	}
 	
