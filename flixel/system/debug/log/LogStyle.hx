@@ -1,15 +1,16 @@
 package flixel.system.debug.log;
 
-import flixel.util.FlxSignal;
+import flixel.system.debug.log.FlxLogStyle;
+import flixel.util.FlxColor;
 import haxe.PosInfos;
-
-using flixel.util.FlxStringUtil;
 
 /**
  * A class that allows you to create a custom style for `FlxG.log.advanced()`.
  * Also used internally for the pre-defined styles.
  */
-class LogStyle
+@:forward
+@:deprecated("LogStyle is deprecated, use FlxLogStyle, instead")
+abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 {
 	@:deprecated("LogStyle.NORMAL is deprecated, use FlxG.log.styles.NORMAL, instead")
 	public static var NORMAL (default, set):LogStyle;
@@ -87,37 +88,6 @@ class LogStyle
 		
 		this.callbackFunction = callbackFunction;
 		if (callback != null)
-			onLog.add(callback);
-		this.throwException = throwException;
-	}
-	
-	/**
-	 * Converts the data into a log message according to this style.
-	 * 
-	 * @param   data  The data being logged
-	 */
-	public function toLogString(data:Array<Any>)
-	{
-		// Format FlxPoints, Arrays, Maps or turn the data entry into a String
-		final texts = new Array<String>();
-		for (i in 0...data.length)
-		{
-			final text = Std.string(data[i]);
-			
-			// Make sure you can't insert html tags
-			texts.push(StringTools.htmlEscape(text));
-		}
-		
-		return prefix + texts.join(" ");
-	}
-	
-	/**
-	 * Converts the data into an html log message according to this style.
-	 * 
-	 * @param   data  The data being logged
-	 */
-	public inline function toHtmlString(data:Array<Any>)
-	{
-		return toLogString(data).htmlFormat(size, color, bold, italic, underlined);
+			this.onLog.add(callback);
 	}
 }
