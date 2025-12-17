@@ -59,7 +59,7 @@ class FlxLogStylesList
 	}
 	
 	@:haxe.warning("-WDeprecated")
-	function set_normal (style:FlxLogStyle)
+	function set_normal(style:FlxLogStyle)
 	{
 		@:bypassAccessor LogStyle.NORMAL = style;
 		return this.normal = style;
@@ -73,14 +73,14 @@ class FlxLogStylesList
 	}
 	
 	@:haxe.warning("-WDeprecated")
-	function set_error  (style:FlxLogStyle)
+	function set_error(style:FlxLogStyle)
 	{
 		@:bypassAccessor LogStyle.ERROR = style;
 		return this.error = style;
 	}
 	
 	@:haxe.warning("-WDeprecated")
-	function set_notice (style:FlxLogStyle)
+	function set_notice(style:FlxLogStyle)
 	{
 		@:bypassAccessor LogStyle.NOTICE = style;
 		return this.notice = style;
@@ -92,7 +92,6 @@ class FlxLogStylesList
 		@:bypassAccessor LogStyle.CONSOLE = style;
 		return this.console = style;
 	}
-	
 }
 
 /**
