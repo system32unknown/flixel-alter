@@ -122,7 +122,7 @@ class FlxSound extends FlxBasic
 	 * NOTE: This setter is deprecated, use `group.add(sound)` or `group.remove(sound)`.
 	 */
 	@:allow(flixel.sound.FlxSoundGroup)
-	public var group(default, set):FlxSoundGroup;
+	public var group(default, null):FlxSoundGroup;
 	
 	/**
 	 * Whether or not this sound should loop.
@@ -287,6 +287,7 @@ class FlxSound extends FlxBasic
 			_sound = null;
 		}
 		
+		onFinish.removeAll();
 		onComplete = null;
 		
 		super.destroy();

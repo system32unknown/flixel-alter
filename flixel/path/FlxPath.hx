@@ -136,13 +136,7 @@ class FlxPath extends FlxBasePath
 	 * The angle in degrees between this object and the next node, where -90 is directly upward, and 0 is to the right.
 	 */
 	public var angle(default, null):Float = 0;
-	
-	/**
-	 * Legacy method of alignment for the object following the path. If true, align the midpoint of the object on the path, else use the x, y position.
-	 */
-	@:deprecated("path.autoCenter is deprecated, use centerMode") // 5.7.0
-	public var autoCenter(get, set):Bool;
-	
+
 	/**
 	 * How to center the object on the path.
 	 * @since 5.7.0
@@ -162,16 +156,7 @@ class FlxPath extends FlxBasePath
 	 * @since 5.0.0
 	 */
 	public var angleOffset:Float = 0;
-	
-	@:deprecated("onComplete is deprecated, use the onEndReached signal, instead")
-	public var onComplete:FlxPath->Void;
-	
-	/**
-	 * Tracks which node of the path this object is currently moving toward.
-	 */
-	@:deprecated("nodeIndex is deprecated, use nextIndex, instead")
-	public var nodeIndex(get, never):Int;
-	
+
 	/**
 	 * Whether to limit movement to certain axes.
 	 */
