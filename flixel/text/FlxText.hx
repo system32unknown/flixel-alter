@@ -20,7 +20,7 @@ import openfl.text.TextField;
 import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
-
+import openfl.utils.AssetType;
 using flixel.util.FlxStringUtil;
 #if flash
 import openfl.geom.Rectangle;
@@ -94,6 +94,14 @@ class FlxText extends FlxSprite
 	public var underline(get, set):Bool;
 
 	/**
+	 * Whether new lines in the text should be allowed or not (`true` by default).
+	 * 
+	 * **NOTE:** If word wrapping is on, the text field could still have multiple
+	 * lines even if this is disabled.
+	 */
+	public var multiLine(get, set):Bool;
+
+	/**
 	 * Whether to use word wrapping and multiline or not (`true` by default).
 	 */
 	public var wordWrap(get, set):Bool;
@@ -156,19 +164,7 @@ class FlxText extends FlxSprite
 	public var autoSize(get, set):Bool;
 
 	var _autoHeight:Bool = true;
-	
-	/**
-	 * Internal handler for deprecated `shadowOffset` field
-	 */
-	var _shadowOffset:FlxPoint = FlxPoint.get(1, 1);
-	
-	/**
-	 * Offset that is applied to the shadow border style, if active.
-	 * `x` and `y` are multiplied by `borderSize`. Default is `(1, 1)`, or lower-right corner.
-	 */
-	@:deprecated("shadowOffset is deprecated, use setBorderStyle(SHADOW_XY(offsetX, offsetY)), instead") // 5.9.0
-	public var shadowOffset(get, never):FlxPoint;
-	
+
 	/**
 	 * Used to offset the graphic to account for the border
 	 */
@@ -257,7 +253,6 @@ class FlxText extends FlxSprite
 		_font = null;
 		_defaultFormat = null;
 		_formatAdjusted = null;
-		_shadowOffset = FlxDestroyUtil.put(_shadowOffset);
 		_graphicOffset = FlxDestroyUtil.put(_graphicOffset);
 		super.destroy();
 	}
@@ -684,14 +679,15 @@ class FlxText extends FlxSprite
 		
 		return value;
 	}
-	
-	override function setColorTransform(redMultiplier = 1.0, greenMultiplier = 1.0, blueMultiplier = 1.0, alphaMultiplier = 1.0, redOffset = 0.0, greenOffset = 0.0, blueOffset = 0.0, alphaOffset = 0.0)
+
+	override function setColorTransform(redMultiplier = 1.0, greenMultiplier = 1.0, blueMultiplier = 1.0, alphaMultiplier = 1.0, redOffset = 0.0,
+			greenOffset = 0.0, blueOffset = 0.0, alphaOffset = 0.0)
 	{
 		super.setColorTransform(1, 1, 1, 1, redOffset, greenOffset, blueOffset, alphaOffset);
 		_defaultFormat.color = FlxColor.fromRGBFloat(redMultiplier, greenMultiplier, blueMultiplier, 0);
 		updateDefaultFormat();
 	}
-
+	
 	override function set_color(value:FlxColor):Int
 	{
 		if (_defaultFormat.color == value.rgb)
@@ -807,6 +803,28 @@ class FlxText extends FlxSprite
 		return value;
 	}
 
+	function get_multiLine():Bool
+	{
+		return (textField != null) ? textField.multiline : false;
+	}
+	
+	function set_multiLine(value:Bool):Bool
+	{
+		if (textField == null)
+			return value;
+			
+		if (textField.multiline != value)
+		{
+			textField.multiline = value;
+			if (!value)
+			{
+				// Refresh text to remove any new lines
+				text = text;
+			}
+		}
+		return value;
+	}
+
 	inline function get_wordWrap():Bool
 	{
 		return textField.wordWrap;
@@ -886,11 +904,6 @@ class FlxText extends FlxSprite
 		regenGraphic();
 		return super.get_height();
 	}
-	
-	inline function get_shadowOffset()
-	{
-		return _shadowOffset;
-	}
 
 	override function updateColorTransform():Void
 	{
@@ -914,27 +927,23 @@ class FlxText extends FlxSprite
 		
 		var borderWidth:Float = 0;
 		var borderHeight:Float = 0;
-		switch(borderStyle)
-		{
-			case SHADOW if (_shadowOffset.x != 1 || _shadowOffset.y != 1):
-				borderWidth += Math.abs(_shadowOffset.x);
-				borderHeight += Math.abs(_shadowOffset.y);
-			
+		switch (borderStyle)
+		{		
 			case SHADOW: // With the default shadowOffset value
 				borderWidth += Math.abs(borderSize);
 				borderHeight += Math.abs(borderSize);
-			
+				
 			case SHADOW_XY(offsetX, offsetY):
 				borderWidth += Math.abs(offsetX);
 				borderHeight += Math.abs(offsetY);
-			
+				
 			case OUTLINE_FAST | OUTLINE:
 				borderWidth += Math.abs(borderSize) * 2;
 				borderHeight += Math.abs(borderSize) * 2;
 			
 			case NONE:
 		}
-		
+
 		final newWidth:Int = Math.ceil(newWidthFloat + borderWidth);
 		final newHeight:Int = Math.ceil(newHeightFloat + borderHeight);
 		
@@ -1111,27 +1120,23 @@ class FlxText extends FlxSprite
 		regenGraphic();
 		super.calcFrame(RunOnCpp);
 	}
-	
+
 	function applyBorderStyle():Void
 	{
 		// offset entire image to fit the border
-		switch(borderStyle)
+		switch (borderStyle)
 		{
-			case SHADOW if (_shadowOffset.x != 1 || _shadowOffset.y != 1):
-				_graphicOffset.x = _shadowOffset.x > 0 ? _shadowOffset.x : 0;
-				_graphicOffset.y = _shadowOffset.y > 0 ? _shadowOffset.y : 0;
-			
 			case SHADOW: // With the default shadowOffset value
 				if (borderSize < 0)
 					_graphicOffset.set(-borderSize, -borderSize);
-			
+					
 			case SHADOW_XY(offsetX, offsetY):
 				_graphicOffset.x = offsetX < 0 ? -offsetX : 0;
 				_graphicOffset.y = offsetY < 0 ? -offsetY : 0;
-			
+				
 			case OUTLINE_FAST | OUTLINE if (borderSize < 0):
 				_graphicOffset.set(-borderSize, -borderSize);
-			
+				
 			case NONE | OUTLINE_FAST | OUTLINE:
 				_graphicOffset.set(0, 0);
 		}
@@ -1139,23 +1144,10 @@ class FlxText extends FlxSprite
 		
 		switch (borderStyle)
 		{
-			case SHADOW if (_shadowOffset.x != 1 || _shadowOffset.y != 1):
-				// Render a shadow beneath the text using the shadowOffset property
-				applyFormats(_formatAdjusted, true);
-				
-				var iterations = borderQuality < 1 ? 1 : Std.int(Math.abs(borderSize) * borderQuality);
-				final delta = borderSize / iterations;
-				for (i in 0...iterations)
-				{
-					copyTextWithOffset(delta, delta);
-				}
-				
-				_matrix.translate(-_shadowOffset.x * borderSize, -_shadowOffset.y * borderSize);
-			
 			case SHADOW: // With the default shadowOffset value
 				// Render a shadow beneath the text
 				applyFormats(_formatAdjusted, true);
-				
+
 				final originX = _matrix.tx;
 				final originY = _matrix.ty;
 				
@@ -1168,7 +1160,7 @@ class FlxText extends FlxSprite
 					_matrix.tx = originX;
 					_matrix.ty = originY;
 				}
-			
+
 			case SHADOW_XY(shadowX, shadowY):
 				// Render a shadow beneath the text with the specified offset
 				applyFormats(_formatAdjusted, true);
@@ -1192,7 +1184,7 @@ class FlxText extends FlxSprite
 				// Render an outline around the text
 				// (do 8 offset draw calls)
 				applyFormats(_formatAdjusted, true);
-				
+
 				final iterations = FlxMath.maxInt(1, Std.int(borderSize * borderQuality));
 				var i = iterations + 1;
 				while (i-- > 1)
@@ -1206,16 +1198,16 @@ class FlxText extends FlxSprite
 					copyTextWithOffset(-curDelta, 0); // lower-middle
 					copyTextWithOffset(-curDelta, 0); // lower-left
 					copyTextWithOffset(0, -curDelta); // lower-left
-					
+
 					_matrix.translate(curDelta, 0); // return to center
 				}
-			
+
 			case OUTLINE_FAST:
 				// Render an outline around the text
 				// (do 4 diagonal offset draw calls)
 				// (this method might not work with certain narrow fonts)
 				applyFormats(_formatAdjusted, true);
-				
+
 				final iterations = FlxMath.maxInt(1, Std.int(borderSize * borderQuality));
 				var i = iterations + 1;
 				while (i-- > 1)
@@ -1225,10 +1217,10 @@ class FlxText extends FlxSprite
 					copyTextWithOffset(curDelta * 2, 0); // upper-right
 					copyTextWithOffset(0, curDelta * 2); // lower-right
 					copyTextWithOffset(-curDelta * 2, 0); // lower-left
-					
+
 					_matrix.translate(curDelta, -curDelta); // return to center
 				}
-			
+
 			case NONE:
 		}
 	}
@@ -1402,12 +1394,12 @@ class FlxTextFormatMarkerPair
 enum FlxTextBorderStyle
 {
 	NONE;
-	
+
 	/**
 	 * A simple shadow to the lower-right
 	 */
 	SHADOW;
-	
+
 	/**
 	 * A shadow that allows custom placement
 	 * **Note:** Ignores borderSize
@@ -1418,7 +1410,7 @@ enum FlxTextBorderStyle
 	 * Outline on all 8 sides
 	 */
 	OUTLINE;
-	
+
 	/**
 	 * Outline, optimized using only 4 draw calls
 	 * **Note:** Might not work for narrow and/or 1-pixel fonts

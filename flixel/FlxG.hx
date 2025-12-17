@@ -155,6 +155,12 @@ class FlxG
 	public static var elapsed(default, null):Float = 0;
 
 	/**
+	 * Represents the amount of time in seconds that passed since last frame. (Ignoring timescale)
+	 */
+	@:allow(flixel.FlxGame.updateElapsed)
+	public static var rawElapsed(default, null):Float = 0;
+
+	/**
 	 * Useful when the timestep is NOT fixed (i.e. variable),
 	 * to prevent jerky movement or erratic behavior at very low fps.
 	 * Essentially locks the framerate to a minimum value - any slower and you'll get
@@ -182,7 +188,7 @@ class FlxG
 	public static var scaleMode(default, set):BaseScaleMode = new RatioScaleMode();
 
 	/**
-	 * Use this to toggle between fullscreen and normal mode. Works on CPP, Neko and Flash.
+	 * Use this to toggle between fullscreen and normal mode. Works on CPP and Flash.
 	 * You can easily toggle fullscreen with e.g.: `FlxG.fullscreen = !FlxG.fullscreen;`
 	 */
 	public static var fullscreen(get, set):Bool;
@@ -191,7 +197,7 @@ class FlxG
 	 * The dimensions of the game world, used by the quad tree for collisions and overlap checks.
 	 * Use `.set()` instead of creating a new object!
 	 */
-	public static var worldBounds(default, null):FlxRect = FlxRect.get();
+	public static var worldBounds(default, null):FlxRect = new FlxRect();
 
 	#if FLX_SAVE
 	/**
@@ -346,7 +352,7 @@ class FlxG
 	}
 
 	/**
-	 * Resizes the window. Only works on desktop targets (Neko, Windows, Linux, Mac).
+	 * Resizes the window. Only works on desktop targets (Windows, Linux, Mac).
 	 */
 	public static function resizeWindow(width:Int, height:Int):Void
 	{

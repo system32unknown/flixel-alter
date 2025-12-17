@@ -277,6 +277,15 @@ abstract FlxColor(Int) from Int from UInt to Int to UInt
 	}
 
 	/**
+	 * Divide the RGB channels of two FlxColors
+	 */
+	@:op(A / B)
+	public static inline function divide(lhs:FlxColor, rhs:FlxColor):FlxColor
+	{
+		return FlxColor.fromRGBFloat(lhs.redFloat / rhs.redFloat, lhs.greenFloat / rhs.greenFloat, lhs.blueFloat / rhs.blueFloat);
+	}
+
+	/**
 	 * Multiply the RGB channels of two FlxColors
 	 */
 	@:op(A * B)
@@ -587,18 +596,7 @@ abstract FlxColor(Int) from Int from UInt to Int to UInt
 
 	inline function getThis():Int
 	{
-		#if neko
-		return Std.int(this);
-		#else
 		return this;
-		#end
-	}
-
-	inline function validate():Void
-	{
-		#if neko
-		this = Std.int(this);
-		#end
 	}
 
 	inline function get_red():Int
@@ -643,7 +641,6 @@ abstract FlxColor(Int) from Int from UInt to Int to UInt
 
 	inline function set_red(Value:Int):Int
 	{
-		validate();
 		this &= 0xff00ffff;
 		this |= boundChannel(Value) << 16;
 		return Value;
@@ -651,7 +648,6 @@ abstract FlxColor(Int) from Int from UInt to Int to UInt
 
 	inline function set_green(Value:Int):Int
 	{
-		validate();
 		this &= 0xffff00ff;
 		this |= boundChannel(Value) << 8;
 		return Value;
@@ -659,7 +655,6 @@ abstract FlxColor(Int) from Int from UInt to Int to UInt
 
 	inline function set_blue(Value:Int):Int
 	{
-		validate();
 		this &= 0xffffff00;
 		this |= boundChannel(Value);
 		return Value;
@@ -667,7 +662,6 @@ abstract FlxColor(Int) from Int from UInt to Int to UInt
 
 	inline function set_alpha(Value:Int):Int
 	{
-		validate();
 		this &= 0x00ffffff;
 		this |= boundChannel(Value) << 24;
 		return Value;
@@ -799,7 +793,6 @@ abstract FlxColor(Int) from Int from UInt to Int to UInt
 
 	inline function set_rgb(value:FlxColor):FlxColor
 	{
-		validate();
 		this = (this & 0xff000000) | (value & 0x00ffffff);
 		return value;
 	}

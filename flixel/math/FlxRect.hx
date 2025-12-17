@@ -156,6 +156,32 @@ class FlxRect implements IFlxPooled
 	}
 	
 	/**
+	 * Ensures that width and height are positive while covering the same space. For example:
+	 * ```haxe
+	 * rect.set(100, 100, -50, -50).abs();
+	 * // Is the same as
+	 * rect.set(50, 50, 50, 50);
+	 * ```
+	 * @since 6.2.0
+	 */
+	public inline function abs()
+	{
+		if (width < 0)
+		{
+			x += width;
+			width = -width;
+		}
+		
+		if (height < 0)
+		{
+			y += height;
+			height = -height;
+		}
+		
+		return this;
+	}
+
+	/**
 	 * Fills the rectangle so that it has always has a positive width and height. For example:
 	 * ```haxe
 	 * rect.setAbs(100, 100, -50, -50);
@@ -171,11 +197,7 @@ class FlxRect implements IFlxPooled
 	 */
 	public inline function setAbs(x:Float, y:Float, width:Float, height:Float)
 	{
-		this.x = width > 0 ? x : x + width;
-		this.y = height > 0 ? y : y + height;
-		this.width = width > 0 ? width : -width;
-		this.height = height > 0 ? height : -height;
-		return this;
+		return this.set(x, y, width, height).abs();
 	}
 	
 	/**
@@ -293,10 +315,7 @@ class FlxRect implements IFlxPooled
 	 */
 	public inline function contains(rect:FlxRect):Bool
 	{
-		final result = rect.left >= left
-			&& rect.right <= right
-			&& rect.top >= top
-			&& rect.bottom <= bottom;
+		final result = rect.left >= left && rect.right <= right && rect.top >= top && rect.bottom <= bottom;
 		rect.putWeak();
 		return result;
 	}
@@ -520,13 +539,13 @@ class FlxRect implements IFlxPooled
 	{
 		if (result == null)
 			result = FlxRect.get();
-		
+
 		final x0:Float = x < rect.x ? rect.x : x;
 		final x1:Float = right > rect.right ? rect.right : right;
 		final y0:Float = y < rect.y ? rect.y : y;
 		final y1:Float = bottom > rect.bottom ? rect.bottom : bottom;
 		rect.putWeak();
-		
+
 		if (x1 <= x0 || y1 <= y0)
 			return result.set(0, 0, 0, 0);
 		

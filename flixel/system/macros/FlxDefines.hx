@@ -24,10 +24,6 @@ private enum UserDefine
 	FLX_NO_SOUND_TRAY;
 	FLX_NO_FOCUS_LOST_SCREEN;
 	FLX_NO_DEBUG;
-	/* Removes FlxObject.health */
-	FLX_NO_HEALTH;
-	/* Enables FlxObject.health */
-	FLX_HEALTH;
 	FLX_RECORD;
 	/* Defined in HaxeFlixel CI tests, do not use */
 	FLX_UNIT_TEST;
@@ -123,8 +119,7 @@ private enum HelperDefine
 	/* Used in HaxeFlixel CI, should have no effect on personal projects */
 	FLX_NO_CI;
 	FLX_SAVE;
-	/** Neither FLX_HEALTH not FLX_NO_HEALTH was defined */
-	FLX_HEALTH_NOT_DEFINED;
+
 	FLX_NO_TRACK_POOLS;
 	FLX_NO_TRACK_GRAPHICS;
 	FLX_OPENGL_AVAILABLE;
@@ -133,6 +128,8 @@ private enum HelperDefine
 	/** The normalized, absolute path of `FLX_CUSTOM_ASSETS_DIRECTORY`, used internally */
 	FLX_CUSTOM_ASSETS_DIRECTORY_ABS;
 	FLX_NO_DEFAULT_SOUND_EXT;
+	/** Enables audio streaming related APIs */
+	FLX_STREAM_SOUND;
 }
 
 class FlxDefines
@@ -203,6 +200,7 @@ class FlxDefines
 				Context.warning('"$define" is not a valid flixel define.', (macro null).pos);
 			}
 		}
+		defineInversion(FLX_DEFAULT_SOUND_EXT, FLX_NO_DEFAULT_SOUND_EXT);
 	}
 	
 	static var userDefinable = UserDefine.getConstructors();
@@ -233,13 +231,6 @@ class FlxDefines
 		defineInversion(FLX_SWF_VERSION_TEST, FLX_NO_SWF_VERSION_TEST);
 		defineInversion(FLX_TRACK_POOLS, FLX_NO_TRACK_POOLS);
 		defineInversion(FLX_DEFAULT_SOUND_EXT, FLX_NO_DEFAULT_SOUND_EXT);
-		// defineInversion(FLX_TRACK_GRAPHICS, FLX_NO_TRACK_GRAPHICS); // special case
-		// defineInversion(FLX_NO_HEALTH, FLX_HEALTH);
-		if (!defined(FLX_NO_HEALTH) && !defined(FLX_HEALTH))
-		{
-			define(FLX_HEALTH_NOT_DEFINED);
-			define(FLX_HEALTH);
-		}
 	}
 
 	static function defineHelperDefine()
@@ -269,7 +260,7 @@ class FlxDefines
 		
 		if (!defined("flash") || defined("flash11_8"))
 			define(FLX_GAMEINPUT_API);
-		else if (!defined("openfl_next") && (defined("cpp") || defined("neko")))
+		else if (!defined("openfl_next") && defined("cpp"))
 			define(FLX_JOYSTICK_API);
 
 		#if nme
@@ -326,6 +317,10 @@ class FlxDefines
 		}
 		else // define boolean inversion
 			define(FLX_STANDARD_ASSETS_DIRECTORY);
+
+		#if lime_vorbis
+		define(FLX_STREAM_SOUND);
+		#end
 		
 		validateLogLevel(FLX_LOG_THROW);
 		validateLogLevel(FLX_LOG_PLAY_SOUND);

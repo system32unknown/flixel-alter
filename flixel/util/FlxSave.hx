@@ -171,14 +171,14 @@ class FlxSave implements IFlxDestroyable
 	 *                        **Note:** This arg is never used when targeting flash
 	 * @return  Whether or not you successfully connected to the save data.
 	 */
-	public function bind(name:String, ?path:String, ?backupParser:(String, Exception)->Null<Any>):Bool
+	public function bind(name:String, ?path:String, ?backupParser:(String, Exception) -> Null<Any>):Bool
 	{
 		destroy();
 		
 		name = validateAndWarn(name, "name");
 		if (path != null)
 			path = validateAndWarn(path, "path");
-		
+
 		try
 		{
 			switch FlxSharedObject.getLocal(name, path)
@@ -365,8 +365,6 @@ class FlxSave implements IFlxDestroyable
 				FlxG.log.error('Invalid path:"$path", ${reason == null ? "" : reason}.');
 			case LOAD_ERROR(PARSING(rawData, e)):
 				FlxG.log.error('Error parsing "$rawData", ${e.message}.');
-			case found:
-				throw 'Unexpected status: $found';
 		}
 		return false;
 	}
@@ -491,7 +489,7 @@ private class FlxSharedObject extends SharedObject
 		
 		if (localPath == null)
 			localPath = "";
-		
+
 		var id = localPath + "/" + name;
 		
 		init();
@@ -514,7 +512,7 @@ private class FlxSharedObject extends SharedObject
 			
 			if (localPath == "")
 				localPath = getDefaultLocalPath();
-			
+
 			final sharedObject = new FlxSharedObject();
 			sharedObject.data = {};
 			sharedObject.__localPath = localPath;
@@ -525,7 +523,7 @@ private class FlxSharedObject extends SharedObject
 				try
 				{
 					final unserializer = new haxe.Unserializer(encodedData);
-					final resolver = { resolveEnum: Type.resolveEnum, resolveClass: FlxSave.resolveFlixelClasses };
+					final resolver = {resolveEnum: Type.resolveEnum, resolveClass: FlxSave.resolveFlixelClasses};
 					unserializer.setResolver(cast resolver);
 					sharedObject.data = unserializer.unserialize();
 				}
@@ -541,7 +539,7 @@ private class FlxSharedObject extends SharedObject
 		
 		return SUCCESS(all.get(id));
 	}
-	
+
 	#if (js && html5)
 	static function getData(name:String, ?localPath:String)
 	{
@@ -765,7 +763,7 @@ enum FlxSaveStatus
 	BOUND(name:String, ?path:String);
 	
 	/**
-	 * There was an issue during `flush`. Previously known as `ERROR(msg:String)`
+	 * There was an issue during `flush`
 	 */
 	SAVE_ERROR(type:SaveFailureType);
 	
@@ -773,8 +771,4 @@ enum FlxSaveStatus
 	 * There was an issue while loading
 	 */
 	LOAD_ERROR(type:LoadFailureType);
-	
-	@:noCompletion
-	@:deprecated("FlxSaveStatus.ERROR is never used, it has been replaced by SAVE_ERROR")
-	ERROR(msg:String);
 }

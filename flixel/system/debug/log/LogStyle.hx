@@ -13,7 +13,7 @@ import haxe.PosInfos;
 abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 {
 	@:deprecated("LogStyle.NORMAL is deprecated, use FlxG.log.styles.NORMAL, instead")
-	public static var NORMAL (default, set):LogStyle;
+	public static var NORMAL(default, set):LogStyle;
 	static function set_NORMAL(style:LogStyle)
 	{
 		@:bypassAccessor
@@ -31,7 +31,7 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	}
 	
 	@:deprecated("LogStyle.ERROR is deprecated, use FlxG.log.styles.ERROR, instead")
-	public static var ERROR  (default, set):LogStyle;
+	public static var ERROR(default, set):LogStyle;
 	static function set_ERROR(style:LogStyle)
 	{
 		@:bypassAccessor
@@ -40,7 +40,7 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	}
 	
 	@:deprecated("LogStyle.NOTICE is deprecated, use FlxG.log.styles.NOTICE, instead")
-	public static var NOTICE (default, set):LogStyle;
+	public static var NOTICE(default, set):LogStyle;
 	static function set_NOTICE(style:LogStyle)
 	{
 		@:bypassAccessor
@@ -54,7 +54,7 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	{
 		@:bypassAccessor
 		FlxG.log.styles.console = style;
-		return CONSOLE = style;
+		return this.CONSOLE = style;
 	}
 	
 	

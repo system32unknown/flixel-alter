@@ -14,7 +14,7 @@ import flixel.input.gamepad.FlxGamepadAnalogStick;
  * LINUX: untested.
  *
  * MAC: Worked on html out of box for me when connected via microUSB cable or Bluetooth.
- * Flash and neko couldn't detect the controller via bluetooth,
+	* Flash couldn't detect the controller via bluetooth,
  * which is weird because The pro worked wirelessly.
  * 
  * @since 4.8.0

@@ -319,9 +319,6 @@ class FlxGraphic implements IFlxDestroyable
 	 * This is only the case for graphics with an `assetsKey` or `assetsClass`.
 	 */
 	public var canBeRefreshed(get, never):Bool;
-	
-	@:deprecated("`canBeDumped` is deprecated, use `canBeRefreshed`")
-	public var canBeDumped(get, never):Bool;
 
 	/**
 	 * GLSL shader for this graphic. Only used if utilizing sprites do not define a shader
@@ -373,25 +370,7 @@ class FlxGraphic implements IFlxDestroyable
 	 */
 	public var trackingInfo:String = "";
 	#end
-	
-	/**
-	 * Internal var holding `FlxImageFrame` for the whole bitmap of this graphic.
-	 * Use public `imageFrame` var to access/generate it.
-	 */
-	@:deprecated("_imageFrame is deprecated, use imageFrame")
-	var _imageFrame(get, set):FlxImageFrame;
-	inline function get__imageFrame() return imageFrame;
-	inline function set__imageFrame(value:FlxImageFrame) return imageFrame = value;
 
-	@:deprecated('_useCount is deprecated, use incrementUseCount and decrementUseCount')
-	var _useCount(get, set):Int;
-	inline function get__useCount() return useCount;
-	inline function set__useCount(value:Int) return useCount = value;
-
-	@:deprecated('_destroyOnNoUse is deprecated, use destroyOnNoUse')
-	var _destroyOnNoUse(get, set):Bool;
-	inline function get__destroyOnNoUse() return destroyOnNoUse;
-	inline function set__destroyOnNoUse(value:Bool) return destroyOnNoUse = value;
 	/**
 	 * `FlxGraphic` constructor
 	 *
@@ -421,13 +400,7 @@ class FlxGraphic implements IFlxDestroyable
 		if (newBitmap != null)
 			bitmap = newBitmap;
 	}
-	
-	@:deprecated("`undump` is deprecated, use `refresh`")
-	public function undump():Void
-	{
-		refresh();
-	}
-	
+
 	/**
 	 * Asset reload callback for this graphic object.
 	 * It regenerates its bitmap data.
@@ -480,6 +453,8 @@ class FlxGraphic implements IFlxDestroyable
 				FlxG.log.warn('Attempting to add already added collection');
 			else
 				collections.push(collection);
+			if (!frameCollectionTypes.contains(collection.type))
+				frameCollectionTypes.push(collection.type);
 		}
 	}
 
@@ -554,12 +529,7 @@ class FlxGraphic implements IFlxDestroyable
 	{
 		return assetsClass != null || assetsKey != null;
 	}
-	
-	inline function get_canBeDumped():Bool
-	{
-		return canBeRefreshed;
-	}
-	
+
 	public function incrementUseCount()
 	{
 		useCount++;

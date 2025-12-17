@@ -10,8 +10,8 @@ import flixel.graphics.atlas.TexturePackerAtlas;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.frames.FlxFramesCollection;
-import flixel.system.frontEnds.AssetFrontEnd;
 import flixel.graphics.frames.bmfont.BMFont;
+import flixel.system.frontEnds.AssetFrontEnd;
 import flixel.util.typeLimit.OneOfFour;
 import flixel.util.typeLimit.OneOfThree;
 import flixel.util.typeLimit.OneOfTwo;
@@ -36,7 +36,7 @@ class VirtualInputData extends #if nme ByteArray #else ByteArrayData #end {}
 
 typedef FlxTexturePackerJsonAsset = FlxJsonAsset<TexturePackerAtlas>;
 typedef FlxAsepriteJsonAsset = FlxJsonAsset<AseAtlas>;
-typedef FlxSoundAsset = OneOfThree<String, Sound, Class<Sound>>;
+typedef FlxSoundAsset = OneOfFour<String, Sound, Class<Sound>, ByteArray>;
 typedef FlxTilemapGraphicAsset = OneOfFour<FlxFramesCollection, FlxGraphic, BitmapData, String>;
 typedef FlxBitmapFontGraphicAsset = OneOfFour<FlxFrame, FlxGraphic, BitmapData, String>;
 
@@ -363,19 +363,6 @@ class FlxAssets
 		}
 		
 		return null;
-	}
-
-	/**
-	 * Loads an OpenFL sound asset from the given asset id. If an extension not provided the 
-	 * `defaultSoundExtension` is used (defaults to "ogg" on non-flash targets).
-	 * 
-	 * @param   id  The asset id of the local sound file.
-	 * @return  The sound file.
-	 */
-	@:deprecated("FlxAssets.getSound is deprecated, use getSoundAddExtension, instead")
-	public static inline function getSound(id:String):Sound
-	{
-		return getSoundAddExtension(id);
 	}
 	
 	/**

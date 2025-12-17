@@ -59,7 +59,7 @@ class FlxLogStylesList
 	}
 	
 	@:haxe.warning("-WDeprecated")
-	function set_normal (style:FlxLogStyle)
+	function set_normal(style:FlxLogStyle)
 	{
 		@:bypassAccessor LogStyle.NORMAL = style;
 		return this.normal = style;
@@ -73,14 +73,14 @@ class FlxLogStylesList
 	}
 	
 	@:haxe.warning("-WDeprecated")
-	function set_error  (style:FlxLogStyle)
+	function set_error(style:FlxLogStyle)
 	{
 		@:bypassAccessor LogStyle.ERROR = style;
 		return this.error = style;
 	}
 	
 	@:haxe.warning("-WDeprecated")
-	function set_notice (style:FlxLogStyle)
+	function set_notice(style:FlxLogStyle)
 	{
 		@:bypassAccessor LogStyle.NOTICE = style;
 		return this.notice = style;
@@ -92,7 +92,6 @@ class FlxLogStylesList
 		@:bypassAccessor LogStyle.CONSOLE = style;
 		return this.console = style;
 	}
-	
 }
 
 /**
@@ -100,6 +99,7 @@ class FlxLogStylesList
  */
 class LogFrontEnd
 {
+	public static var onLogs:Dynamic->LogStyle->Bool->Void;
 	/**
 	 * Whether everything you trace() is being redirected into the log window.
 	 */
@@ -108,7 +108,6 @@ class LogFrontEnd
 	public final styles:FlxLogStylesList;
 
 	var _standardTraceFunction:(Dynamic, ?PosInfos)->Void;
-	
 	public inline function add(data:Dynamic, ?pos:PosInfos):Void
 	{
 		advanced(data, styles.normal, false, pos);
@@ -136,7 +135,6 @@ class LogFrontEnd
 	 * @param   style     The LogStyle to use, for example LogStyle.WARNING. You can also create your own by importing the LogStyle class.
 	 * @param   fireOnce  Whether you only want to log the Data in case it hasn't been added already
 	 */
-	@:haxe.warning("-WDeprecated")
 	public function advanced(data:Any, ?style:LogStyle, fireOnce = false, ?pos:PosInfos):Void
 	{
 		if (style == null)
@@ -163,9 +161,6 @@ class LogFrontEnd
 			
 			if (style.openConsole)
 				FlxG.debugger.visible = true;
-			
-			if (style.callbackFunction != null)
-				style.callbackFunction();
 		}
 		#end
 		

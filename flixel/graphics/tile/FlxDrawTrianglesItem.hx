@@ -340,7 +340,6 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 				colorMultipliers.push(1);
 			}
 		}
-
 		verticesPosition += 8;
 		indicesPosition += 6;
 	}

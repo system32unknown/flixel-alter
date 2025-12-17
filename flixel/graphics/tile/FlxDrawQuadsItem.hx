@@ -103,7 +103,7 @@ class FlxDrawQuadsItem extends FlxDrawBaseItem<FlxDrawQuadsItem>
 					colorOffsets.push(0);
 					colorOffsets.push(0);
 				}
-
+				
 				colorMultipliers.push(1);
 			}
 		}

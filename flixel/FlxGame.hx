@@ -2,8 +2,6 @@ package flixel;
 
 import flixel.graphics.tile.FlxDrawBaseItem;
 import flixel.system.FlxSplash;
-import flixel.util.FlxArrayUtil;
-import flixel.util.FlxDestroyUtil;
 import flixel.util.typeLimit.NextState;
 import openfl.Assets;
 import openfl.Lib;
@@ -239,8 +237,8 @@ class FlxGame extends Sprite
 	 *
 	 * @see [scale modes](https://api.haxeflixel.com/flixel/system/scaleModes/index.html)
 	 */
-	public function new(gameWidth = 0, gameHeight = 0, ?initialState:InitialState, updateFramerate = 60, drawFramerate = 60, skipSplash = false,
-			startFullscreen = false)
+	public function new(?initialState:NextState, ?gameWidth:Int = 0, ?gameHeight:Int = 0, ?framerate:Int = 60, ?skipSplash:Bool = false,
+			?startFullscreen:Bool = false)
 	{
 		super();
 
@@ -259,8 +257,7 @@ class FlxGame extends Sprite
 		// Basic display and update setup stuff
 		FlxG.init(this, gameWidth, gameHeight);
 
-		FlxG.updateFramerate = updateFramerate;
-		FlxG.drawFramerate = drawFramerate;
+		FlxG.drawFramerate = FlxG.updateFramerate = framerate;
 		_accumulator = _stepMS;
 		_skipSplash = skipSplash;
 
@@ -269,7 +266,7 @@ class FlxGame extends Sprite
 		#end
 
 		// Then get ready to create the game object for real
-		_initialState = (initialState == null) ? FlxState.new : initialState.toNextState();
+		_initialState = (initialState == null) ? FlxState.new : initialState;
 
 		addEventListener(Event.ADDED_TO_STAGE, create);
 	}
@@ -577,7 +574,7 @@ class FlxGame extends Sprite
 
 		// Finally assign and create the new state
 		_state = _nextState.createInstance();
-		_state._constructor = _nextState.getConstructor();
+		_state._constructor = _nextState;
 		_nextState = null;
 
 		if (_gameJustStarted)
@@ -596,8 +593,8 @@ class FlxGame extends Sprite
 
 		FlxG.signals.postStateSwitch.dispatch();
 	}
-	
-	function gameStart()
+
+	function gameStart():Void
 	{
 		FlxG.signals.postGameStart.dispatch();
 		_gameJustStarted = false;
@@ -709,7 +706,7 @@ class FlxGame extends Sprite
 		}
 		#end
 
-		filters = filtersEnabled ? _filters : null;
+		setFiltersSuper(filtersEnabled ? _filters : null);
 	}
 
 	function updateElapsed():Void
@@ -717,14 +714,15 @@ class FlxGame extends Sprite
 		if (FlxG.fixedTimestep)
 		{
 			FlxG.elapsed = FlxG.timeScale * _stepSeconds; // fixed timestep
+			FlxG.rawElapsed = _stepSeconds;
 		}
 		else
 		{
-			FlxG.elapsed = FlxG.timeScale * (_elapsedMS / 1000); // variable timestep
+			FlxG.rawElapsed = _elapsedMS / 1000; // variable timestep
+			if (FlxG.rawElapsed > FlxG.maxElapsed)
+				FlxG.rawElapsed = FlxG.maxElapsed;
 
-			var max = FlxG.maxElapsed * FlxG.timeScale;
-			if (FlxG.elapsed > max)
-				FlxG.elapsed = max;
+			FlxG.elapsed = FlxG.timeScale * FlxG.rawElapsed;
 		}
 	}
 
@@ -846,6 +844,16 @@ class FlxGame extends Sprite
 	{
 		// expensive, only call if necessary
 		return Lib.getTimer();
+	}
+	override function set_filters(value:Array<BitmapFilter>):Array<BitmapFilter>
+	{
+		setFilters(value);
+		return value;
+	}
+	
+	function setFiltersSuper(value:Array<BitmapFilter>):Array<BitmapFilter>
+	{
+		return super.set_filters(value);
 	}
 }
 

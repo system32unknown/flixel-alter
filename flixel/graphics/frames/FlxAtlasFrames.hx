@@ -244,12 +244,19 @@ class FlxAtlasFrames extends FlxFramesCollection
 		if (frames != null)
 			return frames;
 
-		if (graphic == null || xml == null)
+		final xmlData = xml.getXml().firstElement();
+		if (xmlData == null)
+		{
+			FlxG.log.warn('Invalid xml: $xml');
+			return null;
+		}
+		
+		if (graphic == null)
 			return null;
 
 		frames = new FlxAtlasFrames(graphic);
 
-		var data:Access = new Access(xml.getXml().firstElement());
+		var data:Access = new Access(xmlData);
 
 		for (texture in data.nodes.SubTexture)
 		{
@@ -323,14 +330,19 @@ class FlxAtlasFrames extends FlxFramesCollection
 		if (frames != null)
 			return frames;
 
-		if (graphic == null || xml == null)
+		final xmlData = xml.getXml().firstElement();
+		if (xmlData == null)
+		{
+			FlxG.log.warn('Invalid xml: $xml');
+			return null;
+		}
+		
+		if (graphic == null)
 			return null;
 
 		frames = new FlxAtlasFrames(graphic);
 
-		final data = xml.getXml();
-
-		for (sprite in data.firstElement().elements())
+		for (sprite in xmlData.elements())
 		{
 			var trimmed = (sprite.exists("oX") || sprite.exists("oY"));
 			var rotated = (sprite.exists("r") && sprite.get("r") == "y");
@@ -476,10 +488,3 @@ class FlxAtlasFrames extends FlxFramesCollection
 		return this;
 	}
 }
-
-@:deprecated("Use TexturePackerAtlas instead")// 5.4.0
-typedef TexturePackerObject = TexturePackerAtlas;
-@:deprecated("Use TexturePackerAtlasFrame instead")// 5.4.0
-typedef TexturePackerFrameData = TexturePackerAtlasFrame;
-@:deprecated("Use AtlasRect instead")// 5.4.0
-typedef TexturePackerFrameRect = AtlasRect;
