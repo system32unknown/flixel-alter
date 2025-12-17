@@ -39,8 +39,13 @@ typedef FlxAsepriteJsonAsset = FlxJsonAsset<AseAtlas>;
 typedef FlxSoundAsset = OneOfFour<String, Sound, Class<Sound>, ByteArray>;
 typedef FlxTilemapGraphicAsset = OneOfFour<FlxFramesCollection, FlxGraphic, BitmapData, String>;
 typedef FlxBitmapFontGraphicAsset = OneOfFour<FlxFrame, FlxGraphic, BitmapData, String>;
+<<<<<<< HEAD
 abstract FlxGraphicAsset(OneOfFour<FlxGraphic, BitmapData, String, Class<Dynamic>>) from FlxGraphic to FlxGraphic from BitmapData to BitmapData from String
 	to String from Class<Dynamic> to Class<Dynamic>
+=======
+
+abstract FlxGraphicAsset(OneOfFour<FlxGraphic, BitmapData, String, Class<Dynamic>>) from FlxGraphic to FlxGraphic from BitmapData to BitmapData from String to String from Class<Dynamic> to Class<Dynamic>
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 {
 	public inline function resolveBitmapData():BitmapData
 	{
@@ -56,6 +61,12 @@ abstract FlxAngelCodeAsset(OneOfThree<Xml, String, Bytes>) from Xml from String 
 	}
 }
 
+<<<<<<< HEAD
+=======
+@:deprecated("`FlxAngelCodeXmlAsset` is deprecated, use `FlxAngelCodeAsset` instead")// 5.6.0
+typedef FlxAngelCodeXmlAsset = FlxAngelCodeAsset;
+
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 abstract FlxXmlAsset(OneOfTwo<Xml, String>) from Xml from String
 {
 	public function getXml()
@@ -338,7 +349,11 @@ class FlxAssets
 	{
 		if (key != null)
 			return key;
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 		if ((graphic is FlxGraphic))
 		{
 			return cast(graphic, FlxGraphic).key;

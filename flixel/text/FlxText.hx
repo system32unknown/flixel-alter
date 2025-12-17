@@ -628,11 +628,15 @@ class FlxText extends FlxSprite
 
 	function set_text(Text:String):String
 	{
+<<<<<<< HEAD
 		if (!multiLine && (Text.contains("\n") || Text.contains("\r")))
 		{
 			Text = Text.split("\n").join("").split("\r").join("");
 		}
 		text = Text;
+=======
+		// TODO: Remove if and let it crash on 7.0.0
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 		if (textField != null)
 		{
 			var ot:String = textField.text;
@@ -890,7 +894,13 @@ class FlxText extends FlxSprite
 	{
 		if (textField == null || !_regen)
 			return;
+<<<<<<< HEAD
 
+=======
+		
+		_regen = false;
+		
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 		final oldWidth:Int = graphic != null ? graphic.width : 0;
 		final oldHeight:Int = graphic != null ? graphic.height : VERTICAL_GUTTER;
 		
@@ -1037,8 +1047,13 @@ class FlxText extends FlxSprite
 		regenGraphic();
 		super.draw();
 	}
+<<<<<<< HEAD
 
 	override function drawSimple(camera:FlxCamera):Void
+=======
+	
+	override function getScreenPosition(?result:FlxPoint, ?camera:FlxCamera):FlxPoint
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	{
 		// same as super but checks _graphicOffset
 		getScreenPosition(_point, camera).subtract(offset).subtract(_graphicOffset);

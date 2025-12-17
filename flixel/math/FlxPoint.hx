@@ -7,31 +7,31 @@ import openfl.geom.Point;
 
 /**
  * 2-dimensional point class
- *
+ * 
  * ## Pooling
  * To avoid creating new instances, unnecessarily, used points can be
  * for later use. Rather than creating a new instance directly, call
  * `FlxPoint.get(x, y)` and it will retrieve a point from the pool, if
  * one exists, otherwise it will create a new instance. Similarly, when
  * you're done using a point, call `myPoint.put()` to place it back.
- *
+ * 
  * You can disable point pooling entirely with `FLX_NO_POINT_POOL`.
- *
+ * 
  * ## Weak points
  * Weak points are points meant for a singular use, rather than calling
  * `put` on every point you `get`, you can create a weak point, and have
  * it placed back once used. All `FlxPoint` methods and Flixel utilities
  * automatically call `putWeak()` on every point passed in.
- *
+ * 
  * In the following example, a weak point is created, and passed into
  * `p.degreesTo` where `putWeak` is called on it, putting it back in the pool.
  *
  * ```haxe
  * var angle = p.degreesTo(FlxPoint.weak(FlxG.mouse.x, FlxG.mouse.y));
  * ```
- *
+ * 
  * ## Overloaded Operators
- *
+ * 
  * - `A += B` adds the value of `B` to `A`
  * - `A -= B` subtracts the value of `B` from `A`
  * - `A *= k` scales `A` by float `k` in both x and y components
@@ -43,7 +43,7 @@ import openfl.geom.Point;
  *
  * Note: that these operators get points from the pool, but do not put
  * points back in the pool, unless they are weak.
- *
+ * 
  * Example: 4 total points are created, but only 3 are put into the pool
  * ```haxe
  * var a = FlxPoint.get(1, 1);
@@ -53,7 +53,7 @@ import openfl.geom.Point;
  * b.put();
  * c.put();
  * ```
- *
+ * 
  * To put all 4 back, it should look like this:
  * ```haxe
  * var a = FlxPoint.get(1, 1);
@@ -65,11 +65,11 @@ import openfl.geom.Point;
  * c.put();
  * d.put();
  * ```
- *
+ * 
  * Otherwise, the remainging points will become garbage, adding to the
  * heap, potentially triggering a garbage collection when you don't want.
  */
-@:forward abstract FlxPoint(FlxBasePoint) to FlxBasePoint from FlxBasePoint
+@:forward abstract FlxPoint(FlxBasePoint) to FlxBasePoint from FlxBasePoint 
 {
 	public static inline var EPSILON:Float = 0.0000001;
 	public static inline var EPSILON_SQUARED:Float = EPSILON * EPSILON;
@@ -301,16 +301,28 @@ import openfl.geom.Point;
 	{
 		this = FlxPoint.get(x, y);
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	/**
 	 * Set the coordinates of this point object.
 	 *
 	 * @param   n  The X and Y coordinate of the point in space.
 	 */
+<<<<<<< HEAD
 	public inline function setXY(n:Float):FlxBasePoint
 	{
 		return set(n, n);
 	}
+=======
+	public inline function setXY(n:Float):FlxPoint
+	{
+		return set(n, n);
+	}
+	
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 
 	/**
 	 * Set the coordinates of this point object.
@@ -322,13 +334,21 @@ import openfl.geom.Point;
 	{
 		return this.set(x, y);
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	/**
 	 * Sets the x coordinate of this point and zeroes the y coordinate.
 	 *
 	 * @param   x  The X-coordinate of the point in space.
 	 */
+<<<<<<< HEAD
 	@:deprecated("set(n) is deprecated, use the two-arged set(n, 0), instead")
+=======
+	@:deprecated("set(n) with one arg, is deprecated, use the two-arged set(n, 0), instead") // 6.2.0
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	overload public inline extern function set(x:Float):FlxPoint
 	{
 		return set(x, 0);
@@ -337,11 +357,19 @@ import openfl.geom.Point;
 	/**
 	 * Set the coordinates of this point to zero.
 	 */
+<<<<<<< HEAD
+=======
+	// @:deprecated("set() with no args, is deprecated, use the two-arged set(0, 0), setXY(0) or zero(), instead")
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	overload public inline extern function set():FlxPoint
 	{
 		return set(0, 0);
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	/**
 	 * Adds to the coordinates of this point.
 	 *
@@ -1006,12 +1034,16 @@ import openfl.geom.Point;
 	{
 		var s:Float = Math.sin(rads);
 		var c:Float = Math.cos(rads);
+<<<<<<< HEAD
 		var tempX:Float = x;
 		
 		x = tempX * c - y * s;
 		y = tempX * s + y * c;
 		
 		return this;
+=======
+		return set(x * c - y * s, x * s + y * c);
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	}
 
 	/**
@@ -1046,7 +1078,7 @@ import openfl.geom.Point;
 	 * @param   length   The length to set the point
 	 * @param   radians  The angle to set the point, in radians
 	 * @return  The rotated point
-	 *
+	 * 
 	 * @since 4.10.0
 	 */
 	public function setPolarRadians(length:Float, radians:Float):FlxPoint
@@ -1062,7 +1094,7 @@ import openfl.geom.Point;
 	 * @param   length  The length to set the point
 	 * @param   degrees The angle to set the point, in degrees
 	 * @return  The rotated point
-	 *
+	 * 
 	 * @since 4.10.0
 	 */
 	public inline function setPolarDegrees(length:Float, degrees:Float):FlxPoint
@@ -1541,7 +1573,7 @@ import openfl.geom.Point;
 
 /**
  * The base class of FlxPoint, just use FlxPoint instead.
- *
+ * 
  * Note to contributors: don't worry about adding functionality to the base class.
  * it's all mostly inlined anyway so there's no runtime definitions for
  * reflection or anything.
@@ -1605,6 +1637,7 @@ class FlxBasePoint implements IFlxPooled
 		set(x, y);
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Necessary for FlxCallbackPoint.
 	 */
@@ -1615,34 +1648,19 @@ class FlxBasePoint implements IFlxPooled
 		return this;
 	}
 	
+=======
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	/**
 	 * Set the coordinates of this point object.
 	 *
 	 * @param   x  The X-coordinate of the point in space.
 	 * @param   y  The Y-coordinate of the point in space.
 	 */
-	overload public inline extern function set(x:Float, y:Float):FlxBasePoint
+	public function set(x:Float = 0, y:Float = 0):FlxBasePoint
 	{
-		return setHelper(x, y);
-	}
-	
-	/**
-	 * Sets the x coordinate of this point and zeroes the y coordinate.
-	 *
-	 * @param   x  The X-coordinate of the point in space.
-	 */
-	@:deprecated("set(n) is deprecated, use the two-arged set(n, 0), instead")
-	overload public inline extern function set(x:Float):FlxBasePoint
-	{
-		return set(x, 0);
-	}
-	
-	/**
-	 * Set the coordinates of this point to zero.
-	 */
-	overload public inline extern function set():FlxBasePoint
-	{
-		return set(0, 0);
+		this.x = x;
+		this.y = y;
+		return this;
 	}
 
 	/**
@@ -1744,6 +1762,7 @@ abstract FlxReadOnlyPoint(FlxPoint) from FlxPoint
 	inline function get_degrees():Float return this.degrees;
 
 	// hide underlying mutators
+<<<<<<< HEAD
 	overload inline extern function set(x, y):FlxReadOnlyPoint
 		return this.set(x, y);
 		
@@ -1752,6 +1771,11 @@ abstract FlxReadOnlyPoint(FlxPoint) from FlxPoint
 		
 	overload inline extern function set():FlxReadOnlyPoint
 		return this.set();
+=======
+	overload inline extern function set(x, y):FlxReadOnlyPoint return this.set(x, y);
+	overload inline extern function set(x):FlxReadOnlyPoint return this.set(x);
+	overload inline extern function set():FlxReadOnlyPoint return this.set();
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	inline function add(x = 0, y = 0):FlxReadOnlyPoint return this.add(x, y);
 	inline function addPoint(point):FlxReadOnlyPoint return this.add(point);
 	inline function subtract(x = 0, y = 0):FlxReadOnlyPoint return this.subtract(x, y);
@@ -1814,9 +1838,23 @@ class FlxCallbackPoint extends FlxBasePoint
 		}
 	}
 
+<<<<<<< HEAD
 	override function setHelper(x:Float, y:Float):FlxCallbackPoint
 	{
 		super.setHelper(x, y);
+=======
+	override function set(x:Float = 0, y:Float = 0)
+	{
+		@:bypassAccessor this.x = x;
+		@:bypassAccessor this.y = y;
+		
+		if (_setXCallback != null)
+			_setXCallback(this);
+		
+		if (_setYCallback != null)
+			_setYCallback(this);
+		
+>>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 		if (_setXYCallback != null)
 			_setXYCallback(this);
 		return this;
