@@ -5,7 +5,6 @@ import flixel.graphics.frames.FlxTileFrames;
 import flixel.group.FlxSpriteContainer;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
-import flixel.ui.FlxAnalog;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
