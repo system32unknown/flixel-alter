@@ -52,7 +52,6 @@
 		<haxedef name="FLX_RECORD" />
 		<haxedef name="FLX_RENDER_TRIANGLE" />
 		<haxedef name="FLX_NO_SAVE" />
-		<haxedef name="FLX_NO_HEALTH" />
 		<haxedef name="FLX_4_LEGACY_COLLISION" />
 		<haxedef name="FLX_DEFAULT_SOUND_EXT" />
 	</section>
@@ -76,7 +75,6 @@
 		<haxedef name="FLX_RECORD" />
 		<haxedef name="FLX_RENDER_TRIANGLE" />
 		<haxedef name="FLX_NO_SAVE" />
-		<haxedef name="FLX_NO_HEALTH" />
 		<haxedef name="FLX_4_LEGACY_COLLISION" />
 		<haxedef name="FLX_DEFAULT_SOUND_EXT" />
 		<haxedef name="FLX_DEBUGGER_SCALE" value="2" />
