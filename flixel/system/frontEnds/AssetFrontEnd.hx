@@ -443,26 +443,6 @@ class AssetFrontEnd
 	}
 
 	/**
-	 * Gets an instance of a streamed sound, logs when the asset is not found.
-	 * 
-	 * Streamed sounds load and unload chunks of audio data during playback, keeping memory usage low.
-	 * The usage of streamed sounds is only recommended for larger audio tracks, such as music.
-	 * 
-	 * **Note**: Due to a backend limitation, streamed sounds currently only work on native targets and OGG/Vorbis files.
-	 * Trying to stream an unsupported file format will fall back to regular sound loading behavior.
-	 * 
-	 * @param   id        The ID or asset path for the sound
-	 * @param   useCache  Whether to allow use of the asset cache (if one exists)
-	 * @param   logStyle  How to log, if the asset is not found. Uses `LogStyle.ERROR` by default
-	 * @return  A new `Sound` object Note: Does not return a `FlxSound`
-	 * @since   6.2.0
-	 */
-	public function streamSoundAddExt(id:String, ?logStyle:LogStyle):Sound
-	{
-		return streamSound(addSoundExt(id));
-	}
-	
-	/**
 	 * Checks whether the sound asset with the specified ID can be streamed.
 	 * 
 	 * **Note**: Due to a backend limitation, streamed sounds currently only work on native targets and OGG/Vorbis files.

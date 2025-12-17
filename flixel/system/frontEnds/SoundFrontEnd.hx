@@ -322,27 +322,6 @@ class SoundFrontEnd
 	}
 
 	/**
-	 * Plays a sound from a URL. Tries to recycle a cached sound first.
-	 * NOTE: Just calls FlxG.sound.load() with AutoPlay == true.
-	 *
-	 * @param   url          Load a sound from an external web resource instead.
-	 * @param   volume       How loud to play it (0 to 1).
-	 * @param   looped       Whether to loop this sound.
-	 * @param   group        The group to add this sound to.
-	 * @param   autoDestroy  Whether to destroy this sound when it finishes playing.
-	 *                       Leave this value set to "false" if you want to re-use this FlxSound instance.
-	 * @param   onComplete   Called when the sound finished playing
-	 * @param   onLoad       Called when the sound finished loading.
-	 * @return  A FlxSound object.
-	 */
-	@:deprecated("FlxG.sound.stream() is deprecated, use FlxG.sound.loadFromURL() instead")
-	public function stream(url:String, volume = 1.0, looped = false, ?group:FlxSoundGroup, autoDestroy = true, ?onComplete:Void->Void,
-			?onLoad:Void->Void):FlxSound
-	{
-		return loadFromURL(url, volume, looped, group, autoDestroy, onComplete, onLoad);
-	}
-
-	/**
 	 * Pause all sounds currently playing.
 	 */
 	public function pause():Void
