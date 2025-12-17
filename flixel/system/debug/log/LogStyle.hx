@@ -54,7 +54,7 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	{
 		@:bypassAccessor
 		FlxG.log.styles.console = style;
-		return this.CONSOLE = style;
+		return CONSOLE = style;
 	}
 	
 	
