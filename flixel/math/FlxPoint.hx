@@ -301,28 +301,17 @@ import openfl.geom.Point;
 	{
 		this = FlxPoint.get(x, y);
 	}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	/**
 	 * Set the coordinates of this point object.
 	 *
 	 * @param   n  The X and Y coordinate of the point in space.
 	 */
-<<<<<<< HEAD
-	public inline function setXY(n:Float):FlxBasePoint
-	{
-		return set(n, n);
-	}
-=======
 	public inline function setXY(n:Float):FlxPoint
 	{
 		return set(n, n);
 	}
-	
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
+
 
 	/**
 	 * Set the coordinates of this point object.
@@ -334,21 +323,13 @@ import openfl.geom.Point;
 	{
 		return this.set(x, y);
 	}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	/**
 	 * Sets the x coordinate of this point and zeroes the y coordinate.
 	 *
 	 * @param   x  The X-coordinate of the point in space.
 	 */
-<<<<<<< HEAD
-	@:deprecated("set(n) is deprecated, use the two-arged set(n, 0), instead")
-=======
 	@:deprecated("set(n) with one arg, is deprecated, use the two-arged set(n, 0), instead") // 6.2.0
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	overload public inline extern function set(x:Float):FlxPoint
 	{
 		return set(x, 0);
@@ -357,19 +338,11 @@ import openfl.geom.Point;
 	/**
 	 * Set the coordinates of this point to zero.
 	 */
-<<<<<<< HEAD
-=======
 	// @:deprecated("set() with no args, is deprecated, use the two-arged set(0, 0), setXY(0) or zero(), instead")
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	overload public inline extern function set():FlxPoint
 	{
 		return set(0, 0);
 	}
-<<<<<<< HEAD
-	
-=======
-
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	/**
 	 * Adds to the coordinates of this point.
 	 *
@@ -1034,16 +1007,7 @@ import openfl.geom.Point;
 	{
 		var s:Float = Math.sin(rads);
 		var c:Float = Math.cos(rads);
-<<<<<<< HEAD
-		var tempX:Float = x;
-		
-		x = tempX * c - y * s;
-		y = tempX * s + y * c;
-		
-		return this;
-=======
 		return set(x * c - y * s, x * s + y * c);
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	}
 
 	/**
@@ -1637,19 +1601,6 @@ class FlxBasePoint implements IFlxPooled
 		set(x, y);
 	}
 
-<<<<<<< HEAD
-	/**
-	 * Necessary for FlxCallbackPoint.
-	 */
-	function setHelper(x:Float, y:Float):FlxBasePoint
-	{
-		this.x = x;
-		this.y = y;
-		return this;
-	}
-	
-=======
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	/**
 	 * Set the coordinates of this point object.
 	 *
@@ -1762,20 +1713,10 @@ abstract FlxReadOnlyPoint(FlxPoint) from FlxPoint
 	inline function get_degrees():Float return this.degrees;
 
 	// hide underlying mutators
-<<<<<<< HEAD
-	overload inline extern function set(x, y):FlxReadOnlyPoint
-		return this.set(x, y);
-		
-	overload inline extern function set(x):FlxReadOnlyPoint
-		return this.set(x);
-		
-	overload inline extern function set():FlxReadOnlyPoint
-		return this.set();
-=======
 	overload inline extern function set(x, y):FlxReadOnlyPoint return this.set(x, y);
 	overload inline extern function set(x):FlxReadOnlyPoint return this.set(x);
-	overload inline extern function set():FlxReadOnlyPoint return this.set();
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
+	overload inline extern function set():FlxReadOnlyPoint
+		return this.set();
 	inline function add(x = 0, y = 0):FlxReadOnlyPoint return this.add(x, y);
 	inline function addPoint(point):FlxReadOnlyPoint return this.add(point);
 	inline function subtract(x = 0, y = 0):FlxReadOnlyPoint return this.subtract(x, y);
@@ -1838,11 +1779,6 @@ class FlxCallbackPoint extends FlxBasePoint
 		}
 	}
 
-<<<<<<< HEAD
-	override function setHelper(x:Float, y:Float):FlxCallbackPoint
-	{
-		super.setHelper(x, y);
-=======
 	override function set(x:Float = 0, y:Float = 0)
 	{
 		@:bypassAccessor this.x = x;
@@ -1853,8 +1789,7 @@ class FlxCallbackPoint extends FlxBasePoint
 		
 		if (_setYCallback != null)
 			_setYCallback(this);
-		
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
+
 		if (_setXYCallback != null)
 			_setXYCallback(this);
 		return this;

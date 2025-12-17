@@ -1063,29 +1063,17 @@ class FlxSprite extends FlxObject
 			if (angle != 0)
 				matrix.rotateWithTrig(_cosAngle, _sinAngle);
 		}
-<<<<<<< HEAD
-
-		getScreenPosition(_point, camera).subtract(offset);
-		_point.add(origin.x, origin.y);
-		matrix.translate(_point.x, _point.y);
-=======
 		
 		final screenPos = getScreenPosition(camera).subtract(offset);
 		screenPos.add(origin.x, origin.y);
 		matrix.translate(screenPos.x, screenPos.y);
 		screenPos.put();
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 		
 		if (isPixelPerfectRender(camera))
 		{
 			matrix.tx = Math.floor(matrix.tx);
 			matrix.ty = Math.floor(matrix.ty);
 		}
-<<<<<<< HEAD
-
-		camera.drawPixels(frame, framePixels, matrix, colorTransform, blend, antialiasing, shader);
-=======
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	}
 
 	/**

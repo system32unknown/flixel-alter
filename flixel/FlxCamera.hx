@@ -23,10 +23,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
 import openfl.Vector;
-<<<<<<< HEAD
-import openfl.display.BlendMode;
-import openfl.filters.ShaderFilter;
-=======
 import openfl.filters.ShaderFilter;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -34,7 +30,6 @@ import openfl.display.BlendMode;
 import openfl.display.DisplayObject;
 import openfl.display.Graphics;
 import openfl.display.Sprite;
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 import openfl.filters.BitmapFilter;
 
 using flixel.util.FlxColorTransformUtil;

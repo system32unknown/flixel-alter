@@ -360,11 +360,7 @@ class FlxSound extends FlxBasic
 			return this;
 
 		cleanup(true);
-<<<<<<< HEAD
 
-=======
-		
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 		if ((sound is Sound))
 		{
 			_sound = sound;
@@ -379,17 +375,6 @@ class FlxSound extends FlxBasic
 				_sound = FlxG.assets.getSoundUnsafe(sound);
 			else
 				FlxG.log.error('Could not find a Sound asset with an ID of \'$sound\'.');
-<<<<<<< HEAD
-=======
-		}
-		else if ((sound is ByteArrayData))
-		{
-			var bytes:ByteArray = cast sound;
-
-			_sound = new Sound();
-			_sound.addEventListener(Event.ID3, gotID3);
-			_sound.loadCompressedDataFromByteArray(bytes, bytes.length);
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 		}
 		else if ((sound is ByteArrayData))
 		{
@@ -407,14 +392,6 @@ class FlxSound extends FlxBasic
 	/**
 	 * Loads a sound from the provided URL.
 	 * 
-<<<<<<< HEAD
-	 * @param soundURL A string representing the URL of the sound you want to play.
-	 * @param looped Whether or not this sound should loop endlessly.
-	 * @param autoDestroy Whether or not this FlxSound instance should be destroyed when the sound finishes playing.
-	 * @param onComplete Called when the sound finishes playing.
-	 * @param onLoad Called when the sound finishes loading.
-	 * @return This FlxSound instance (nice for chaining stuff together, if you're into that).
-=======
 	 * @param   soundURL     A string representing the URL of the sound you want to play.
 	 * @param   looped       Whether or not this sound should loop endlessly.
 	 * @param   autoDestroy  Whether or not this FlxSound instance should be destroyed when
@@ -422,7 +399,6 @@ class FlxSound extends FlxBasic
 	 * @param   onComplete   Called when the sound finishes playing.
 	 * @param   onLoad       Called when the sound finishes loading.
 	 * @return  This FlxSound instance (nice for chaining stuff together, if you're into that).
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	 * 
 	 * @since 6.2.0
 	 */
@@ -453,17 +429,6 @@ class FlxSound extends FlxBasic
 
 	/**
 	 * One of the main setup functions for sounds, this function loads a sound from an embedded MP3.
-<<<<<<< HEAD
-	 *
-	 * **Note:** If the `FLX_DEFAULT_SOUND_EXT` flag is enabled, you may omit the file extension
-	 *
-	 * @param	EmbeddedSound	An embedded Class object representing an MP3 file.
-	 * @param	Looped			Whether or not this sound should loop endlessly.
-	 * @param	AutoDestroy		Whether or not this FlxSound instance should be destroyed when the sound finishes playing.
-	 * 							Default value is false, but `FlxG.sound.play()` and `FlxG.sound.loadFromURL()` will set it to true by default.
-	 * @param	OnComplete		Called when the sound finished playing
-	 * @return	This FlxSound instance (nice for chaining stuff together, if you're into that).
-=======
 	 * 
 	 * **Note:** If the `FLX_DEFAULT_SOUND_EXT` flag is enabled, you may omit the file extension
 	 * 
@@ -473,26 +438,12 @@ class FlxSound extends FlxBasic
 	 *                         Default value is false, but `FlxG.sound.play()` and `FlxG.sound.loadFromURL()` will set it to true by default.
 	 * @param   OnComplete     Called when the sound finished playing
 	 * @return  This FlxSound instance (nice for chaining stuff together, if you're into that).
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	 */
 	@:deprecated("loadEmbedded() is deprecated, use load() instead.")
 	public function loadEmbedded(EmbeddedSound:FlxSoundAsset, Looped:Bool = false, AutoDestroy:Bool = false, ?OnComplete:Void->Void):FlxSound
 	{
 		return load(EmbeddedSound, Looped, AutoDestroy, OnComplete);
 	}
-<<<<<<< HEAD
-
-	/**
-	 * One of the main setup functions for sounds, this function loads a sound from a URL.
-	 *
-	 * @param	SoundURL		A string representing the URL of the MP3 file you want to play.
-	 * @param	Looped			Whether or not this sound should loop endlessly.
-	 * @param	AutoDestroy		Whether or not this FlxSound instance should be destroyed when the sound finishes playing.
-	 * 							Default value is false, but `FlxG.sound.play()` and `FlxG.sound.loadFromURL()` will set it to true by default.
-	 * @param	OnComplete		Called when the sound finished playing
-	 * @param	OnLoad			Called when the sound finished loading.
-	 * @return	This FlxSound instance (nice for chaining stuff together, if you're into that).
-=======
 	
 	/**
 	 * One of the main setup functions for sounds, this function loads a sound from a URL.
@@ -504,7 +455,6 @@ class FlxSound extends FlxBasic
 	 * @param   OnComplete   Called when the sound finished playing
 	 * @param   OnLoad       Called when the sound finished loading.
 	 * @return  This FlxSound instance (nice for chaining stuff together, if you're into that).
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	 */
 	@:deprecated("loadStream() is deprecated, use loadFromURL() instead.")
 	public function loadStream(SoundURL:String, Looped:Bool = false, AutoDestroy:Bool = false, ?OnComplete:Void->Void, ?OnLoad:Void->Void):FlxSound
@@ -513,13 +463,6 @@ class FlxSound extends FlxBasic
 	}
 	
 	/**
-<<<<<<< HEAD
-	 * @param	Bytes 			A ByteArray object.
-	 * @param	Looped			Whether or not this sound should loop endlessly.
-	 * @param	AutoDestroy		Whether or not this FlxSound instance should be destroyed when the sound finishes playing.
-	 * 							Default value is false, but `FlxG.sound.play()` and `FlxG.sound.loadFromURL()` will set it to true by default.
-	 * @return	This FlxSound instance (nice for chaining stuff together, if you're into that).
-=======
 	 * One of the main setup functions for sounds, this function loads a sound from a ByteArray.
 	 * 
 	 * @param   Bytes        A ByteArray object.
@@ -527,7 +470,6 @@ class FlxSound extends FlxBasic
 	 * @param   AutoDestroy  Whether or not this FlxSound instance should be destroyed when the sound finishes playing.
 	 *                       Default value is false, but `FlxG.sound.play()` and `FlxG.sound.loadFromURL()` will set it to true by default.
 	 * @return  This FlxSound instance (nice for chaining stuff together, if you're into that).
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	 */
 	@:deprecated("loadByteArray() is deprecated, use load() instead.")
 	public function loadByteArray(Bytes:ByteArray, Looped:Bool = false, AutoDestroy:Bool = false, ?OnComplete:Void->Void):FlxSound

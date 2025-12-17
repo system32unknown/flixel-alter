@@ -61,15 +61,10 @@ class FlxPointer
 	{
 		if (camera == null)
 			camera = FlxG.camera;
-		
-<<<<<<< HEAD
-		final p = getViewPosition(camera, FlxPoint.weak());
-		return camera.viewToWorldPosition(p, 1, 1, result);
-=======
+
 		result = getViewPosition(camera, result);
 		result.add(camera.scroll);
 		return result;
->>>>>>> ac92853fb1359c745d7c348893dccf928daaed2c
 	}
 	
 	/**
