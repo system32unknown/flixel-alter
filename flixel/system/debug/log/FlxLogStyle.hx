@@ -32,13 +32,7 @@ class FlxLogStyle
 	 * Whether the console should be forced to open when this LogStyle is used
 	 */
 	public var openConsole:Bool;
-	
-	/**
-	 * A callback function that is called when this LogStyle is used
-	 */
-	@:deprecated("callbackFunction is deprecated, use callback, instead")
-	public var callbackFunction:()->Void;
-	
+
 	/**
 	 * A callback function that is called when this LogStyle is used
 	 * **Note:** Unlike the deprecated `callbackFunction`, this is called every time,

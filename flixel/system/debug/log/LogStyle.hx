@@ -13,12 +13,12 @@ import haxe.PosInfos;
 abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 {
 	@:deprecated("LogStyle.NORMAL is deprecated, use FlxG.log.styles.NORMAL, instead")
-	public static var NORMAL (default, set):LogStyle;
+	public static var NORMAL(default, set):LogStyle;
 	static function set_NORMAL(style:LogStyle)
 	{
 		@:bypassAccessor
 		FlxG.log.styles.normal = style;
-		return NORMAL = style;
+		return LogStyle.NORMAL = style;
 	}
 	
 	@:deprecated("LogStyle.WARNING is deprecated, use FlxG.log.styles.WARNING, instead")
@@ -27,7 +27,7 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	{
 		@:bypassAccessor
 		FlxG.log.styles.warning = style;
-		return WARNING = style;
+		return LogStyle.WARNING = style;
 	}
 	
 	@:deprecated("LogStyle.ERROR is deprecated, use FlxG.log.styles.ERROR, instead")
@@ -36,7 +36,7 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	{
 		@:bypassAccessor
 		FlxG.log.styles.error = style;
-		return ERROR = style;
+		return LogStyle.ERROR = style;
 	}
 	
 	@:deprecated("LogStyle.NOTICE is deprecated, use FlxG.log.styles.NOTICE, instead")
@@ -45,7 +45,7 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	{
 		@:bypassAccessor
 		FlxG.log.styles.notice = style;
-		return NOTICE = style;
+		return LogStyle.NOTICE = style;
 	}
 	
 	@:deprecated("LogStyle.CONSOLE is deprecated, use FlxG.log.styles.CONSOLE, instead")
@@ -54,7 +54,7 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	{
 		@:bypassAccessor
 		FlxG.log.styles.console = style;
-		return CONSOLE = style;
+		return LogStyle.CONSOLE = style;
 	}
 	
 	
@@ -80,13 +80,12 @@ abstract LogStyle(FlxLogStyle) from FlxLogStyle to FlxLogStyle
 	
 	
 	@:deprecated("LogStyle is deprecated, use FlxLogStyle, instead")
-	public function new(prefix = "", color = "FFFFFF", size = 12, bold = false, italic = false, underlined = false,
-			?errorSound:String, openConsole = false, ?callbackFunction:()->Void, ?callback:(Any, ?PosInfos)->Void, throwException = false)
+	public function new(prefix = "", color = "FFFFFF", size = 12, bold = false, italic = false, underlined = false, ?errorSound:String, openConsole = false,
+			?callback:(Any, ?PosInfos) -> Void, throwException = false)
 	{
 		final format = new FlxLogFormat(FlxColor.fromString('#$color'), size, bold, italic, underlined);
 		this = new FlxLogStyle(prefix, format, errorSound, openConsole, throwException);
-		
-		this.callbackFunction = callbackFunction;
+
 		if (callback != null)
 			this.onLog.add(callback);
 	}

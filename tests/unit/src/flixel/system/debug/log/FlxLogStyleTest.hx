@@ -55,19 +55,7 @@ class FlxLogStyleTest
 		log("testOnLog");
 		Assert.isTrue(called, "Expected style.onLog to be dispatched");
 	}
-	
-	@Test
-	#if FLX_NO_DEBUG @Ignore("FLX_NO_DEBUG") #end
-	@:haxe.warning("-WDeprecated")
-	function testCallbackFunction()
-	{
-		var called = false;
-		style.callbackFunction = ()->called = true;
-		
-		log('testCallbackFunction');
-		Assert.isTrue(called, "Expected callbackFunction to be caled, it was not");
-	}
-	
+
 	@Test
 	#if FLX_NO_DEBUG @Ignore("FLX_NO_DEBUG") #end
 	function testOpenConsole()
