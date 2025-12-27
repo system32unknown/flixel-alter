@@ -3,6 +3,7 @@ package;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.util.FlxColor;
 import flixel.util.FlxStringUtil;
 import haxe.PosInfos;
 import massive.munit.Assert;
@@ -56,7 +57,7 @@ class FlxAssert
 		]);
 	}
 
-	static function areNearHelper(expected:Float, actual:Float, margin = 0.001):Bool
+	public static function areNearHelper(expected:Float, actual:Float, margin = 0.001):Bool
 	{
 		return actual >= expected - margin && actual <= expected + margin;
 	}
