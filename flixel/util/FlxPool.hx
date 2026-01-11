@@ -18,7 +18,7 @@ abstract PoolFactory<T:IFlxDestroyable>(() -> T)
 	{
 		return fromFunction(() -> Type.createInstance(classRef, []));
 	}
-	
+
 	@:from
 	public static inline function fromFunction<T:IFlxDestroyable>(func:() -> T):PoolFactory<T>
 	{
@@ -64,11 +64,11 @@ class FlxPool<T:IFlxDestroyable> implements IFlxPool<T>
 	/**
 	 * Creates a pool of the specified type
 	 * @param   constructor  A function that takes no args and creates an instance,
-	 *                       example: `FlxRect.new.bind(0, 0, 0, 0)` or `()->FlxRect.get()`
+	 *                       example: `FlxRect.new.bind(0, 0, 0, 0)`
 	 */
-	public function new(constructor)
+	public function new(constructor:PoolFactory<T>)
 	{
-		_constructor = constructor;
+		_constructor = constructor.getFunction();
 	}
 
 	public function get():T
