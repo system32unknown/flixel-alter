@@ -106,7 +106,7 @@ class FlxFrame implements IFlxDestroyable
 	/**
 	 * UV coordinates for this frame.
 	 */
-	public var uv:FlxUVRect;
+	public var uv:FlxRect;
 
 	public var parent:FlxGraphic;
 
@@ -811,7 +811,7 @@ class FlxFrame implements IFlxDestroyable
 			return;
 		
 		if (uv == null)
-			uv = FlxUVRect.get();
+			uv = FlxRect.get();
 
 		uv.setFromFrameRect(frame, parent);
 	}
@@ -834,77 +834,6 @@ enum abstract FlxFrameAngle(Int) from Int to Int
 	var ANGLE_90 = 90;
 	var ANGLE_NEG_90 = -90;
 	var ANGLE_270 = -90;
-}
-
-/**
- * FlxRect, but instead of `x`, `y`, `width` and `height`, it takes a `left`, `right`, `top` and
- * `bottom`. This is for optimization reasons, to reduce arithmetic when drawing vertices
- */
-@:forward(put)
-abstract FlxUVRect(FlxRect) from FlxRect
-{
-	public var left(get, set):Float;
-	inline function get_left():Float
-		return this.x;
-		
-	inline function set_left(v:Float):Float
-		return this.x = v;
-
-	public var right(get, set):Float;
-	inline function get_right():Float
-		return this.width;
-		
-	inline function set_right(v:Float):Float
-		return this.width = v;
-
-	public var top(get, set):Float;
-	inline function get_top():Float
-		return this.y;
-		
-	inline function set_top(v:Float):Float
-		return this.y = v;
-
-	public var bottom(get, set):Float;
-	inline function get_bottom():Float
-		return this.height;
-		
-	inline function set_bottom(v:Float):Float
-		return this.height = v;
-
-	public inline function set(l:Float, t:Float, r:Float, b:Float)
-	{
-		this.set(l, t, r, b);
-	}
-	
-	public inline function setFromFrameRect(frame:FlxRect, parent:FlxGraphic)
-	{
-		set(frame.x / parent.width, frame.y / parent.height, frame.right / parent.width, frame.bottom / parent.height);
-	}
-	
-	public inline function copyTo(uv:FlxUVRect)
-	{
-		uv.set(left, top, right, bottom);
-	}
-	
-	public inline function copyFrom(uv:FlxUVRect)
-	{
-		set(uv.left, uv.top, uv.right, uv.bottom);
-	}
-	
-	public inline function toString()
-	{
-		return FlxStringUtil.getDebugString([
-			LabelValuePair.weak("l", left),
-			LabelValuePair.weak("t", top),
-			LabelValuePair.weak("r", right),
-			LabelValuePair.weak("b", bottom)
-		]);
-	}
-
-	public static function get(l = 0.0, t = 0.0, r = 0.0, b = 0.0):FlxUVRect
-	{
-		return FlxRect.get(l, t, r, b);
-	}
 }
 
 /**
