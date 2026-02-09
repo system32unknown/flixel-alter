@@ -813,7 +813,7 @@ class FlxFrame implements IFlxDestroyable
 		if (uv == null)
 			uv = FlxRect.get();
 
-		uv.setFromFrameRect(frame, parent);
+		uv.set(value.x / parent.width, value.y / parent.height, value.right / parent.width, value.bottom / parent.height);
 	}
 }
 
