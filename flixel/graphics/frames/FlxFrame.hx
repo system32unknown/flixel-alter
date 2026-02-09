@@ -813,7 +813,11 @@ class FlxFrame implements IFlxDestroyable
 		if (uv == null)
 			uv = FlxRect.get();
 
+		#if CUSTOM_CLASSES
+		uv.set(frame.x / parent.width, frame.y / parent.height, frame.right / parent.width, frame.bottom / parent.height);
+		#else
 		uv.setFromFrameRect(frame, parent);
+		#end
 	}
 }
 
@@ -836,6 +840,7 @@ enum abstract FlxFrameAngle(Int) from Int to Int
 	var ANGLE_270 = -90;
 }
 
+#if !CUSTOM_CLASSES
 /**
  * FlxRect, but instead of `x`, `y`, `width` and `height`, it takes a `left`, `right`, `top` and
  * `bottom`. This is for optimization reasons, to reduce arithmetic when drawing vertices
@@ -897,6 +902,7 @@ abstract FlxUVRect(FlxRect) from FlxRect to flixel.util.FlxPool.IFlxPooled
 		return FlxRect.get(l, t, r, b);
 	}
 }
+#end
 
 /**
  * Used internally instead of a FlxMatrix, for some unknown reason.
