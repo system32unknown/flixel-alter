@@ -841,35 +841,44 @@ enum abstract FlxFrameAngle(Int) from Int to Int
  * `bottom`. This is for optimization reasons, to reduce arithmetic when drawing vertices
  */
 @:forward(put)
-abstract FlxUVRect(FlxRect) from FlxRect to flixel.util.FlxPool.IFlxPooled
+abstract FlxUVRect(FlxRect) from FlxRect
 {
 	public var left(get, set):Float;
-	inline function get_left():Float { return this.x; }
-	inline function set_left(value):Float { return this.x = value; }
-	
-	/** Top */
+	inline function get_left():Float
+		return this.x;
+		
+	inline function set_left(v:Float):Float
+		return this.x = v;
+
 	public var right(get, set):Float;
-	inline function get_right():Float { return this.width; }
-	inline function set_right(value):Float { return this.width = value; }
-	
-	/** Right */
+	inline function get_right():Float
+		return this.width;
+		
+	inline function set_right(v:Float):Float
+		return this.width = v;
+
 	public var top(get, set):Float;
-	inline function get_top():Float { return this.y; }
-	inline function set_top(value):Float { return this.y = value; }
-	
-	/** Bottom */
+	inline function get_top():Float
+		return this.y;
+		
+	inline function set_top(v:Float):Float
+		return this.y = v;
+
 	public var bottom(get, set):Float;
-	inline function get_bottom():Float { return this.height; }
-	inline function set_bottom(value):Float { return this.height = value; }
-	
-	public inline function set(l, t, r, b)
+	inline function get_bottom():Float
+		return this.height;
+		
+	inline function set_bottom(v:Float):Float
+		return this.height = v;
+
+	public inline function set(l:Float, t:Float, r:Float, b:Float)
 	{
 		this.set(l, t, r, b);
 	}
 	
 	public inline function setFromFrameRect(frame:FlxRect, parent:FlxGraphic)
 	{
-		this.set(frame.x / parent.width, frame.y / parent.height, frame.right / parent.width, frame.bottom / parent.height);
+		set(frame.x / parent.width, frame.y / parent.height, frame.right / parent.width, frame.bottom / parent.height);
 	}
 	
 	public inline function copyTo(uv:FlxUVRect)
@@ -884,15 +893,15 @@ abstract FlxUVRect(FlxRect) from FlxRect to flixel.util.FlxPool.IFlxPooled
 	
 	public inline function toString()
 	{
-		return return FlxStringUtil.getDebugString([
+		return FlxStringUtil.getDebugString([
 			LabelValuePair.weak("l", left),
 			LabelValuePair.weak("t", top),
 			LabelValuePair.weak("r", right),
 			LabelValuePair.weak("b", bottom)
 		]);
 	}
-	
-	public static function get(l = 0.0, t = 0.0, r = 0.0, b = 0.0)
+
+	public static function get(l = 0.0, t = 0.0, r = 0.0, b = 0.0):FlxUVRect
 	{
 		return FlxRect.get(l, t, r, b);
 	}
