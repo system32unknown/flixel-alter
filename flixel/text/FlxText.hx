@@ -1295,6 +1295,12 @@ class FlxText extends FlxSprite
 		
 		return antialiasing = value;
 	}
+	#if CUSTOM_CLASSES
+	override function update(elapsed:Float):Void
+	{
+		super.update(elapsed);
+	}
+	#end
 }
 
 @:allow(flixel.text.FlxText.applyFormats)
