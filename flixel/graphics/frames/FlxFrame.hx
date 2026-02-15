@@ -106,7 +106,7 @@ class FlxFrame implements IFlxDestroyable
 	/**
 	 * UV coordinates for this frame.
 	 */
-	public var uv:FlxRect;
+	public var uv:#if CUSTOM_CLASSES FlxRect #else FlxUVRect #end;
 
 	public var parent:FlxGraphic;
 
