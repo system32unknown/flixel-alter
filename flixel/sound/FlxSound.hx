@@ -576,7 +576,6 @@ class FlxSound extends FlxBasic
 		exists = true;
 		onFinish.removeAll();
 		onFinish.add(onComplete);
-		onComplete = OnComplete;
 		#if FLX_PITCH
 		pitch = 1;
 		#end
