@@ -610,8 +610,22 @@ class FlxCamera extends FlxBasic
 		return false;
 	}
 
+	// Can't batch complex non-coherent blends, so this is needed to check if its should start a new batch everytime or not
+	inline static function isCoherentBlendMode(blend:BlendMode):Bool
+	{
+		@:privateAccess
+		return switch (blend)
+		{
+			case DARKEN, DIFFERENCE, HARDLIGHT, OVERLAY, COLORDODGE, COLORBURN, SOFTLIGHT, EXCLUSION, HUE, SATURATION, COLOR, LUMINOSITY:
+				openfl.display.OpenGLRenderer.__coherentBlendsSupported;
+			default:
+				true;
+		}
+	}
+
 	@:noCompletion
-	public function startQuadBatch(graphic:FlxGraphic, colored:Bool, hasColorOffsets:Bool = false, ?blend:BlendMode, smooth:Bool = false, ?shader:FlxShader)
+	public function startQuadBatch(graphic:FlxGraphic, colored:Bool, hasColorOffsets:Bool = false, ?blend:BlendMode, smooth:Bool = false,
+			?shader:FlxShader):FlxDrawQuadsItem
 	{
 		#if FLX_RENDER_TRIANGLE
 		return startTrianglesBatch(graphic, smooth, colored, blend);
@@ -623,7 +637,7 @@ class FlxCamera extends FlxBasic
 			&& _headTiles.graphics == graphic
 			&& _headTiles.colored == colored
 			&& _headTiles.hasColorOffsets == hasColorOffsets
-			&& _headTiles.blend == blend
+			&& (_headTiles.blend == blend && isCoherentBlendMode(blend))
 			&& _headTiles.antialiasing == smooth
 			&& _headTiles.shader == shader)
 		{
@@ -680,7 +694,7 @@ class FlxCamera extends FlxBasic
 			&& _headTriangles.graphics == graphic
 			&& _headTriangles.antialiasing == smoothing
 			&& _headTriangles.colored == isColored
-			&& _headTriangles.blend == blend
+			&& (_headTriangles.blend == blend && isCoherentBlendMode(blend))
 			&& _headTriangles.hasColorOffsets == hasColorOffsets
 			&& _headTriangles.shader == shader
 			)

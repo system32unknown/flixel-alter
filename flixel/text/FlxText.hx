@@ -255,6 +255,19 @@ class FlxText extends FlxSprite
 		_defaultFormat = null;
 		_formatAdjusted = null;
 		_graphicOffset = FlxDestroyUtil.put(_graphicOffset);
+		if (_borderPixels != null)
+		{
+			_borderPixels.dispose();
+			_borderPixels = null;
+		}
+		
+		if (graphic != null)
+		{
+			graphic.destroy();
+			graphic = null;
+		}
+		
+		_formatRanges = [];
 		super.destroy();
 	}
 
@@ -919,6 +932,9 @@ class FlxText extends FlxSprite
 		
 		_regen = false;
 		
+		final oldGraphic:FlxGraphic = graphic;
+		final oldBorderPixels:BitmapData = _borderPixels;
+
 		final oldWidth:Int = graphic != null ? graphic.width : 0;
 		final oldHeight:Int = graphic != null ? graphic.height : VERTICAL_GUTTER;
 		
@@ -946,10 +962,18 @@ class FlxText extends FlxSprite
 		
 		final newWidth:Int = Math.ceil(newWidthFloat + borderWidth);
 		final newHeight:Int = Math.ceil(newHeightFloat + borderHeight);
-		
-		// prevent text height from shrinking on flash if text == ""
-		if (textField.textHeight != 0 && (oldWidth != newWidth || oldHeight != newHeight))
+		if (oldBorderPixels != null)
 		{
+			oldBorderPixels.dispose();
+			_borderPixels = null;
+		}
+		
+		if (graphic == null || oldWidth != newWidth || oldHeight != newHeight)
+		{
+			if (oldGraphic != null)
+			{
+				oldGraphic.destroy();
+			}
 			// Need to generate a new buffer to store the text graphic
 			final key:String = FlxG.bitmap.getUniqueKey("text");
 			makeGraphic(newWidth, newHeight, FlxColor.TRANSPARENT, false, key);
@@ -959,9 +983,6 @@ class FlxText extends FlxSprite
 			#if FLX_TRACK_GRAPHICS
 			graphic.trackingInfo = 'text($ID, $text)';
 			#end
-			
-			if (_hasBorderAlpha)
-				_borderPixels = graphic.bitmap.clone();
 
 			if (_autoHeight)
 				textField.height = newHeight;
@@ -974,16 +995,14 @@ class FlxText extends FlxSprite
 		else // Else just clear the old buffer before redrawing the text
 		{
 			graphic.bitmap.fillRect(_flashRect, FlxColor.TRANSPARENT);
-			if (_hasBorderAlpha)
-			{
-				if (_borderPixels == null)
-					_borderPixels = new BitmapData(frameWidth, frameHeight, true);
-				else
-					_borderPixels.fillRect(_flashRect, FlxColor.TRANSPARENT);
-			}
 		}
 
-		if (textField != null && textField.text != null)
+		if (_hasBorderAlpha)
+		{
+			_borderPixels = new BitmapData(frameWidth, frameHeight, true, FlxColor.TRANSPARENT);
+		}
+
+		if (textField != null && textField.text != null && textField.text != "")
 		{
 			// Now that we've cleared a buffer, we need to actually render the text to it
 			copyTextFormat(_defaultFormat, _formatAdjusted);
@@ -1193,7 +1212,7 @@ class FlxText extends FlxSprite
 
 	inline function applyBorderTransparency()
 	{
-		if (!_hasBorderAlpha)
+		if (!_hasBorderAlpha || _borderPixels == null)
 			return;
 
 		if (_borderColorTransform == null)

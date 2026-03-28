@@ -370,6 +370,7 @@ class FlxGame extends Sprite
 		FlxG.signals.focusGained.dispatch();
 		_state.onFocus();
 
+		stage.frameRate = FlxG.drawFramerate;
 		if (!FlxG.autoPause)
 			return;
 
@@ -382,7 +383,6 @@ class FlxGame extends Sprite
 		debugger.stats.onFocus();
 		#end
 
-		stage.frameRate = FlxG.drawFramerate;
 		#if FLX_SOUND_SYSTEM
 		FlxG.sound.onFocus();
 		#end
