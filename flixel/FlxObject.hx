@@ -1222,6 +1222,11 @@ class FlxObject extends FlxBasic
 		return this;
 	}
 
+	@:deprecated("Use gameCenter Instead.")
+	public function screenCenter(axes:FlxAxes = XY):FlxObject {
+		return gameCenter(axes);
+	}
+
 	/**
 	 * Centers this `FlxObject` in camera view, either by the x axis, y axis, or both.
 	 *
