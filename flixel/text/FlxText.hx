@@ -953,7 +953,7 @@ class FlxText extends FlxSprite
 				borderWidth += Math.abs(offsetX);
 				borderHeight += Math.abs(offsetY);
 			
-			case OUTLINE_FAST | OUTLINE:
+			case OUTLINE_FAST | OUTLINE | OUTLINE_CARDINAL:
 				borderWidth += Math.abs(borderSize) * 2;
 				borderHeight += Math.abs(borderSize) * 2;
 			
@@ -1119,10 +1119,10 @@ class FlxText extends FlxSprite
 				_graphicOffset.x = offsetX < 0 ? -offsetX : 0;
 				_graphicOffset.y = offsetY < 0 ? -offsetY : 0;
 			
-			case OUTLINE_FAST | OUTLINE if (borderSize < 0):
+			case OUTLINE_FAST | OUTLINE | OUTLINE_CARDINAL if (borderSize < 0):
 				_graphicOffset.set(-borderSize, -borderSize);
 			
-			case NONE | OUTLINE_FAST | OUTLINE:
+			case NONE | OUTLINE_FAST | OUTLINE | OUTLINE_CARDINAL:
 				_graphicOffset.set(0, 0);
 		}
 		_matrix.translate(_graphicOffset.x, _graphicOffset.y);
@@ -1187,6 +1187,24 @@ class FlxText extends FlxSprite
 					_matrix.translate(curDelta, 0); // return to center
 				}
 			
+			case OUTLINE_CARDINAL:
+				// Render an outline around the text
+				// (do 4 offset draw calls just in all cardinal directions)
+				applyFormats(_formatAdjusted, true);
+				
+				final iterations = FlxMath.maxInt(1, Std.int(borderSize * borderQuality));
+				var i = iterations + 1;
+				while (i-- > 1)
+				{
+					final curDelta = borderSize / iterations * i;
+					copyTextWithOffset(-curDelta, 0); // middle-left
+					copyTextWithOffset(curDelta * 2, 0); // middle-right
+					copyTextWithOffset(-curDelta, -curDelta); // upper-middle
+					copyTextWithOffset(0, curDelta * 2); // lower-middle
+					
+					_matrix.translate(0, -curDelta); // return to center
+				}
+
 			case OUTLINE_FAST:
 				// Render an outline around the text
 				// (do 4 diagonal offset draw calls)
@@ -1407,6 +1425,10 @@ enum FlxTextBorderStyle
 	 * **Note:** Might not work for narrow and/or 1-pixel fonts
 	 */
 	OUTLINE_FAST;
+	/**
+	 * Outline on all 4 cardinal directions (UP, DOWN, LEFT, RIGHT)
+	 */
+	OUTLINE_CARDINAL;
 }
 
 enum abstract FlxTextAlign(String) from String
