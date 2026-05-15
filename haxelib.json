@@ -6,5 +6,9 @@
 	"description": "HaxeFlixel is a 2D game engine based on OpenFL that delivers cross-platform games.",
 	"version": "6.1.2",
 	"releasenote": "More fixes to rendering and FlxPoints",
-	"contributors": ["haxeflixel", "Gama11", "GeoKureli"]
+	"contributors": ["haxeflixel", "Gama11", "GeoKureli"],
+	"dependencies": {
+		"lime": "",
+		"openfl": ""
+	}
 }
