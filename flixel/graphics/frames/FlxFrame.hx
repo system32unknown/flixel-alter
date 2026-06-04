@@ -8,6 +8,7 @@ import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxStringUtil;
+import flixel.util.FlxPool.IFlxPooled;
 import haxe.ds.ArraySort;
 import haxe.ds.Vector;
 import openfl.display.BitmapData;
@@ -106,7 +107,7 @@ class FlxFrame implements IFlxDestroyable
 	/**
 	 * UV coordinates for this frame.
 	 */
-	public var uv:#if CUSTOM_CLASSES FlxRect #else FlxUVRect #end;
+	public var uv:FlxUVRect;
 
 	public var parent:FlxGraphic;
 
@@ -813,11 +814,7 @@ class FlxFrame implements IFlxDestroyable
 		if (uv == null)
 			uv = FlxRect.get();
 
-		#if CUSTOM_CLASSES
-		uv.set(frame.x / parent.width, frame.y / parent.height, frame.right / parent.width, frame.bottom / parent.height);
-		#else
 		uv.setFromFrameRect(frame, parent);
-		#end
 	}
 }
 
@@ -840,14 +837,18 @@ enum abstract FlxFrameAngle(Int) from Int to Int
 	var ANGLE_270 = -90;
 }
 
-#if !CUSTOM_CLASSES
 /**
  * FlxRect, but instead of `x`, `y`, `width` and `height`, it takes a `left`, `right`, `top` and
  * `bottom`. This is for optimization reasons, to reduce arithmetic when drawing vertices
  */
 @:forward(put)
-abstract FlxUVRect(FlxRect) from FlxRect to flixel.util.FlxPool.IFlxPooled
+abstract FlxUVRect(FlxRect) from FlxRect to IFlxPooled
 {
+	@:to inline function toIFlxPooled():IFlxPooled
+	{
+		return this;
+	}
+
 	public var left(get, set):Float;
 	inline function get_left():Float { return this.x; }
 	inline function set_left(value):Float { return this.x = value; }
@@ -902,7 +903,6 @@ abstract FlxUVRect(FlxRect) from FlxRect to flixel.util.FlxPool.IFlxPooled
 		return FlxRect.get(l, t, r, b);
 	}
 }
-#end
 
 /**
  * Used internally instead of a FlxMatrix, for some unknown reason.

@@ -220,14 +220,12 @@ class FlxFrameTest extends FlxTest
 		rect.y = 20;
 		rect.width = 90;
 		rect.height = 100;
-		
-		#if !CUSTOM_CLASSES
+
 		final uvRect:FlxUVRect = rect;
 		FlxAssert.areNear(uvRect.left, rect.x);
 		FlxAssert.areNear(uvRect.top, rect.y);
 		FlxAssert.areNear(uvRect.right, rect.width);
 		FlxAssert.areNear(uvRect.bottom, rect.height);
-		#end
 	}
 	
 	@Test

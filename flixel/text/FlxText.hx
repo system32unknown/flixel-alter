@@ -1332,6 +1332,7 @@ class FlxText extends FlxSprite
 		
 		return antialiasing = value;
 	}
+
 	#if CUSTOM_CLASSES
 	override function update(elapsed:Float):Void
 	{
