@@ -1197,14 +1197,14 @@ class FlxText extends FlxSprite
 				while (i-- > 1)
 				{
 					final curDelta = borderSize / iterations * i;
-					copyTextWithOffset(-curDelta, 0); // middle-left
-					copyTextWithOffset(curDelta * 2, 0); // middle-right
-					copyTextWithOffset(-curDelta, -curDelta); // upper-middle
-					copyTextWithOffset(0, curDelta * 2); // lower-middle
+					copyTextWithOffset(-curDelta, 0); // left
+					copyTextWithOffset(curDelta * 2, 0); // right
+					copyTextWithOffset(-curDelta, -curDelta); // up
+					copyTextWithOffset(0, curDelta * 2); // down
 					
 					_matrix.translate(0, -curDelta); // return to center
 				}
-
+			
 			case OUTLINE_FAST:
 				// Render an outline around the text
 				// (do 4 diagonal offset draw calls)
@@ -1420,6 +1420,10 @@ enum FlxTextBorderStyle
 	 * Outline on all 8 sides
 	 */
 	OUTLINE;
+	/**
+	 * Outline on all 4 cardinal directions (UP, DOWN, LEFT, RIGHT)
+	 */
+	OUTLINE_CARDINAL;
 	
 	/**
 	 * Outline, optimized using only 4 draw calls
