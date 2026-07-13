@@ -266,22 +266,3 @@ enum abstract FlxType(Int)
 	var TILEMAP = 3;
 	var SPRITEGROUP = 4;
 }
-
-@:deprecated("IFlxBasic is deprecated and never used")
-interface IFlxBasic
-{
-	var ID:Int;
-	var active(default, set):Bool;
-	var visible(default, set):Bool;
-	var alive(default, set):Bool;
-	var exists(default, set):Bool;
-
-	function draw():Void;
-	function update(elapsed:Float):Void;
-	function destroy():Void;
-
-	function kill():Void;
-	function revive():Void;
-
-	function toString():String;
-}

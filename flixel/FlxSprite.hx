@@ -1,6 +1,5 @@
 package flixel;
 
-import flixel.FlxBasic.IFlxBasic;
 import flixel.animation.FlxAnimationController;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
@@ -2108,28 +2107,4 @@ class FlxSprite extends FlxObject
 		}
 		return doFlipY;
 	}
-}
-
-@:deprecated("IFlxSprite is deprecated and never used")
-interface IFlxSprite extends IFlxBasic
-{
-	var x(default, set):Float;
-	var y(default, set):Float;
-	var alpha(default, set):Float;
-	var angle(default, set):Float;
-	var facing(default, set):FlxDirectionFlags;
-	var moves(default, set):Bool;
-	var immovable(default, set):Bool;
-
-	var offset(default, null):FlxPoint;
-	var origin(default, null):FlxPoint;
-	var scale(default, null):FlxPoint;
-	var velocity(default, null):FlxPoint;
-	var maxVelocity(default, null):FlxPoint;
-	var acceleration(default, null):FlxPoint;
-	var drag(default, null):FlxPoint;
-	var scrollFactor(default, null):FlxPoint;
-
-	function reset(X:Float, Y:Float):Void;
-	function setPosition(X:Float = 0, Y:Float = 0):Void;
 }
