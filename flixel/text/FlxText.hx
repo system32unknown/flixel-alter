@@ -1430,10 +1430,6 @@ enum FlxTextBorderStyle
 	 * **Note:** Might not work for narrow and/or 1-pixel fonts
 	 */
 	OUTLINE_FAST;
-	/**
-	 * Outline on all 4 cardinal directions (UP, DOWN, LEFT, RIGHT)
-	 */
-	OUTLINE_CARDINAL;
 }
 
 enum abstract FlxTextAlign(String) from String
