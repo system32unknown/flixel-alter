@@ -258,6 +258,7 @@ class FlxAtlasFrames extends FlxFramesCollection
 
 		var data:Access = new Access(xmlData);
 
+		final size = FlxRect.get();
 		for (texture in data.nodes.SubTexture)
 		{
 			if (!texture.has.width && texture.has.w)
@@ -272,14 +273,14 @@ class FlxAtlasFrames extends FlxFramesCollection
 			var rect = FlxRect.get(Std.parseFloat(texture.att.x), Std.parseFloat(texture.att.y), Std.parseFloat(texture.att.width),
 				Std.parseFloat(texture.att.height));
 			
-			var size = if (trimmed)
+			if (trimmed)
 			{
-				FlxRect.get(Std.parseInt(texture.att.frameX), Std.parseInt(texture.att.frameY), Std.parseInt(texture.att.frameWidth),
+				size.set(Std.parseInt(texture.att.frameX), Std.parseInt(texture.att.frameY), Std.parseInt(texture.att.frameWidth),
 					Std.parseInt(texture.att.frameHeight));
 			}
 			else
 			{
-				FlxRect.get(0, 0, rect.width, rect.height);
+				size.set(0, 0, rect.width, rect.height);
 			}
 			
 
@@ -307,6 +308,7 @@ class FlxAtlasFrames extends FlxFramesCollection
 
 			frames.addAtlasFrame(rect, sourceSize, offset, name, angle, flipX, flipY);
 		}
+		size.put();
 
 		return frames;
 	}
