@@ -111,6 +111,7 @@ class SoundFrontEnd
 		if (music == null) music = new FlxSound();
 		else if (music.active) music.stop();
 
+		music.persist = true;
 		group.add(music);
 		
 		return music;

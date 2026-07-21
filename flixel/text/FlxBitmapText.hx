@@ -353,7 +353,7 @@ class FlxBitmapText extends FlxSprite
 
 				if (isPixelPerfectRender(camera))
 				{
-					screenPos.floor();
+					screenPos.round();
 				}
 
 				updateTrig();
