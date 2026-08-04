@@ -962,6 +962,7 @@ class FlxText extends FlxSprite
 		
 		final newWidth:Int = Math.ceil(newWidthFloat + borderWidth);
 		final newHeight:Int = Math.ceil(newHeightFloat + borderHeight);
+
 		if (oldBorderPixels != null)
 		{
 			oldBorderPixels.dispose();
