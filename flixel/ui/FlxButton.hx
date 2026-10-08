@@ -168,7 +168,7 @@ class FlxTypedButton<T:FlxSprite> extends FlxSprite implements IFlxInput
 
 	/**
 	 * Shows the current state of the button, either `NORMAL`,
-	 * `HIGHLIGHT` or `PRESSED`.
+	 * `HIGHLIGHT`, `PRESSED` or `DISABLED`.
 	 */
 	public var status(default, set):FlxButtonState;
 
