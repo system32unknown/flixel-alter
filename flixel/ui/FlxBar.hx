@@ -726,6 +726,9 @@ class FlxBar extends FlxSprite
 				_fillHorizontal = false;
 		}
 
+		if (range > 0)
+			updateBar();
+
 		return fillDirection;
 	}
 
@@ -761,8 +764,8 @@ class FlxBar extends FlxSprite
 	 */
 	public function updateFilledBar():Void
 	{
-		_filledBarRect.width = barWidth;
-		_filledBarRect.height = barHeight;
+		_filledBarRect.setTo(0, 0, barWidth, barHeight);
+		_filledBarPoint.setTo(0, 0);
 
 		var fraction:Float = (value - min) / range;
 		var percent:Float = fraction * _maxPercent;
