@@ -221,6 +221,27 @@ class FlxTimer implements IFlxDestroyable
 	}
 
 	/**
+	 * Quickly iterates through all remaining loops. 
+	 */
+	public function completeLoops():Void
+	{
+		while (!finished && loops > 0)
+		{
+			if (_loopsCounter >= loops)
+			{
+				finished = true;
+			}
+			else
+			{
+				_timeCounter = 0;
+				_loopsCounter++;
+				
+				onLoopFinished();
+			}
+		}
+	}
+
+	/**
 	 * Ends a loop early and calls onComplete(), regardless of how much time is left. 
 	 */
 	public function complete():Void
@@ -231,9 +252,9 @@ class FlxTimer implements IFlxDestroyable
 			_loopsCounter++;
 			
 			onLoopFinished();
-			if (_loopsCounter == loops)
+			if (loops > 0 && (_loopsCounter >= loops))
 			{
-				cancel();
+				finished = true;
 			}
 		}
 	}
